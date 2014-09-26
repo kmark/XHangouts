@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+
+def gitRev = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine './gitRev.sh'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "com.versobit.kmark.xhangouts"
+        minSdkVersion 15
+        targetSdkVersion 20
+        versionCode 1
+        versionName "1.0-" + gitRev()
+    }
+}
+
+dependencies {
+    provided files('libs/XposedBridgeApi-54.jar')
+}

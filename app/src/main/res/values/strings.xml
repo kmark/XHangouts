@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">XHangouts</string>
+    <string name="xposed_desc">Improvements for Google Hangouts MMS handling</string>
+</resources>
