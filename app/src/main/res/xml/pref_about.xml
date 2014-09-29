@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="about_version"
+        android:title="@string/pref_title_about_version"
+        android:summary="@string/pref_desc_about_version" />
+
+    <CheckBoxPreference
+        android:dependency="mod_enabled"
+        android:key="debug"
+        android:title="@string/pref_title_about_debug"
+        android:summaryOn="@string/pref_desc_about_debug_on"
+        android:summaryOff="@string/pref_desc_about_debug_off"
+        android:defaultValue="off" />
+
+</PreferenceScreen>

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Weather Doge.  If not, see <http://www.gnu.org/licenses/>.
+ * along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.versobit.kmark.xhangouts;
@@ -22,6 +22,7 @@ package com.versobit.kmark.xhangouts;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -41,13 +42,14 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public final class XHangouts implements IXposedHookLoadPackage {
+
     private static final String TAG = "XHangouts";
 
     private static final String ACTIVITY_THREAD_CLASS = "android.app.ActivityThread";
     private static final String ACTIVITY_THREAD_CURRENTACTHREAD = "currentActivityThread";
     private static final String ACTIVITY_THREAD_GETSYSCTX = "getSystemContext";
 
-    private static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
+    static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
 
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
     private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
@@ -60,17 +62,55 @@ public final class XHangouts implements IXposedHookLoadPackage {
     // private static d(Ljava/lang/String;)Ljava/lang/String
     private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "d";
 
-    private static final boolean LOG = true;
-    private static final boolean ROTATE = true;
-
     private static final String TESTED_VERSION_STR = "2.3.75731955";
     private static final int TESTED_VERSION_INT = 22037769;
 
     // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
-    WeakReference<Context> hangoutsCtx;
+    private WeakReference<Context> hangoutsCtx;
+
+    private static final class Config {
+
+        private static final Uri ALL_PREFS_URI = Uri.parse("content://" + SettingsProvider.AUTHORITY + "/all");
+
+        // Give us some sane defaults, just in case
+        private static boolean modEnabled = true;
+        private static boolean resizing = true;
+        private static boolean rotation = true;
+        private static int rotateMode = -1;
+        private static boolean debug = false;
+
+        private static void reload(Context ctx) {
+            Cursor prefs = ctx.getContentResolver().query(ALL_PREFS_URI, null, null, null, null);
+            if(prefs == null) {
+                log("Failed to retrieve settings!");
+                return;
+            }
+            while(prefs.moveToNext()) {
+                switch (Setting.fromString(prefs.getString(SettingsProvider.QUERY_ALL_KEY))) {
+                    case MOD_ENABLED:
+                        modEnabled = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                        continue;
+                    case MMS_RESIZE_ENABLED:
+                        resizing = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                        continue;
+                    case MMS_ROTATE_ENABLED:
+                        rotation = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                        continue;
+                    case MMS_ROTATE_MODE:
+                        rotateMode = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case DEBUG:
+                        debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                }
+            }
+        }
+    }
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+        if(loadPackageParam.packageName.equals(BuildConfig.PACKAGE_NAME)) {
+            XposedHelpers.findAndHookMethod(XApp.class.getCanonicalName(), loadPackageParam.classLoader, "isActive", XC_MethodReplacement.returnConstant(true));
+        }
         if(!loadPackageParam.packageName.equals(HANGOUTS_PKG_NAME)) {
             return;
         }
@@ -78,21 +118,26 @@ public final class XHangouts implements IXposedHookLoadPackage {
         Object activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass(ACTIVITY_THREAD_CLASS, null), ACTIVITY_THREAD_CURRENTACTHREAD);
         final Context systemCtx = (Context)XposedHelpers.callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
 
-        log("--- LOADING XHANGOUTS ---", false);
-        log(String.format("XHangouts v%s (%d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE), false);
+        Config.reload(systemCtx);
+        if(!Config.modEnabled) {
+            return;
+        }
+
+        debug("--- LOADING XHANGOUTS ---", false);
+        debug(String.format("XHangouts v%s (%d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE), false);
 
         PackageInfo pi = systemCtx.getPackageManager().getPackageInfo(HANGOUTS_PKG_NAME, 0);
-        log(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
+        debug(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
         // TODO: replace this with something more robust?
         if(pi.versionCode != TESTED_VERSION_INT) {
-            log(String.format("Warning: Your Hangouts version differs from the version XHangouts was built against: v%s (%d)", TESTED_VERSION_STR, TESTED_VERSION_INT), false);
+            log(String.format("Warning: Your Hangouts version differs from the version XHangouts was built against: v%s (%d)", TESTED_VERSION_STR, TESTED_VERSION_INT));
         }
 
         // Get application context to use later
         XposedHelpers.findAndHookMethod(HANGOUTS_ESAPP_CLASS, loadPackageParam.classLoader, HANGOUTS_ESAPP_ONCREATE, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                log("Context set.");
+                debug("Context set.");
                 hangoutsCtx = new WeakReference<Context>((Context)param.thisObject);
             }
         });
@@ -114,13 +159,18 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Config.reload(systemCtx);
+                if(!Config.modEnabled || !Config.resizing) {
+                    return;
+                }
+
                 // Thanks to cottonBallPaws @ http://stackoverflow.com/a/4250279/238374
 
                 final int maxWidth = (Integer)param.args[1];
                 final int maxHeight = (Integer)param.args[2];
                 final Uri imgUri = (Uri)param.args[4];
 
-                log(String.format("New MMS image! Max dimensions: %dx%d, Uri: %s, Other: %s %s", maxWidth, maxHeight, imgUri, param.args[0], param.args[3]));
+                debug(String.format("New MMS image! Max dimensions: %dx%d, Uri: %s, Other: %s %s", maxWidth, maxHeight, imgUri, param.args[0], param.args[3]));
 
                 ContentResolver esAppResolver = hangoutsCtx.get().getContentResolver();
                 InputStream imgStream = esAppResolver.openInputStream(imgUri);
@@ -133,26 +183,32 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 int srcW = options.outWidth;
                 int srcH = options.outHeight;
 
-                log(String.format("Original: %dx%d", srcW, srcH));
+                debug(String.format("Original: %dx%d", srcW, srcH));
 
                 int rotation = 0;
-                if(ROTATE) {
-                    // Find the rotated "real" dimensions to determine proper final scaling
-                    // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
-                    String scratchId = imgUri.getPathSegments().get(1);
-                    String filePath = (String) XposedHelpers.callStaticMethod(XposedHelpers.findClass(HANGOUTS_ESPROVIDER_CLASS, loadPackageParam.classLoader), HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, scratchId);
-                    log(String.format("Cache file located: %s", filePath));
-                    ExifInterface exif = new ExifInterface(filePath);
-                    // Let's pretend other orientation modes don't exist
-                    switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                        case ExifInterface.ORIENTATION_ROTATE_90:
-                            rotation = 90;
-                            break;
-                        case ExifInterface.ORIENTATION_ROTATE_180:
-                            rotation = 180;
-                            break;
-                        case ExifInterface.ORIENTATION_ROTATE_270:
-                            rotation = 270;
+                if(Config.rotation) {
+                    rotation = Config.rotateMode;
+                    if(rotation == -1) {
+                        // Find the rotated "real" dimensions to determine proper final scaling
+                        // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
+                        String scratchId = imgUri.getPathSegments().get(1);
+                        String filePath = (String) XposedHelpers.callStaticMethod(XposedHelpers.findClass(HANGOUTS_ESPROVIDER_CLASS, loadPackageParam.classLoader), HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, scratchId);
+                        debug(String.format("Cache file located: %s", filePath));
+                        ExifInterface exif = new ExifInterface(filePath);
+                        // Let's pretend other orientation modes don't exist
+                        switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotation = 90;
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotation = 180;
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotation = 270;
+                                break;
+                            default:
+                                rotation = 0;
+                        }
                     }
                     if (rotation != 0) {
                         // Technically we could just swap width and height if rotation = 90 or 270 but
@@ -164,7 +220,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         imgMatrix.mapRect(imgRect, new RectF(0, 0, srcW, srcH));
                         srcW = Math.round(imgRect.width());
                         srcH = Math.round(imgRect.height());
-                        log(String.format("Rotated: %dx%d, Rotation: %d°", srcW, srcH, rotation));
+                        debug(String.format("Rotated: %dx%d, Rotation: %d°", srcW, srcH, rotation));
                     }
                 }
 
@@ -179,7 +235,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 // Use the longest side to determine scale, this should always be <= 1
                 float scale = ((float)(srcW > srcH ? maxWidth : maxHeight)) / (srcW > srcH ? srcW : srcH);
 
-                log(String.format("Estimated: %dx%d, Sample Size: 1/%d, Scale: %f", srcW, srcH, inSS, scale));
+                debug(String.format("Estimated: %dx%d, Sample Size: 1/%d, Scale: %f", srcW, srcH, inSS, scale));
 
                 // Load the sampled image into memory
                 options.inJustDecodeBounds = false;
@@ -190,7 +246,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 imgStream = esAppResolver.openInputStream(imgUri);
                 Bitmap sampled = BitmapFactory.decodeStream(imgStream, null, options);
                 imgStream.close();
-                log(String.format("Sampled: %dx%d", sampled.getWidth(), sampled.getHeight()));
+                debug(String.format("Sampled: %dx%d", sampled.getWidth(), sampled.getHeight()));
 
                 // Load our scale and rotation changes into a matrix and use it to create the final bitmap
                 Matrix m = new Matrix();
@@ -198,9 +254,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 m.postRotate(rotation);
                 Bitmap scaled = Bitmap.createBitmap(sampled, 0, 0, sampled.getWidth(), sampled.getHeight(), m, true);
                 sampled.recycle();
-                log(String.format("Scaled: %dx%d", scaled.getWidth(), scaled.getHeight()));
+                debug(String.format("Scaled: %dx%d", scaled.getWidth(), scaled.getHeight()));
 
-                
+
                 // In the Hangouts implementation it converts to JPEG here, and then compresses it again later
                 // not certain as to why that is.
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -210,22 +266,21 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
                 param.setResult(output.toByteArray());
                 output.close();
-                log("MMS image processing complete.");
+                debug("MMS image processing complete.");
             }
         });
 
-        XposedBridge.hookMethod(XHangouts.class.getDeclaredMethod("isActive"), new XC_MethodReplacement() {
-            @Override
-            protected Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
-                return true;
-            }
-        });
-
-        log("--- LOAD COMPLETE ---", false);
+        debug("--- LOAD COMPLETE ---", false);
     }
 
-    static boolean isActive() {
-        return false;
+    private static void debug(String msg) {
+        debug(msg, true);
+    }
+
+    private static void debug(String msg, boolean tag) {
+        if(Config.debug) {
+            log(msg, tag);
+        }
     }
 
     private static void log(String msg) {
@@ -233,8 +288,6 @@ public final class XHangouts implements IXposedHookLoadPackage {
     }
 
     private static void log(String msg, boolean tag) {
-        if(LOG) {
-            XposedBridge.log((tag ? TAG + ": " : "") + msg);
-        }
+        XposedBridge.log((tag ? TAG + ": " : "") + msg);
     }
 }

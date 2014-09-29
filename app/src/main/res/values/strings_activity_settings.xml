@@ -1,0 +1,51 @@
+<resources>
+    <string name="title_activity_settings">XHangouts Settings</string>
+    <string name="warning_not_loaded">XHangouts is not activated by Xposed.</string>
+    <string name="restart_hangouts_toast">Restart Hangouts for this to take full effect.</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- General -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_mod_enabled">Enable module</string>
+    <string name="pref_desc_mod_enabled">Turn this module on or off without rebooting</string>
+
+    <!-- MMS -->
+    <string name="pref_header_mms">MMS</string>
+
+    <string name="pref_title_mms_resize_enabled">High quality resizing</string>
+    <string name="pref_desc_mms_resize_enabled_on">Using the XHangouts resizing algorithm</string>
+    <string name="pref_desc_mms_resize_enabled_off">Using the built-in resizing algorithm</string>
+
+    <string name="pref_title_orientation_enabled">Orientation correction</string>
+
+    <string name="pref_title_orientation_mode">Correction mode</string>
+    <string-array name="pref_mms_orientation_mode_titles">
+        <item>Auto (recommended)</item>
+        <item>90 degrees</item>
+        <item>180 degrees</item>
+        <item>270 degrees</item>
+    </string-array>
+    <string-array name="pref_mms_orientation_mode_values">
+        <item>-1</item>
+        <item>90</item>
+        <item>180</item>
+        <item>270</item>
+    </string-array>
+
+    <!-- About -->
+    <string name="pref_header_about">About</string>
+
+    <string name="pref_title_about_version">XHangouts v%1$s</string>
+    <string name="pref_desc_about_version">Google Hangouts v%1$s (%2$d)\n%3$s</string>
+    <string name="pref_title_about_version_loaded">Loaded</string>
+    <string name="pref_title_about_version_notloaded">Not loaded</string>
+
+    <string name="xda_thread">http://forum.xda-developers.com/xposed/modules/xhangouts-mms-fixes-google-hangouts-t2888102</string>
+
+    <string name="pref_title_about_debug">Debug mode</string>
+    <string name="pref_desc_about_debug_on">Xposed logging is on</string>
+    <string name="pref_desc_about_debug_off">Xposed logging is off</string>
+
+</resources>
