@@ -61,6 +61,7 @@ public final class SettingsProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        SettingsActivity.setDefaultPreferences(getContext());
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         return true;
     }

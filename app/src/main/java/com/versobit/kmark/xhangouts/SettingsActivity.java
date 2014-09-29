@@ -51,6 +51,12 @@ import java.util.List;
  */
 final public class SettingsActivity extends PreferenceActivity {
 
+    static void setDefaultPreferences(Context ctx) {
+        PreferenceManager.setDefaultValues(ctx, R.xml.pref_general, false);
+        PreferenceManager.setDefaultValues(ctx, R.xml.pref_mms, false);
+        PreferenceManager.setDefaultValues(ctx, R.xml.pref_about, false);
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
