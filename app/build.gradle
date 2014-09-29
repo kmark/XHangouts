@@ -22,8 +22,9 @@ android {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 15
         targetSdkVersion 20
-        versionCode 1
-        versionName "1.0-" + gitRev()
+        versionCode 2
+        versionName "1.1-" + gitRev()
+        signingConfig signingConfigs.config
     }
 }
 
