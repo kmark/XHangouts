@@ -76,7 +76,6 @@ public final class SettingsProvider extends ContentProvider {
                     Object[] row = new Object[] { entry.getKey(), entry.getValue() };
                     // Cursor doesn't support bool, convert to int
                     if(row[QUERY_ALL_VALUE] instanceof Boolean) {
-                        // bool to int, 0 = false, 1 = true
                         row[QUERY_ALL_VALUE] = ((Boolean) row[QUERY_ALL_VALUE]) ? TRUE : FALSE;
                     }
                     cursor.addRow(row);
