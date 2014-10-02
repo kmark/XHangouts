@@ -1,4 +1,6 @@
 # [XHangouts](http://repo.xposed.info/module/com.versobit.kmark.xhangouts)
+![XHangouts](https://raw.githubusercontent.com/kmark/XHangouts/master/app/src/main/res/drawable-xhdpi/ic_launcher.png)
+
 Google Hangouts is a great SMS app for those of us who also make considerable use of the Google
 Hangouts IM platform. While it does a better job of handling MMS than most Android
 alternatives it still has a few key persisting issues:
@@ -11,6 +13,8 @@ XHangouts is an Xposed module tasked with resolving these issues. Maybe one day 
 
 See [this thread on XDA](http://forum.xda-developers.com/xposed/modules/xhangouts-mms-fixes-google-hangouts-t2888102) for more information, support, etc. The GitHub issue tracker is a valid way of reporting bugs as well.
 
+Icon by [Adrian Babilinski](https://twitter.com/mrBabilin)!
+
 ## Licensing
-Copyright &copy; 2014 Kevin Mark. XHangouts is licensed under the GNU General Public License, Version 3 which can
+Copyright &copy; 2014 Kevin Mark. XHangouts is licensed under the GNU General Public License, Version 3, which can
 be found in `LICENSE.md`
