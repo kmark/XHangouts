@@ -24,7 +24,6 @@ android {
         targetSdkVersion 20
         versionCode 3
         versionName "1.2-" + gitRev()
-        signingConfig signingConfigs.config
     }
 }
 
