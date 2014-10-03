@@ -26,6 +26,7 @@ enum Setting {
     MMS_RESIZE_ENABLED,
     MMS_ROTATE_ENABLED,
     MMS_ROTATE_MODE,
+    UI_ENTER_KEY,
     ABOUT_VERSION,
     DEBUG;
 
@@ -61,5 +62,29 @@ enum Setting {
     @Override
     public String toString() {
         return name != null ? name : name().toLowerCase();
+    }
+
+    enum UiEnterKey {
+        EMOJI_SELECTOR(0),
+        NEWLINE(1),
+        SEND(2);
+
+        private final int value;
+        private UiEnterKey(final int value) {
+            this.value = value;
+        }
+
+        static UiEnterKey fromInt(int value) {
+            for(UiEnterKey u : values()) {
+                if(value == u.value) {
+                    return u;
+                }
+            }
+            throw new IllegalArgumentException("No constant with value " + value + " found");
+        }
+
+        int toInt() {
+            return value;
+        }
     }
 }

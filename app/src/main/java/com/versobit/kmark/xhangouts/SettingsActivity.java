@@ -54,6 +54,7 @@ final public class SettingsActivity extends PreferenceActivity {
     static void setDefaultPreferences(Context ctx) {
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_general, false);
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_mms, false);
+        PreferenceManager.setDefaultValues(ctx, R.xml.pref_ui, false);
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_about, false);
     }
 
@@ -93,6 +94,13 @@ final public class SettingsActivity extends PreferenceActivity {
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
         bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
+
+        // Add 'UI Tweaks' preferences, and a corresponding header.
+        fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle(R.string.pref_header_ui);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_ui);
+        bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
 
         // Add 'About' preferences, and a corresponding header.
         fakeHeader = new PreferenceCategory(this);
@@ -249,6 +257,15 @@ final public class SettingsActivity extends PreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
+        }
+    }
+
+    public static final class UiPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_ui);
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
         }
     }
 

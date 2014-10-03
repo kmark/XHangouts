@@ -29,6 +29,12 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.text.InputType;
+import android.util.AttributeSet;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -62,6 +68,11 @@ public final class XHangouts implements IXposedHookLoadPackage {
     // private static d(Ljava/lang/String;)Ljava/lang/String
     private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "d";
 
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.views.ComposeMessageView";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "i";
+    // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
+    private static final String HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
+
     private static final String TESTED_VERSION_STR = "2.3.75731955";
     private static final int TESTED_VERSION_INT = 22037769;
 
@@ -77,6 +88,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static boolean resizing = true;
         private static boolean rotation = true;
         private static int rotateMode = -1;
+        private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
         private static boolean debug = false;
 
         private static void reload(Context ctx) {
@@ -99,6 +111,8 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     case MMS_ROTATE_MODE:
                         rotateMode = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
                         continue;
+                    case UI_ENTER_KEY:
+                        enterKey = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
                     case DEBUG:
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                 }
@@ -267,6 +281,32 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 param.setResult(output.toByteArray());
                 output.close();
                 debug("MMS image processing complete.");
+            }
+        });
+
+        Class<?> ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
+        XposedHelpers.findAndHookConstructor(ComposeMessageView, Context.class, AttributeSet.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Config.reload((Context)param.args[0]);
+                if(Config.modEnabled) {
+                    Setting.UiEnterKey enterKey = Setting.UiEnterKey.fromInt(Config.enterKey);
+                    debug(String.format("ComposeMessageView: %s", enterKey.name()));
+                    if(enterKey != Setting.UiEnterKey.EMOJI_SELECTOR) {
+                        EditText et = (EditText)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT);
+                        et.setInputType(et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(ComposeMessageView, HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION, TextView.class, int.class, KeyEvent.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                int actionId = (Integer)param.args[1];
+                if(Config.modEnabled && actionId == EditorInfo.IME_NULL && Config.enterKey == Setting.UiEnterKey.NEWLINE.toInt()) {
+                    param.setResult(false); // We do not handle the enter action, and it adds a newline for us
+                }
             }
         });
 

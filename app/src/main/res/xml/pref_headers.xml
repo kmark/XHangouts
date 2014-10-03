@@ -11,6 +11,10 @@
         android:title="@string/pref_header_mms" />
 
     <header
+        android:fragment="com.versobit.kmark.xhangouts.SettingsActivity$UiPreferenceFragment"
+        android:title="@string/pref_header_ui" />
+
+    <header
         android:fragment="com.versobit.kmark.xhangouts.SettingsActivity$AboutPreferenceFragment"
         android:title="@string/pref_header_about" />
 

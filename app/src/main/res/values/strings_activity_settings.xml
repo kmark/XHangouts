@@ -34,6 +34,21 @@
         <item>270</item>
     </string-array>
 
+    <!-- UI Tweaks -->
+    <string name="pref_header_ui">UI Tweaks</string>
+
+    <string name="pref_title_ui_enter_key">Enter key behavior</string>
+    <string-array name="pref_ui_enter_key_titles">
+        <item>Emoji selector (default)</item>
+        <item>New line</item>
+        <item>Send</item>
+    </string-array>
+    <string-array name="pref_ui_enter_key_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <!-- About -->
     <string name="pref_header_about">About</string>
 
