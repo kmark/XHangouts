@@ -294,12 +294,19 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     debug(String.format("ComposeMessageView: %s", enterKey.name()));
                     if(enterKey != Setting.UiEnterKey.EMOJI_SELECTOR) {
                         EditText et = (EditText)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT);
-                        et.setInputType(et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
+                        // Remove Emoji selector (works for new line)
+                        int inputType = et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
+                        if(enterKey == Setting.UiEnterKey.SEND) {
+                            // Disable multi-line input which shows the send button
+                            inputType ^= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
+                        }
+                        et.setInputType(inputType);
                     }
                 }
             }
         });
 
+        // Called by at least SwiftKey and Fleksy on new line, but not the AOSP or Google keyboard
         XposedHelpers.findAndHookMethod(ComposeMessageView, HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION, TextView.class, int.class, KeyEvent.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
