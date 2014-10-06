@@ -22,8 +22,8 @@ android {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 15
         targetSdkVersion 20
-        versionCode 3
-        versionName "1.2-" + gitRev()
+        versionCode 4
+        versionName "1.3-" + gitRev()
     }
 }
 
