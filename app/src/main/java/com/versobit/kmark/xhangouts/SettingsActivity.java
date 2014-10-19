@@ -21,6 +21,7 @@ package com.versobit.kmark.xhangouts;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -89,6 +90,37 @@ final public class SettingsActivity extends PreferenceActivity {
         fakeHeader.setTitle(R.string.pref_header_mms);
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_mms);
+
+        final Preference scale = findPreference(Setting.MMS_SCALE_PREFKEY.toString());
+        final Preference image = findPreference(Setting.MMS_IMAGE_PREFKEY.toString());
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 640);
+        int scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 640);
+
+        updateMmsScaleSummary(findPreference(Setting.MMS_SCALE_PREFKEY.toString()), scaleWidth, scaleHeight);
+
+        scale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MmsScaleDialog dialog = new MmsScaleDialog(SettingsActivity.this, scale);
+                dialog.show();
+                return true;
+            }
+        });
+
+        Setting.ImageFormat format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
+        int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 60);
+        updateMmsTypeQualitySummary(findPreference(Setting.MMS_IMAGE_PREFKEY.toString()), format, quality);
+
+        image.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                MmsTypeQualityDialog dialog = new MmsTypeQualityDialog(SettingsActivity.this, image);
+                dialog.show();
+                return true;
+            }
+        });
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
         // their values. When their values change, their summaries are updated
@@ -209,7 +241,7 @@ final public class SettingsActivity extends PreferenceActivity {
         });
     }
 
-    private void setupVersionPreference(Preference preference) {
+    private void setupVersionPreference(final Preference preference) {
         setupVersionPreference(this, preference);
     }
 
@@ -237,6 +269,23 @@ final public class SettingsActivity extends PreferenceActivity {
         });
     }
 
+    void updateMmsScaleSummary(final Preference preference, final int width, final int height) {
+        updateMmsScaleSummary(this, preference, width, height);
+    }
+
+    static void updateMmsScaleSummary(final Context ctx, final Preference preference, final int width, final int height) {
+        preference.setSummary(ctx.getString(R.string.pref_desc_mms_scale, width, height));
+    }
+
+    void updateMmsTypeQualitySummary(final Preference preference, final Setting.ImageFormat format, final int quality) {
+        updateMmsTypeQualitySummary(this, preference, format, quality);
+    }
+
+    static void updateMmsTypeQualitySummary(final Context ctx, final Preference preference, final Setting.ImageFormat format, final int quality) {
+        String strQuality = format == Setting.ImageFormat.PNG ? ctx.getString(R.string.dialog_mms_type_quality_lossless) : String.valueOf(quality);
+        preference.setSummary(ctx.getString(R.string.pref_desc_mms_image_type, format.toString(), strQuality.toLowerCase()));
+    }
+
     public static final class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -251,6 +300,37 @@ final public class SettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_mms);
+
+            final Preference scale = findPreference(Setting.MMS_SCALE_PREFKEY.toString());
+            final Preference image = findPreference(Setting.MMS_IMAGE_PREFKEY.toString());
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 640);
+            int scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 640);
+
+            updateMmsScaleSummary(getActivity(), findPreference(Setting.MMS_SCALE_PREFKEY.toString()), scaleWidth, scaleHeight);
+
+            scale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    MmsScaleDialog dialog = new MmsScaleDialog(getActivity(), scale);
+                    dialog.show();
+                    return true;
+                }
+            });
+
+            Setting.ImageFormat format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
+            int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 60);
+            updateMmsTypeQualitySummary(getActivity(), findPreference(Setting.MMS_IMAGE_PREFKEY.toString()), format, quality);
+
+            image.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    MmsTypeQualityDialog dialog = new MmsTypeQualityDialog(getActivity(), image);
+                    dialog.show();
+                    return true;
+                }
+            });
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are

@@ -25,4 +25,14 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <Preference
+        android:dependency="mms_resize_enabled"
+        android:key="mms_scale"
+        android:title="@string/pref_title_mms_scale" />
+
+    <Preference
+        android:dependency="mms_resize_enabled"
+        android:key="mms_image"
+        android:title="@string/pref_title_mms_image_type" />
+
 </PreferenceScreen>

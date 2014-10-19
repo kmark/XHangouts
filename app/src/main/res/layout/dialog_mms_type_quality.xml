@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="5dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_mms_type_quality_type"
+            android:entries="@array/pref_mms_image_type_titles"
+            android:spinnerMode="dropdown" />
+
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_mms_type_quality_quality"
+            android:layout_weight="1"
+            android:progress="60"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+
+    <TextView
+        tools:ignore="HardcodedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Quality: 60"
+        android:id="@+id/dialog_mms_type_quality_qlabel"
+        android:layout_gravity="center_horizontal" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_mms_type_quality_preview1"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/fajita" />
+
+        <TextView
+            tools:ignore="HardcodedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/dialog_mms_type_quality_preview1"
+            android:layout_alignRight="@id/dialog_mms_type_quality_preview1"
+            android:layout_alignEnd="@id/dialog_mms_type_quality_preview1"
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="7.25"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="28.15 KB"
+            android:id="@+id/dialog_mms_type_quality_p1text" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_mms_type_quality_preview2"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/screenshot" />
+
+        <TextView
+            tools:ignore="HardcodedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/dialog_mms_type_quality_preview2"
+            android:layout_alignRight="@id/dialog_mms_type_quality_preview2"
+            android:layout_alignEnd="@id/dialog_mms_type_quality_preview2"
+            android:textColor="@android:color/black"
+            android:shadowColor="@android:color/white"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="7.25"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="28.15 KB"
+            android:id="@+id/dialog_mms_type_quality_p2text" />
+    </RelativeLayout>
+
+</LinearLayout>

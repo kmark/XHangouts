@@ -26,6 +26,12 @@ enum Setting {
     MMS_RESIZE_ENABLED,
     MMS_ROTATE_ENABLED,
     MMS_ROTATE_MODE,
+    MMS_SCALE_PREFKEY("mms_scale"),
+    MMS_SCALE_WIDTH,
+    MMS_SCALE_HEIGHT,
+    MMS_IMAGE_PREFKEY("mms_image"),
+    MMS_IMAGE_TYPE,
+    MMS_IMAGE_QUALITY,
     UI_ENTER_KEY,
     ABOUT_VERSION,
     DEBUG;
@@ -76,6 +82,29 @@ enum Setting {
 
         static UiEnterKey fromInt(int value) {
             for(UiEnterKey u : values()) {
+                if(value == u.value) {
+                    return u;
+                }
+            }
+            throw new IllegalArgumentException("No constant with value " + value + " found");
+        }
+
+        int toInt() {
+            return value;
+        }
+    }
+
+    enum ImageFormat {
+        JPEG(0),
+        PNG(1);
+
+        private final int value;
+        private ImageFormat(final int value) {
+            this.value = value;
+        }
+
+        static ImageFormat fromInt(int value) {
+            for(ImageFormat u : values()) {
                 if(value == u.value) {
                     return u;
                 }

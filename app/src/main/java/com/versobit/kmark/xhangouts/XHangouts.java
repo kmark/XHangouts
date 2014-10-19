@@ -88,6 +88,10 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static boolean resizing = true;
         private static boolean rotation = true;
         private static int rotateMode = -1;
+        private static int imageWidth = 640;
+        private static int imageHeight = 640;
+        private static Setting.ImageFormat imageFormat = Setting.ImageFormat.JPEG;
+        private static int imageQuality = 60;
         private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
         private static boolean debug = false;
 
@@ -110,6 +114,18 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         continue;
                     case MMS_ROTATE_MODE:
                         rotateMode = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case MMS_SCALE_WIDTH:
+                        imageWidth = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case MMS_SCALE_HEIGHT:
+                        imageHeight = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case MMS_IMAGE_TYPE:
+                        imageFormat = Setting.ImageFormat.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                        continue;
+                    case MMS_IMAGE_QUALITY:
+                        imageQuality = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
                         continue;
                     case UI_ENTER_KEY:
                         enterKey = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
@@ -166,6 +182,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
             // int4 ?, seems to be width * height - 1024 = 306176
             // Uri1 content:// path that references the input image
 
+            // At least one instance has been reported of int2, int3, and int4 being populated with
+            // much larger values resulting in an image much too large to be sent via MMS
+
             // We're not replacing the method so that even if we fail, which is conceivable, we
             // safely fall back to the original Hangouts result. This also means that if the Hangout
             // function call does something weird that needs to be done (that we don't do) it still
@@ -180,11 +199,17 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
                 // Thanks to cottonBallPaws @ http://stackoverflow.com/a/4250279/238374
 
-                final int maxWidth = (Integer)param.args[1];
-                final int maxHeight = (Integer)param.args[2];
+                final int paramWidth = (Integer)param.args[1];
+                final int paramHeight = (Integer)param.args[2];
                 final Uri imgUri = (Uri)param.args[4];
 
-                debug(String.format("New MMS image! Max dimensions: %dx%d, Uri: %s, Other: %s %s", maxWidth, maxHeight, imgUri, param.args[0], param.args[3]));
+                // Prevents leak of Hangouts account email to the debug log
+                final String safeUri = imgUri.toString().substring(0, imgUri.toString().indexOf("?"));
+
+                debug(String.format("New MMS image! %d, %d, %s, %s, %s", paramWidth, paramHeight, safeUri, param.args[0], param.args[3]));
+                String quality = Config.imageFormat == Setting.ImageFormat.PNG ? "lossless" : String.valueOf(Config.imageQuality);
+                debug(String.format("Configuration: %d×%d, %s at %s quality", Config.imageWidth, Config.imageHeight,
+                        Config.imageFormat.toString(), quality));
 
                 ContentResolver esAppResolver = hangoutsCtx.get().getContentResolver();
                 InputStream imgStream = esAppResolver.openInputStream(imgUri);
@@ -197,7 +222,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 int srcW = options.outWidth;
                 int srcH = options.outHeight;
 
-                debug(String.format("Original: %dx%d", srcW, srcH));
+                debug(String.format("Original: %d×%d", srcW, srcH));
 
                 int rotation = 0;
                 if(Config.rotation) {
@@ -234,22 +259,22 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         imgMatrix.mapRect(imgRect, new RectF(0, 0, srcW, srcH));
                         srcW = Math.round(imgRect.width());
                         srcH = Math.round(imgRect.height());
-                        debug(String.format("Rotated: %dx%d, Rotation: %d°", srcW, srcH, rotation));
+                        debug(String.format("Rotated: %d×%d, Rotation: %d°", srcW, srcH, rotation));
                     }
                 }
 
                 // Find the highest possible sample size divisor that is still larger than our maxes
                 int inSS = 1;
-                while((srcW / 2 > maxWidth) || (srcH / 2 > maxHeight)) {
+                while((srcW / 2 > Config.imageWidth) || (srcH / 2 > Config.imageHeight)) {
                     srcW /= 2;
                     srcH /= 2;
                     inSS *= 2;
                 }
 
                 // Use the longest side to determine scale, this should always be <= 1
-                float scale = ((float)(srcW > srcH ? maxWidth : maxHeight)) / (srcW > srcH ? srcW : srcH);
+                float scale = ((float)(srcW > srcH ? Config.imageWidth : Config.imageHeight)) / (srcW > srcH ? srcW : srcH);
 
-                debug(String.format("Estimated: %dx%d, Sample Size: 1/%d, Scale: %f", srcW, srcH, inSS, scale));
+                debug(String.format("Estimated: %d×%d, Sample Size: 1/%d, Scale: %f", srcW, srcH, inSS, scale));
 
                 // Load the sampled image into memory
                 options.inJustDecodeBounds = false;
@@ -260,7 +285,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 imgStream = esAppResolver.openInputStream(imgUri);
                 Bitmap sampled = BitmapFactory.decodeStream(imgStream, null, options);
                 imgStream.close();
-                debug(String.format("Sampled: %dx%d", sampled.getWidth(), sampled.getHeight()));
+                debug(String.format("Sampled: %d×%d", sampled.getWidth(), sampled.getHeight()));
 
                 // Load our scale and rotation changes into a matrix and use it to create the final bitmap
                 Matrix m = new Matrix();
@@ -268,19 +293,26 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 m.postRotate(rotation);
                 Bitmap scaled = Bitmap.createBitmap(sampled, 0, 0, sampled.getWidth(), sampled.getHeight(), m, true);
                 sampled.recycle();
-                debug(String.format("Scaled: %dx%d", scaled.getWidth(), scaled.getHeight()));
+                debug(String.format("Scaled: %d×%d", scaled.getWidth(), scaled.getHeight()));
 
-
-                // In the Hangouts implementation it converts to JPEG here, and then compresses it again later
-                // not certain as to why that is.
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                scaled.compress(Bitmap.CompressFormat.PNG, 0, output);
-
+                Bitmap.CompressFormat compressFormat = null;
+                final int compressQ = Config.imageFormat == Setting.ImageFormat.PNG ? 0 : Config.imageQuality;
+                switch (Config.imageFormat) {
+                    case PNG:
+                        compressFormat = Bitmap.CompressFormat.PNG;
+                        break;
+                    case JPEG:
+                        compressFormat = Bitmap.CompressFormat.JPEG;
+                        break;
+                }
+                scaled.compress(compressFormat, compressQ, output);
+                final int bytes = output.size();
                 scaled.recycle();
 
                 param.setResult(output.toByteArray());
                 output.close();
-                debug("MMS image processing complete.");
+                debug(String.format("MMS image processing complete. %d bytes", bytes));
             }
         });
 

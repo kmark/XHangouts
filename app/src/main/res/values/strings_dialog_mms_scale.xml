@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_mms_scale_hint_width">W</string>
+    <string name="dialog_mms_scale_hint_height">H</string>
+    <string name="dialog_mms_scale_x">&#215;</string>
+    <string name="dialog_mms_scale_help_txt">When sending MMS, XHangouts will target the width&#215;height resolution given above while maintaining the original image\'s aspect ratio. It will never exceed this resolution in any dimension.</string>
+</resources>

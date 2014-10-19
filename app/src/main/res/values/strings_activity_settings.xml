@@ -34,6 +34,13 @@
         <item>270</item>
     </string-array>
 
+    <string name="pref_title_mms_scale">Resize dimensions</string>
+    <string name="pref_desc_mms_scale">%1$d&#215;%2$d</string>
+
+    <string name="pref_title_mms_image_type">Image type &amp; quality</string>
+    <string name="pref_desc_mms_image_type">%1$s at %2$s quality</string>
+
+
     <!-- UI Tweaks -->
     <string name="pref_header_ui">UI Tweaks</string>
 

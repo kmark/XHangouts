@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="5dp">
+
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp">
+
+        <EditText
+            android:layout_width="70sp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/dialog_mms_scale_width"
+            android:gravity="center_horizontal"
+            android:hint="@string/dialog_mms_scale_hint_width"
+            android:nextFocusRight="@+id/dialog_mms_scale_height" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/dialog_mms_scale_x"
+            android:gravity="center"
+            android:id="@+id/textView" />
+
+        <EditText
+            android:layout_width="70sp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@id/dialog_mms_scale_height"
+            android:hint="@string/dialog_mms_scale_hint_height"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/dialog_mms_scale_help_txt" />
+
+</LinearLayout>
