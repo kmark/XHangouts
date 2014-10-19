@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:dependency="mod_enabled"
         android:key="mms_resize_enabled"
         android:title="@string/pref_title_mms_resize_enabled"
@@ -9,7 +9,7 @@
         android:summaryOff="@string/pref_desc_mms_resize_enabled_off"
         android:defaultValue="true" />
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:dependency="mms_resize_enabled"
         android:key="mms_rotate_enabled"
         android:title="@string/pref_title_orientation_enabled"
