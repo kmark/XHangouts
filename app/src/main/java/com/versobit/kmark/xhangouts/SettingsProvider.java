@@ -32,7 +32,7 @@ import java.util.Map;
 
 public final class SettingsProvider extends ContentProvider {
 
-    static final String AUTHORITY = BuildConfig.PACKAGE_NAME + ".settings";
+    static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".settings";
 
     private static final int CODE_ALL = 0;
 
