@@ -6,7 +6,7 @@
         android:title="@string/pref_title_about_version"
         android:summary="@string/pref_desc_about_version" />
 
-    <SwitchPreference
+    <com.versobit.kmark.xhangouts.XSwitchPreference
         android:dependency="mod_enabled"
         android:key="debug"
         android:title="@string/pref_title_about_debug"
