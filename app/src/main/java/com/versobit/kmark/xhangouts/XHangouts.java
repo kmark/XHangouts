@@ -60,7 +60,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
     private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "bvp";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "bvx";
     // private static a(IIIILandroid/net/Uri;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
@@ -73,8 +73,8 @@ public final class XHangouts implements IXposedHookLoadPackage {
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
 
-    private static final String TESTED_VERSION_STR = "2.3.75731955";
-    private static final int TESTED_VERSION_INT = 22037769;
+    private static final String TESTED_VERSION_STR = "2.4.78234730";
+    private static final int TESTED_VERSION_INT = 22079529;
 
     // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
     private WeakReference<Context> hangoutsCtx;
