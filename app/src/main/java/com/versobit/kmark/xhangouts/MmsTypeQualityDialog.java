@@ -38,7 +38,7 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-class MmsTypeQualityDialog extends AlertDialog {
+final class MmsTypeQualityDialog extends AlertDialog {
 
     private final Preference settingPref;
     private SharedPreferences prefs;
