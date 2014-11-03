@@ -16,7 +16,7 @@ def gitRev = { ->
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.0.2"
+    buildToolsVersion "21.1"
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
