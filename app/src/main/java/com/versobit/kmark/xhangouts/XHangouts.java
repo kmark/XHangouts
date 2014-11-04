@@ -39,6 +39,8 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.util.List;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -57,6 +59,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
     static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
 
+    // TODO: Find a better way to manage these strings
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
     private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
 
@@ -72,6 +75,46 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "i";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
+
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bpp";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "bfc";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST = "a";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER = "bpk";
+
+    private static final String HANGOUTS_MMSTRANSACTIONS = "bvv";
+    private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
+    private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
+    private static final String HANGOUTS_MMSTRANSACTIONS_DEBUGFIELD = "a";
+
+    private static final String HANGOUTS_TRANSACTIONSETTINGS = "bwq";
+    private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
+
+    private static final String HANGOUTS_MMS_MESSAGECLASS1 = "ri";
+    private static final String HANGOUTS_MMS_MESSAGECLASS2 = "sc";
+
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "bvq";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD = "b";
+
+    private static final String HANGOUTS_MMSSENDER = "sk";
+    private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
+
+    private static final String HANGOUTS_MMS_APN = "bwr";
+    private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
+    private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
+    private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
+    private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
+    private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
+
+    private static final String HANGOUTS_MMS_EXCEPTION = "bvu";
+
+    private static final String HANGOUTS_MMSC_RESPONSE = "rt";
+    private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
+
+    private static final String ANDROID_UTIL_LOG_CLASS = "android.util.Log";
+    private static final String ANDROID_UTIL_LOG_ISLOGGABLE = "isLoggable";
 
     private static final String TESTED_VERSION_STR = "2.4.78234730";
     private static final int TESTED_VERSION_INT = 22079529;
@@ -156,12 +199,23 @@ public final class XHangouts implements IXposedHookLoadPackage {
         debug("--- LOADING XHANGOUTS ---", false);
         debug(String.format("XHangouts v%s (%d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE), false);
 
-        PackageInfo pi = systemCtx.getPackageManager().getPackageInfo(HANGOUTS_PKG_NAME, 0);
+        final PackageInfo pi = systemCtx.getPackageManager().getPackageInfo(HANGOUTS_PKG_NAME, 0);
         debug(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
         // TODO: replace this with something more robust?
         if(pi.versionCode != TESTED_VERSION_INT) {
             log(String.format("Warning: Your Hangouts version differs from the version XHangouts was built against: v%s (%d)", TESTED_VERSION_STR, TESTED_VERSION_INT));
         }
+
+        // Hangouts class definitions
+        final Class ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
+        final Class rWriterInnerClass1 = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1, loadPackageParam.classLoader);
+        final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
+        final Class transactionSettings = XposedHelpers.findClass(HANGOUTS_TRANSACTIONSETTINGS, loadPackageParam.classLoader);
+        final Class mmsSendReceiveManager = XposedHelpers.findClass(HANGOUTS_MMSSENDRECEIVEMANAGER, loadPackageParam.classLoader);
+        final Class mmsMsgClass1 = XposedHelpers.findClass(HANGOUTS_MMS_MESSAGECLASS1, loadPackageParam.classLoader);
+        final Class mmsMsgClass2 = XposedHelpers.findClass(HANGOUTS_MMS_MESSAGECLASS2, loadPackageParam.classLoader);
+        final Class mmsTransactions = XposedHelpers.findClass(HANGOUTS_MMSTRANSACTIONS, loadPackageParam.classLoader);
+        final Class mmsSender = XposedHelpers.findClass(HANGOUTS_MMSSENDER, loadPackageParam.classLoader);
 
         // Get application context to use later
         XposedHelpers.findAndHookMethod(HANGOUTS_ESAPP_CLASS, loadPackageParam.classLoader, HANGOUTS_ESAPP_ONCREATE, new XC_MethodHook() {
@@ -174,7 +228,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
 
         // This is called when the user hits the send button on an image MMS
-        // TODO: there seem to be a few instances where this is not called, find alternate code paths
+        // FIXME: there seem to be a few instances where this is not called, find alternate code paths
         XposedHelpers.findAndHookMethod(HANGOUTS_PROCESS_MMS_IMG_CLASS, loadPackageParam.classLoader, HANGOUTS_PROCESS_MMS_IMG_METHOD, int.class, int.class, int.class, int.class, Uri.class, new XC_MethodHook() {
             // int1 = ? (usually zero, it seems)
             // int2 = max scaled width, appears to be 640 if landscape or square, 480 if portrait
@@ -316,7 +370,6 @@ public final class XHangouts implements IXposedHookLoadPackage {
             }
         });
 
-        Class<?> ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
         XposedHelpers.findAndHookConstructor(ComposeMessageView, Context.class, AttributeSet.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -345,6 +398,188 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 int actionId = (Integer)param.args[1];
                 if(Config.modEnabled && actionId == EditorInfo.IME_NULL && Config.enterKey == Setting.UiEnterKey.NEWLINE.toInt()) {
                     param.setResult(false); // We do not handle the enter action, and it adds a newline for us
+                }
+            }
+        });
+
+        // These two lines appear to fully unlock Hangouts internal logging. There's a lot of it...
+        //XposedHelpers.findAndHookMethod(ANDROID_UTIL_LOG_CLASS, loadPackageParam.classLoader, ANDROID_UTIL_LOG_ISLOGGABLE, String.class, int.class, XC_MethodReplacement.returnConstant(true));
+        //XposedHelpers.setStaticBooleanField(XposedHelpers.findClass(HANGOUTS_MMSTRANSACTIONS, loadPackageParam.classLoader), HANGOUTS_MMSTRANSACTIONS_DEBUGFIELD, true);
+
+        XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, rWriterSqlHelper, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                debug("bfc -> a called");
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(mmsTransactions, HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1, Context.class, String[].class, String.class, String.class, String.class, String.class, int.class, int.class, int.class, long.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                debug("bvv -> a1 called");
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(mmsTransactions, HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2, Context.class, mmsMsgClass2, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                debug("bvv -> a2 called (before)");
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                debug("bvv -> a2 called (after)");
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1, Context.class, transactionSettings, mmsMsgClass1, String.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                debug("bvq -> a1 called");
+            }
+        });
+
+        // This prevents the initial request for MMS APN connectivity. It populates a new
+        // TransactionSettings instance with APN data. This is normally done by the broadcast
+        // receiver as it listens for connectivity state changes. Instead of waiting this method
+        // returns with a valid result almost instantly forcing the MMS process to continue.
+        XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK, Context.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Object timerField = XposedHelpers.getStaticObjectField(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD);
+                // This /should/ synchronize with the actual static field not our local representation of it
+                synchronized (timerField) {
+                    debug("GOING FOR IT!");
+
+                    // Create APN
+                    Class mmsApn = XposedHelpers.findClass(HANGOUTS_MMS_APN, loadPackageParam.classLoader);
+                    Constructor<?> newMmsApn = XposedHelpers.findConstructorExact(mmsApn, String.class, String.class, int.class);
+                    // MMSC, Proxy, Port
+                    Object instanceMmsApn = newMmsApn.newInstance("http://mms.vtext.com/servlets/mms", null, -1);
+                    XposedHelpers.setObjectField(instanceMmsApn, HANGOUTS_MMS_APN_RAWMMSCFIELD, "http://mms.vtext.com/servlets/mms");
+
+                    // Creates a TransactionSettings object (this is normally done by the broadcast receiver)
+                    Constructor<?> newTransactionSettings = XposedHelpers.findConstructorExact(transactionSettings);
+                    newTransactionSettings.setAccessible(true);
+                    Object instanceTransactionSettings = newTransactionSettings.newInstance();
+
+                    // Add APN to the list
+                    List apnList = (List)XposedHelpers.getObjectField(instanceTransactionSettings, HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
+                    apnList.clear();
+                    // You bet your ass this is an unchecked call, Android Studio
+                    apnList.add(instanceMmsApn);
+
+                    // Return the needed TransactionSettings object
+                    param.setResult(instanceTransactionSettings);
+                }
+            }
+        });
+
+        // This hook replaces a call to the executeMmsRequest method of the MmsSendReceiveManager.
+        // It calls the method that actually sends the MMS HTTP request. For some reason our little
+        // connectivity shortcut causes this to fail. Instead of spending even more time trying to
+        // figure out why that is, I've just replaced the entire method with something that's far
+        // less picky about what you feed it. Returning null is sometimes a valid result. Admittedly
+        // this replacement may not be nearly as robust as the original implementation.
+        XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, Context.class, transactionSettings, String.class, int.class, byte[].class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                debug("bvq -> a2 called");
+                for(Object o : param.args) {
+                    debug(String.format("bvq -> a2 args: %s", o));
+                }
+
+                Object mmsc = param.args[2];
+                Object isProxy = false;
+                Object proxy = null;
+                Object port = -1;
+                for(Object o : param.args) {
+                    debug(String.format("args1: %s", o));
+                }
+
+                // When sending String will be null, int will be 1
+                // When receiving String will be the message URL, int will be 2, byte[] will be null
+                // When sending the delivery report String will be null, int will be 1
+
+                if(param.args[2] == null) {
+                    // We do not have a custom URL so we need to pull one from the APN list
+
+                    // Get the first MMS APN in the list
+                    List apnList = (List)XposedHelpers.getObjectField(param.args[1], HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
+                    for(Object o : apnList) {
+                        debug("APN: " + o.toString());
+                    }
+                    Object apn = apnList.get(0);
+                    mmsc = XposedHelpers.getObjectField(apn, HANGOUTS_MMS_APN_MMSCFIELD);
+                    isProxy = XposedHelpers.callMethod(apn, HANGOUTS_MMS_APN_ISPROXYSET);
+                    proxy = XposedHelpers.getObjectField(apn, HANGOUTS_MMS_APN_PROXYFIELD);
+                    port = XposedHelpers.getObjectField(apn, HANGOUTS_MMS_APN_PORTFIELD);
+                }
+                debug(String.format("Executing MMS HTTP request. %s, %s, %s, %s, %s, %s, %s, %s",
+                        param.args[0], mmsc, param.args[4], param.args[3],
+                        isProxy, proxy, port, false));
+
+                byte[] result;
+                try {
+                    result = (byte[])XposedHelpers.callStaticMethod(mmsSender, HANGOUTS_MMSSENDER_DOSEND,
+                            param.args[0],
+                            mmsc,
+                            param.args[4],
+                            param.args[3],
+                            isProxy,
+                            proxy,
+                            port,
+                            false);
+                } catch (XposedHelpers.InvocationTargetError ex) {
+                    Constructor mmsException = XposedHelpers.findConstructorExact(HANGOUTS_MMS_EXCEPTION, loadPackageParam.classLoader, String.class);
+                    param.setThrowable((Throwable)mmsException.newInstance("MMS HTTP request failed: " + ex.getCause()));
+                    return;
+                }
+                // XposedHelpers.callMethod(methodHookParam.args[1], "a", apn);
+
+
+                if(result == null) {
+                    debug("RESULT NULL, RETURNING NULL");
+                    param.setResult(null);
+                    return;
+                }
+                debug("RESULT");
+                debug(new String(result, "UTF-8"));
+                if(result.length > 0) {
+                    try {
+                        Class mmscResponse = XposedHelpers.findClass(HANGOUTS_MMSC_RESPONSE, loadPackageParam.classLoader);
+                        Object instanceMmscResponse = XposedHelpers.findConstructorExact(mmscResponse, byte[].class).newInstance(result);
+                        debug("LOCAL RT IS GOOD");
+                        param.setResult(XposedHelpers.callMethod(instanceMmscResponse, HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1));
+                        return;
+                    } catch (RuntimeException ex) {
+                        debug("LOCALRT? RUNTIME EXCEPTION");
+                        param.setResult(null);
+                        return;
+                    }
+                }
+                debug("ZERO LENGTH, RETURNING NULL");
+                param.setResult(null);
+            }
+        });
+
+        // Ctx = RequestWriter
+        // Str1 = MMSC (MMS url when not sending)
+        // byte[] = post data? (null when not sending)
+        // int1 = 1 (2 when not sending)
+        // bool1 = false (true if proxy)
+        // Str2 = null (proxy URL?)
+        // int2 = -1 (proxy port? just port? -1 must mean default 80 port or no proxy)
+        // bool2 = false (true if ipv6)
+        XposedHelpers.findAndHookMethod(mmsSender, HANGOUTS_MMSSENDER_DOSEND, Context.class, String.class, byte[].class, int.class, boolean.class, String.class, int.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                debug("sk -> a called");
+                for(Object o : param.args) {
+                    debug(String.format("sk -> a args: %s", o));
+                }
+                if(param.args[2] != null) {
+                    debug("byte array: " + new String((byte[]) param.args[2], "UTF-8"));
                 }
             }
         });
