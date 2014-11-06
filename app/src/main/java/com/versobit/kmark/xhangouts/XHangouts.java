@@ -28,6 +28,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -449,6 +451,13 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 Object timerField = XposedHelpers.getStaticObjectField(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD);
                 // This /should/ synchronize with the actual static field not our local representation of it
                 synchronized (timerField) {
+
+                    // Do not splice if not connected to mobile
+                    if(!isMobileConnected(hangoutsCtx.get())) {
+                        debug("Not on a mobile connection. Not splicing.");
+                        return;
+                    }
+
                     debug("GOING FOR IT!");
 
                     // Create APN
@@ -485,6 +494,11 @@ public final class XHangouts implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 debug("bvq -> a2 called");
+
+                if(!isMobileConnected(hangoutsCtx.get())) {
+                    return;
+                }
+
                 for(Object o : param.args) {
                     debug(String.format("bvq -> a2 args: %s", o));
                 }
@@ -585,6 +599,12 @@ public final class XHangouts implements IXposedHookLoadPackage {
         });
 
         debug("--- LOAD COMPLETE ---", false);
+    }
+
+    private static boolean isMobileConnected(Context ctx) {
+        ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        return ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE;
     }
 
     private static void debug(String msg) {
