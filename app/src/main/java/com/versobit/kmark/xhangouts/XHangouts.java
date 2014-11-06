@@ -604,7 +604,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static boolean isMobileConnected(Context ctx) {
         ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
-        return ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE;
+        return ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE && ni.isConnected();
     }
 
     private static void debug(String msg) {
