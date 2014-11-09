@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="300dp"
+    android:layout_height="match_parent" android:padding="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dialog_mms_apn_config_preset"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_mms_apn_config_preset"
+        android:layout_marginBottom="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dialog_mms_apn_config_mmsc"
+        android:textStyle="bold" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/dialog_mms_apn_config_required"
+        android:id="@+id/dialog_mms_apn_config_mmsc"
+        android:layout_marginBottom="5dp"
+        android:inputType="textVisiblePassword|text|textNoSuggestions" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dialog_mms_apn_config_proxy_hostname"
+        android:textStyle="bold" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/dialog_mms_apn_config_optional"
+        android:id="@+id/dialog_mms_apn_config_proxy_host"
+        android:layout_marginBottom="5dp"
+        android:inputType="textVisiblePassword|textNoSuggestions" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dialog_mms_apn_config_proxy_port"
+        android:textStyle="bold" />
+
+    <EditText
+        android:layout_width="90sp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:hint="@string/dialog_mms_apn_config_proxy_port_hint"
+        android:id="@+id/dialog_mms_apn_config_proxy_port" />
+
+</LinearLayout>

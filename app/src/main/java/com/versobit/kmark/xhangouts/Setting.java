@@ -32,6 +32,12 @@ enum Setting {
     MMS_IMAGE_PREFKEY("mms_image"),
     MMS_IMAGE_TYPE,
     MMS_IMAGE_QUALITY,
+    MMS_APN_SPLICING_ENABLED,
+    MMS_APN_SPLICING_APN_CONFIG_PREFKEY("mms_apn_splicing_apn_config"),
+    MMS_APN_SPLICING_APN_CONFIG_PRESET,
+    MMS_APN_SPLICING_APN_CONFIG_MMSC,
+    MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME,
+    MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT,
     UI_ENTER_KEY,
     ABOUT_VERSION,
     DEBUG;
@@ -114,6 +120,57 @@ enum Setting {
 
         int toInt() {
             return value;
+        }
+    }
+
+    enum ApnPreset {
+        // The order here can be changed as desired but the first integer provided in the constructor
+        // must remain the same.
+        CUSTOM(0, "Custom", "", "", -1),
+        VERIZON(1, "Verizon", "http://mms.vtext.com/servlets/mms", "", -1);
+
+        private final int value;
+        private final String name;
+        private final String mmsc;
+        private final String proxyHost;
+        private final int proxyPort;
+
+        private ApnPreset(int value, String name, String mmsc, String proxyHost, int proxyPort) {
+            this.value = value;
+            this.name = name;
+            this.mmsc = mmsc;
+            this.proxyHost = proxyHost;
+            this.proxyPort = proxyPort;
+        }
+
+        static ApnPreset fromInt(int value) {
+            for(ApnPreset u : values()) {
+                if(value == u.value) {
+                    return u;
+                }
+            }
+            throw new IllegalArgumentException("No constant with value " + value + " found");
+        }
+
+        int toInt() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        String getMmsc() {
+            return mmsc;
+        }
+
+        String getProxyHost() {
+            return proxyHost;
+        }
+
+        int getProxyPort() {
+            return proxyPort;
         }
     }
 }

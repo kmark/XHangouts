@@ -100,6 +100,19 @@ final public class SettingsActivity extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
 
+            final Preference apnConfig = findPreference(Setting.MMS_APN_SPLICING_APN_CONFIG_PREFKEY.toString());
+            final Setting.ApnPreset apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(Setting.MMS_APN_SPLICING_APN_CONFIG_PRESET.toString(), Setting.ApnPreset.CUSTOM.toInt()));
+            updateMmsApnConfigSummary(apnConfig, apnPreset);
+
+            apnConfig.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    MmsApnConfigDialog dialog = new MmsApnConfigDialog(apnConfig);
+                    dialog.show();
+                    return true;
+                }
+            });
+
             // Add UI Tweaks preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());
             header.setTitle(R.string.pref_header_ui);
@@ -209,6 +222,10 @@ final public class SettingsActivity extends PreferenceActivity {
             Context ctx = preference.getContext();
             String strQuality = format == Setting.ImageFormat.PNG ? ctx.getString(R.string.dialog_mms_type_quality_lossless) : String.valueOf(quality);
             preference.setSummary(ctx.getString(R.string.pref_desc_mms_image_type, format.toString(), strQuality.toLowerCase()));
+        }
+
+        static void updateMmsApnConfigSummary(final Preference preference, final Setting.ApnPreset preset) {
+            preference.setSummary(preset.toString());
         }
     }
 }

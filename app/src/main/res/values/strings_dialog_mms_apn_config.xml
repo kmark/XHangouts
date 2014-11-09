@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_mms_apn_config_preset">Preset</string>
+    <string name="dialog_mms_apn_config_mmsc">MMSC</string>
+    <string name="dialog_mms_apn_config_proxy_hostname">Proxy Hostname</string>
+    <string name="dialog_mms_apn_config_proxy_port">Proxy Port</string>
+    <string name="dialog_mms_apn_config_required">Required</string>
+    <string name="dialog_mms_apn_config_optional">Optional</string>
+    <string name="dialog_mms_apn_config_proxy_port_hint">80</string>
+</resources>
