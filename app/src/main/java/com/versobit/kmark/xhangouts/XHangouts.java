@@ -137,6 +137,11 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static int imageHeight = 640;
         private static Setting.ImageFormat imageFormat = Setting.ImageFormat.JPEG;
         private static int imageQuality = 60;
+        private static boolean apnSplicing = false;
+        private static Setting.ApnPreset apnPreset = Setting.ApnPreset.CUSTOM;
+        private static String mmsc = "";
+        private static String proxyHost = "";
+        private static int proxyPort = -1;
         private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
         private static boolean debug = false;
 
@@ -172,8 +177,24 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     case MMS_IMAGE_QUALITY:
                         imageQuality = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
                         continue;
+                    case MMS_APN_SPLICING_ENABLED:
+                        apnSplicing = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                        continue;
+                    case MMS_APN_SPLICING_APN_CONFIG_PRESET:
+                        apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                        continue;
+                    case MMS_APN_SPLICING_APN_CONFIG_MMSC:
+                        mmsc = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME:
+                        proxyHost = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT:
+                        proxyPort = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
                     case UI_ENTER_KEY:
                         enterKey = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
                     case DEBUG:
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                 }
@@ -448,6 +469,33 @@ public final class XHangouts implements IXposedHookLoadPackage {
         XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK, Context.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Config.reload((Context)param.args[0]);
+                if(!Config.apnSplicing) {
+                    return;
+                }
+                if(Config.apnPreset == Setting.ApnPreset.CUSTOM && Config.mmsc.isEmpty()) {
+                    log("APN splicing enabled but no MMSC has been specified.");
+                    return;
+                }
+
+                debug(String.format("MMS APN splicing configuration: %s, %s, %s, %d",
+                        Config.apnPreset.toString(), Config.mmsc, Config.proxyHost, Config.proxyPort));
+
+                String localMmsc = Config.mmsc;
+                String localProxyHost = Config.proxyHost;
+                int localProxyPort = Config.proxyPort;
+                if(Config.apnPreset != Setting.ApnPreset.CUSTOM) {
+                    localMmsc = Config.apnPreset.getMmsc();
+                    localProxyHost = Config.apnPreset.getProxyHost();
+                    localProxyPort = Config.apnPreset.getProxyPort();
+                }
+                if(localProxyHost.isEmpty()) {
+                    localProxyHost = null;
+                    localProxyPort = -1;
+                } else {
+                    localProxyPort = localProxyPort == -1 ? 80 : localProxyPort;
+                }
+
                 Object timerField = XposedHelpers.getStaticObjectField(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD);
                 // This /should/ synchronize with the actual static field not our local representation of it
                 synchronized (timerField) {
@@ -464,8 +512,8 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     Class mmsApn = XposedHelpers.findClass(HANGOUTS_MMS_APN, loadPackageParam.classLoader);
                     Constructor<?> newMmsApn = XposedHelpers.findConstructorExact(mmsApn, String.class, String.class, int.class);
                     // MMSC, Proxy, Port
-                    Object instanceMmsApn = newMmsApn.newInstance("http://mms.vtext.com/servlets/mms", null, -1);
-                    XposedHelpers.setObjectField(instanceMmsApn, HANGOUTS_MMS_APN_RAWMMSCFIELD, "http://mms.vtext.com/servlets/mms");
+                    Object instanceMmsApn = newMmsApn.newInstance(localMmsc, localProxyHost, localProxyPort);
+                    XposedHelpers.setObjectField(instanceMmsApn, HANGOUTS_MMS_APN_RAWMMSCFIELD, localMmsc);
 
                     // Creates a TransactionSettings object (this is normally done by the broadcast receiver)
                     Constructor<?> newTransactionSettings = XposedHelpers.findConstructorExact(transactionSettings);
@@ -493,6 +541,11 @@ public final class XHangouts implements IXposedHookLoadPackage {
         XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, Context.class, transactionSettings, String.class, int.class, byte[].class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Config.reload((Context)param.args[0]);
+                if(!Config.apnSplicing) {
+                    return;
+                }
+
                 debug("bvq -> a2 called");
 
                 if(!isMobileConnected(hangoutsCtx.get())) {
