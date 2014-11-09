@@ -24,9 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -36,20 +34,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-
-import java.util.List;
-
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
 final public class SettingsActivity extends PreferenceActivity {
 
     static void setDefaultPreferences(Context ctx) {
@@ -60,245 +44,28 @@ final public class SettingsActivity extends PreferenceActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        setupSimplePreferencesScreen();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
         if(!XApp.isActive()) {
             Toast.makeText(this, R.string.warning_not_loaded, Toast.LENGTH_LONG).show();
         }
     }
 
-    /**
-     * Shows the simplified settings UI if the device configuration if the
-     * device configuration dictates that a simplified, single-pane UI should be
-     * shown.
-     */
-    private void setupSimplePreferencesScreen() {
-        if (!isSimplePreferences(this)) {
-            return;
-        }
-
-        // In the simplified UI, fragments are not used at all and we instead
-        // use the older PreferenceActivity APIs.
-
-        // Add 'general' preferences.
-        addPreferencesFromResource(R.xml.pref_general);
-        setupModEnabledPreference(findPreference(Setting.MOD_ENABLED.toString()));
-
-        // Add 'MMS' preferences, and a corresponding header.
-        PreferenceCategory fakeHeader = new PreferenceCategory(this);
-        fakeHeader.setTitle(R.string.pref_header_mms);
-        getPreferenceScreen().addPreference(fakeHeader);
-        addPreferencesFromResource(R.xml.pref_mms);
-
-        final Preference scale = findPreference(Setting.MMS_SCALE_PREFKEY.toString());
-        final Preference image = findPreference(Setting.MMS_IMAGE_PREFKEY.toString());
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 640);
-        int scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 640);
-
-        updateMmsScaleSummary(findPreference(Setting.MMS_SCALE_PREFKEY.toString()), scaleWidth, scaleHeight);
-
-        scale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MmsScaleDialog dialog = new MmsScaleDialog(SettingsActivity.this, scale);
-                dialog.show();
-                return true;
-            }
-        });
-
-        Setting.ImageFormat format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
-        int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 60);
-        updateMmsTypeQualitySummary(findPreference(Setting.MMS_IMAGE_PREFKEY.toString()), format, quality);
-
-        image.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MmsTypeQualityDialog dialog = new MmsTypeQualityDialog(SettingsActivity.this, image);
-                dialog.show();
-                return true;
-            }
-        });
-
-        // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
-        // their values. When their values change, their summaries are updated
-        // to reflect the new value, per the Android Design guidelines.
-        bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
-
-        // Add 'UI Tweaks' preferences, and a corresponding header.
-        fakeHeader = new PreferenceCategory(this);
-        fakeHeader.setTitle(R.string.pref_header_ui);
-        getPreferenceScreen().addPreference(fakeHeader);
-        addPreferencesFromResource(R.xml.pref_ui);
-        bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
-
-        // Add 'About' preferences, and a corresponding header.
-        fakeHeader = new PreferenceCategory(this);
-        fakeHeader.setTitle(R.string.pref_header_about);
-        getPreferenceScreen().addPreference(fakeHeader);
-        addPreferencesFromResource(R.xml.pref_about);
-        setupVersionPreference(findPreference(Setting.ABOUT_VERSION.toString()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this) && !isSimplePreferences(this);
-    }
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-        & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
-     * Determines whether the simplified settings UI should be shown. This is
-     * true if the device doesn't have newer APIs like {@link PreferenceFragment}
-     * or the device doesn't have an extra-large screen. In these cases, a single-pane
-     * "simplified" settings UI should be shown.
-     */
-    private static boolean isSimplePreferences(Context context) {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-                || !isXLargeTablet(context);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void onBuildHeaders(List<Header> target) {
-        if (!isSimplePreferences(this)) {
-            loadHeadersFromResource(R.xml.pref_headers, target);
-        }
-    }
-
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
-            } else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of name below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
-    }
-
-    private void setupModEnabledPreference(final Preference preference) {
-        setupModEnabledPreference(this, preference);
-    }
-
-    private static void setupModEnabledPreference(final Context ctx, final Preference preference) {
-        preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Toast.makeText(ctx, R.string.restart_hangouts_toast, Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
-    }
-
-    private void setupVersionPreference(final Preference preference) {
-        setupVersionPreference(this, preference);
-    }
-
-    private static void setupVersionPreference(final Context ctx, final Preference preference) {
-        preference.setTitle(ctx.getString(R.string.pref_title_about_version, BuildConfig.VERSION_NAME));
-        String gHangoutsVerName = "unknown";
-        int gHangoutsVerCode = 0;
-        try {
-            PackageInfo pi = ctx.getPackageManager().getPackageInfo(XHangouts.HANGOUTS_PKG_NAME, 0);
-            gHangoutsVerName = pi.versionName;
-            gHangoutsVerCode = pi.versionCode;
-
-        } catch (PackageManager.NameNotFoundException ex) {
-            //
-        }
-        String loaded = XApp.isActive() ? ctx.getString(R.string.pref_title_about_version_loaded) :
-                ctx.getString(R.string.pref_title_about_version_notloaded);
-        preference.setSummary(ctx.getString(R.string.pref_desc_about_version, gHangoutsVerName, gHangoutsVerCode, loaded));
-        preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ctx.getString(R.string.xda_thread))));
-                return false;
-            }
-        });
-    }
-
-    void updateMmsScaleSummary(final Preference preference, final int width, final int height) {
-        updateMmsScaleSummary(this, preference, width, height);
-    }
-
-    static void updateMmsScaleSummary(final Context ctx, final Preference preference, final int width, final int height) {
-        preference.setSummary(ctx.getString(R.string.pref_desc_mms_scale, width, height));
-    }
-
-    void updateMmsTypeQualitySummary(final Preference preference, final Setting.ImageFormat format, final int quality) {
-        updateMmsTypeQualitySummary(this, preference, format, quality);
-    }
-
-    static void updateMmsTypeQualitySummary(final Context ctx, final Preference preference, final Setting.ImageFormat format, final int quality) {
-        String strQuality = format == Setting.ImageFormat.PNG ? ctx.getString(R.string.dialog_mms_type_quality_lossless) : String.valueOf(quality);
-        preference.setSummary(ctx.getString(R.string.pref_desc_mms_image_type, format.toString(), strQuality.toLowerCase()));
-    }
-
-    public static final class GeneralPreferenceFragment extends PreferenceFragment {
+    public static final class SettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            PreferenceCategory header;
+
+            // Add general preferences.
             addPreferencesFromResource(R.xml.pref_general);
-            setupModEnabledPreference(getActivity(), findPreference(Setting.MOD_ENABLED.toString()));
-        }
-    }
+            setupModEnabledPreference(findPreference(Setting.MOD_ENABLED.toString()));
 
-    public static final class MmsPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+            // Add MMS preferences, and a corresponding header.
+            header = new PreferenceCategory(getActivity());
+            header.setTitle(R.string.pref_header_mms);
+            getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_mms);
 
             final Preference scale = findPreference(Setting.MMS_SCALE_PREFKEY.toString());
@@ -307,13 +74,12 @@ final public class SettingsActivity extends PreferenceActivity {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 640);
             int scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 640);
-
-            updateMmsScaleSummary(getActivity(), findPreference(Setting.MMS_SCALE_PREFKEY.toString()), scaleWidth, scaleHeight);
+            updateMmsScaleSummary(scale, scaleWidth, scaleHeight);
 
             scale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    MmsScaleDialog dialog = new MmsScaleDialog(getActivity(), scale);
+                    MmsScaleDialog dialog = new MmsScaleDialog(scale);
                     dialog.show();
                     return true;
                 }
@@ -321,40 +87,128 @@ final public class SettingsActivity extends PreferenceActivity {
 
             Setting.ImageFormat format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
             int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 60);
-            updateMmsTypeQualitySummary(getActivity(), findPreference(Setting.MMS_IMAGE_PREFKEY.toString()), format, quality);
+            updateMmsTypeQualitySummary(image, format, quality);
 
             image.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    MmsTypeQualityDialog dialog = new MmsTypeQualityDialog(getActivity(), image);
+                    MmsTypeQualityDialog dialog = new MmsTypeQualityDialog(image);
                     dialog.show();
                     return true;
                 }
             });
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
-        }
-    }
 
-    public static final class UiPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+            // Add UI Tweaks preferences, and a corresponding header.
+            header = new PreferenceCategory(getActivity());
+            header.setTitle(R.string.pref_header_ui);
+            getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_ui);
             bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
-        }
-    }
 
-    public static final class AboutPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+            // Add About preferences, and a corresponding header.
+            header = new PreferenceCategory(getActivity());
+            header.setTitle(R.string.pref_header_about);
+            getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_about);
-            setupVersionPreference(getActivity(), findPreference(Setting.ABOUT_VERSION.toString()));
+            setupVersionPreference(findPreference(Setting.ABOUT_VERSION.toString()));
+        }
+
+        /**
+         * A preference value change listener that updates the preference's summary
+         * to reflect its new value.
+         */
+        private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object value) {
+                String stringValue = value.toString();
+
+                if (preference instanceof ListPreference) {
+                    // For list preferences, look up the correct display value in
+                    // the preference's 'entries' list.
+                    ListPreference listPreference = (ListPreference) preference;
+                    int index = listPreference.findIndexOfValue(stringValue);
+
+                    // Set the summary to reflect the new value.
+                    preference.setSummary(
+                            index >= 0
+                                    ? listPreference.getEntries()[index]
+                                    : null);
+
+                } else {
+                    // For all other preferences, set the summary to the value's
+                    // simple string representation.
+                    preference.setSummary(stringValue);
+                }
+                return true;
+            }
+        };
+
+        /**
+         * Binds a preference's summary to its value. More specifically, when the
+         * preference's value is changed, its summary (line of name below the
+         * preference title) is updated to reflect the value. The summary is also
+         * immediately updated upon calling this method. The exact display format is
+         * dependent on the type of preference.
+         *
+         * @see #sBindPreferenceSummaryToValueListener
+         */
+        private static void bindPreferenceSummaryToValue(Preference preference) {
+            // Set the listener to watch for value changes.
+            preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
+            // Trigger the listener immediately with the preference's
+            // current value.
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.getContext())
+                            .getString(preference.getKey(), ""));
+        }
+
+        private void setupModEnabledPreference(final Preference preference) {
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Toast.makeText(getActivity(), R.string.restart_hangouts_toast, Toast.LENGTH_LONG).show();
+                    return true;
+                }
+            });
+        }
+
+        private void setupVersionPreference(final Preference preference) {
+            final Context ctx = getActivity();
+            preference.setTitle(ctx.getString(R.string.pref_title_about_version, BuildConfig.VERSION_NAME));
+            String gHangoutsVerName = "unknown";
+            int gHangoutsVerCode = 0;
+            try {
+                PackageInfo pi = ctx.getPackageManager().getPackageInfo(XHangouts.HANGOUTS_PKG_NAME, 0);
+                gHangoutsVerName = pi.versionName;
+                gHangoutsVerCode = pi.versionCode;
+
+            } catch (PackageManager.NameNotFoundException ex) {
+                //
+            }
+            String loaded = XApp.isActive() ? ctx.getString(R.string.pref_title_about_version_loaded) :
+                    ctx.getString(R.string.pref_title_about_version_notloaded);
+            preference.setSummary(ctx.getString(R.string.pref_desc_about_version, gHangoutsVerName, gHangoutsVerCode, loaded));
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ctx.getString(R.string.xda_thread))));
+                    return false;
+                }
+            });
+        }
+
+        static void updateMmsScaleSummary(final Preference preference, final int width, final int height) {
+            preference.setSummary(preference.getContext().getString(R.string.pref_desc_mms_scale, width, height));
+        }
+
+        static void updateMmsTypeQualitySummary(final Preference preference, final Setting.ImageFormat format, final int quality) {
+            Context ctx = preference.getContext();
+            String strQuality = format == Setting.ImageFormat.PNG ? ctx.getString(R.string.dialog_mms_type_quality_lossless) : String.valueOf(quality);
+            preference.setSummary(ctx.getString(R.string.pref_desc_mms_image_type, format.toString(), strQuality.toLowerCase()));
         }
     }
 }

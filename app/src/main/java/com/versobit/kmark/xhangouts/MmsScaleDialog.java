@@ -42,8 +42,8 @@ final class MmsScaleDialog extends AlertDialog {
     private int scaleWidth;
     private int scaleHeight;
 
-    MmsScaleDialog(Context ctx, final Preference settingPref) {
-        super(ctx);
+    MmsScaleDialog(final Preference settingPref) {
+        super(settingPref.getContext());
         this.settingPref = settingPref;
     }
 
@@ -93,7 +93,7 @@ final class MmsScaleDialog extends AlertDialog {
                 scaleHeight = Integer.parseInt(txtHeight.getText().toString());
                 prefs.edit().putInt(Setting.MMS_SCALE_WIDTH.toString(), scaleWidth)
                         .putInt(Setting.MMS_SCALE_HEIGHT.toString(), scaleHeight).apply();
-                SettingsActivity.updateMmsScaleSummary(getContext(), settingPref, scaleWidth, scaleHeight);
+                SettingsActivity.SettingsFragment.updateMmsScaleSummary(settingPref, scaleWidth, scaleHeight);
             } catch (NumberFormatException ex) {
                 //
             }

@@ -59,8 +59,8 @@ final class MmsTypeQualityDialog extends AlertDialog {
     private Bitmap bmpPreview1;
     private Bitmap bmpPreview2;
 
-    MmsTypeQualityDialog(Context ctx, final Preference settingPref) {
-        super(ctx);
+    MmsTypeQualityDialog(final Preference settingPref) {
+        super(settingPref.getContext());
         this.settingPref = settingPref;
     }
 
@@ -177,7 +177,7 @@ final class MmsTypeQualityDialog extends AlertDialog {
         public void onClick(DialogInterface dialog, int which) {
             prefs.edit().putInt(Setting.MMS_IMAGE_TYPE.toString(), format.toInt())
                     .putInt(Setting.MMS_IMAGE_QUALITY.toString(), quality).apply();
-            SettingsActivity.updateMmsTypeQualitySummary(getContext(), settingPref, format, quality);
+            SettingsActivity.SettingsFragment.updateMmsTypeQualitySummary(settingPref, format, quality);
         }
     };
 
