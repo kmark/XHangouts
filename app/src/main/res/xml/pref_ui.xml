@@ -11,4 +11,11 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <com.versobit.kmark.xhangouts.XSwitchPreference
+        android:dependency="mod_enabled"
+        android:key="ui_attach_anytime"
+        android:title="@string/pref_title_ui_attach_anytime"
+        android:summary="@string/pref_desc_ui_attach_anytime"
+        android:defaultValue="true" />
+
 </PreferenceScreen>

@@ -34,8 +34,10 @@ import android.net.Uri;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -76,7 +78,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.views.ComposeMessageView";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "i";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
-    private static final String HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "e";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "k";
 
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bpp";
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "bfc";
@@ -143,6 +147,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static String proxyHost = "";
         private static int proxyPort = -1;
         private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
+        private static boolean attachAnytime = true;
         private static boolean debug = false;
 
         private static void reload(Context ctx) {
@@ -194,6 +199,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         continue;
                     case UI_ENTER_KEY:
                         enterKey = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        continue;
+                    case UI_ATTACH_ANYTIME:
+                        attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
                     case DEBUG:
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
@@ -395,11 +403,11 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
         XposedHelpers.findAndHookConstructor(ComposeMessageView, Context.class, AttributeSet.class, new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+            protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                 Config.reload((Context)param.args[0]);
                 if(Config.modEnabled) {
                     Setting.UiEnterKey enterKey = Setting.UiEnterKey.fromInt(Config.enterKey);
-                    debug(String.format("ComposeMessageView: %s", enterKey.name()));
+                    debug(String.format("ComposeMessageView: %s, %s", enterKey.name(), Config.attachAnytime));
                     if(enterKey != Setting.UiEnterKey.EMOJI_SELECTOR) {
                         EditText et = (EditText)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT);
                         // Remove Emoji selector (works for new line)
@@ -410,12 +418,22 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         }
                         et.setInputType(inputType);
                     }
+                    if(Config.attachAnytime) {
+                        ImageButton d = (ImageButton)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON);
+                        d.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                ((Runnable)XposedHelpers.callStaticMethod(ComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT, param.thisObject)).run();
+                                return true;
+                            }
+                        });
+                    }
                 }
             }
         });
 
         // Called by at least SwiftKey and Fleksy on new line, but not the AOSP or Google keyboard
-        XposedHelpers.findAndHookMethod(ComposeMessageView, HANGOUTS_VIEWS_COMEPOSEMSGVIEW_ONEDITORACTION, TextView.class, int.class, KeyEvent.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(ComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION, TextView.class, int.class, KeyEvent.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 int actionId = (Integer)param.args[1];
