@@ -616,6 +616,8 @@ public final class XHangouts implements IXposedHookLoadPackage {
                             port,
                             false);
                 } catch (XposedHelpers.InvocationTargetError ex) {
+                    log("MMS HTTP request failed!");
+                    debug(ex.getCause());
                     Constructor mmsException = XposedHelpers.findConstructorExact(HANGOUTS_MMS_EXCEPTION, loadPackageParam.classLoader, String.class);
                     param.setThrowable((Throwable)mmsException.newInstance("MMS HTTP request failed: " + ex.getCause()));
                     return;
@@ -688,11 +690,21 @@ public final class XHangouts implements IXposedHookLoadPackage {
         }
     }
 
+    private static void debug(Throwable throwable) {
+        if(Config.debug) {
+            log(throwable);
+        }
+    }
+
     private static void log(String msg) {
         log(msg, true);
     }
 
     private static void log(String msg, boolean tag) {
         XposedBridge.log((tag ? TAG + ": " : "") + msg);
+    }
+
+    private static void log(Throwable throwable) {
+        XposedBridge.log(throwable);
     }
 }
