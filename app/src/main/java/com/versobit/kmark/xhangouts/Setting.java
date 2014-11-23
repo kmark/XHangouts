@@ -128,6 +128,8 @@ enum Setting {
         // The order here can be changed as desired but the first integer provided in the constructor
         // must remain the same.
         CUSTOM(0, "Custom", "", "", -1),
+        ATT(2, "AT&T", "http://mmsc.mobile.att.net", "proxy.mobile.att.net", 80),
+        CRICKET(3, "Cricket", "http://mmsc.aiowireless.net", "proxy.aiowireless.net", 80),
         VERIZON(1, "Verizon", "http://mms.vtext.com/servlets/mms", "", -1);
 
         private final int value;
