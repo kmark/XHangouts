@@ -41,7 +41,7 @@
     <string name="pref_desc_mms_image_type">%1$s at %2$s quality</string>
 
     <string name="pref_title_mms_apn_splicing_enabled">APN splicing</string>
-    <string name="pref_desc_mms_apn_splicing_enabled">Experimental!</string>
+    <string name="pref_desc_mms_apn_splicing_enabled">Experimental-ish. Make sure to set the below APN config!</string>
 
     <string name="pref_title_mms_apn_splicing_apn_config">APN configuration</string>
 
