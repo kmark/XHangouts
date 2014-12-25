@@ -632,7 +632,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     return;
                 }
                 debug("RESULT");
-                debug(new String(result, "UTF-8"));
+                // debug(new String(result, "UTF-8"));
                 if(result.length > 0) {
                     try {
                         Class mmscResponse = XposedHelpers.findClass(HANGOUTS_MMSC_RESPONSE, loadPackageParam.classLoader);
@@ -666,9 +666,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 for(Object o : param.args) {
                     debug(String.format("sk -> a args: %s", o));
                 }
-                if(param.args[2] != null) {
+                /*if(param.args[2] != null) {
                     debug("byte array: " + new String((byte[]) param.args[2], "UTF-8"));
-                }
+                }*/
             }
         });
 
