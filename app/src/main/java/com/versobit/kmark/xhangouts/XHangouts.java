@@ -41,6 +41,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -317,22 +318,31 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
                         String scratchId = imgUri.getPathSegments().get(1);
                         String filePath = (String) XposedHelpers.callStaticMethod(XposedHelpers.findClass(HANGOUTS_ESPROVIDER_CLASS, loadPackageParam.classLoader), HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, scratchId);
-                        // FIXME: Add checks to make certain filePath is a real path we can read from
-                        debug(String.format("Cache file located: %s", filePath));
-                        ExifInterface exif = new ExifInterface(filePath);
-                        // Let's pretend other orientation modes don't exist
-                        switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                            case ExifInterface.ORIENTATION_ROTATE_90:
-                                rotation = 90;
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_180:
-                                rotation = 180;
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_270:
-                                rotation = 270;
-                                break;
-                            default:
-                                rotation = 0;
+                        if(new File(filePath).exists()) {
+                            debug(String.format("Cache file located: %s", filePath));
+                            ExifInterface exif = new ExifInterface(filePath);
+                            // Let's pretend other orientation modes don't exist
+                            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                                case ExifInterface.ORIENTATION_ROTATE_90:
+                                    rotation = 90;
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_180:
+                                    rotation = 180;
+                                    break;
+                                case ExifInterface.ORIENTATION_ROTATE_270:
+                                    rotation = 270;
+                                    break;
+                                default:
+                                    rotation = 0;
+                            }
+                        } else {
+                            rotation = 0;
+                            log("Cache file does not exist! Skipping orientation correction.");
+                            debug(String.format("Bad cache path: %s", filePath));
+                            // We could work around this and write the image byte stream out and then
+                            // read it back in but that would take a relatively long time. I've
+                            // only seen the scratch pad method fail once (when I called the wrong
+                            // function from EsProvider).
                         }
                     }
                     if (rotation != 0) {
