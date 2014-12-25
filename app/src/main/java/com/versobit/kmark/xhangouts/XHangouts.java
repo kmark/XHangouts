@@ -67,63 +67,63 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
     private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "bvx";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cev";
     // private static a(IIIILandroid/net/Uri;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
     private static final String HANGOUTS_ESPROVIDER_CLASS = "com.google.android.apps.hangouts.content.EsProvider";
-    // private static d(Ljava/lang/String;)Ljava/lang/String
-    private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "d";
+    // private static e(Ljava/lang/String;)Ljava/lang/String
+    private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "e";
 
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.views.ComposeMessageView";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "i";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.v2.ComposeMessageView";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "h";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "e";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "k";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "d";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "l";
 
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bpp";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "bfc";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "byo";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "boi";
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST = "a";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER = "bpk";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER = "byj";
 
-    private static final String HANGOUTS_MMSTRANSACTIONS = "bvv";
+    private static final String HANGOUTS_MMSTRANSACTIONS = "cet";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_DEBUGFIELD = "a";
 
-    private static final String HANGOUTS_TRANSACTIONSETTINGS = "bwq";
+    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cfo";
     private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
 
-    private static final String HANGOUTS_MMS_MESSAGECLASS1 = "ri";
-    private static final String HANGOUTS_MMS_MESSAGECLASS2 = "sc";
+    private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vm";
+    private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wg";
 
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "bvq";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "ceo";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD = "b";
 
-    private static final String HANGOUTS_MMSSENDER = "sk";
+    private static final String HANGOUTS_MMSSENDER = "wo";
     private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
 
-    private static final String HANGOUTS_MMS_APN = "bwr";
+    private static final String HANGOUTS_MMS_APN = "cfp";
     private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
     private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
     private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
     private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
     private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
 
-    private static final String HANGOUTS_MMS_EXCEPTION = "bvu";
+    private static final String HANGOUTS_MMS_EXCEPTION = "cen";
 
-    private static final String HANGOUTS_MMSC_RESPONSE = "rt";
+    private static final String HANGOUTS_MMSC_RESPONSE = "vx";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
 
     private static final String ANDROID_UTIL_LOG_CLASS = "android.util.Log";
     private static final String ANDROID_UTIL_LOG_ISLOGGABLE = "isLoggable";
 
-    private static final String TESTED_VERSION_STR = "2.4.78234730";
-    private static final int TESTED_VERSION_INT = 22079529;
+    private static final String TESTED_VERSION_STR = "2.5.81636427";
+    private static final int TESTED_VERSION_INT = 22147334;
 
     // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
     private WeakReference<Context> hangoutsCtx;
@@ -317,6 +317,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
                         String scratchId = imgUri.getPathSegments().get(1);
                         String filePath = (String) XposedHelpers.callStaticMethod(XposedHelpers.findClass(HANGOUTS_ESPROVIDER_CLASS, loadPackageParam.classLoader), HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, scratchId);
+                        // FIXME: Add checks to make certain filePath is a real path we can read from
                         debug(String.format("Cache file located: %s", filePath));
                         ExifInterface exif = new ExifInterface(filePath);
                         // Let's pretend other orientation modes don't exist
