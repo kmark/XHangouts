@@ -115,7 +115,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
     private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
 
-    private static final String HANGOUTS_MMS_EXCEPTION = "cen";
+    private static final String HANGOUTS_MMS_EXCEPTION = "ces";
 
     private static final String HANGOUTS_MMSC_RESPONSE = "vx";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
