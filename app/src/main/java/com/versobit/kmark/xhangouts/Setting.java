@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Kevin Mark
+ * Copyright (C) 2014-2015 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -40,6 +40,7 @@ enum Setting {
     MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT,
     UI_ENTER_KEY,
     UI_ATTACH_ANYTIME,
+    UI_HIDE_VIDEO_CALL,
     ABOUT_VERSION,
     DEBUG;
 

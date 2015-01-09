@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Kevin Mark
+ * Copyright (C) 2014-2015 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -34,6 +34,8 @@ import android.net.Uri;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -82,6 +84,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "d";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "l";
+
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "apd";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "byo";
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "boi";
@@ -149,6 +154,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static int proxyPort = -1;
         private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
         private static boolean attachAnytime = true;
+        private static boolean hideVideoCall = false;
         private static boolean debug = false;
 
         private static void reload(Context ctx) {
@@ -204,6 +210,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     case UI_ATTACH_ANYTIME:
                         attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
+                    case UI_HIDE_VIDEO_CALL:
+                        hideVideoCall = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                        continue;
                     case DEBUG:
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                 }
@@ -240,6 +249,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
 
         // Hangouts class definitions
         final Class ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
+        final Class ConversationActSuper = XposedHelpers.findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loadPackageParam.classLoader);
         final Class rWriterInnerClass1 = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1, loadPackageParam.classLoader);
         final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
         final Class transactionSettings = XposedHelpers.findClass(HANGOUTS_TRANSACTIONSETTINGS, loadPackageParam.classLoader);
@@ -450,6 +460,22 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 int actionId = (Integer)param.args[1];
                 if(Config.modEnabled && actionId == EditorInfo.IME_NULL && Config.enterKey == Setting.UiEnterKey.NEWLINE.toInt()) {
                     param.setResult(false); // We do not handle the enter action, and it adds a newline for us
+                }
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(ConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM, Menu.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if(!Config.modEnabled || !Config.hideVideoCall) {
+                    return;
+                }
+                Menu menu = (Menu) param.args[0];
+                for (int i = 0; i < menu.size(); i++) {
+                    MenuItem item = menu.getItem(i);
+                    if(item.getTitle().equals("Video call")) {
+                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                    }
                 }
             }
         });
