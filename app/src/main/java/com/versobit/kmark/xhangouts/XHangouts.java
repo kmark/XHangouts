@@ -154,7 +154,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static int proxyPort = -1;
         private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
         private static boolean attachAnytime = true;
-        private static boolean hideVideoCall = false;
+        private static boolean hideCallButtons = false;
         private static boolean debug = false;
 
         private static void reload(Context ctx) {
@@ -211,7 +211,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
                     case UI_HIDE_CALL_BUTTONS:
-                        hideVideoCall = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                        hideCallButtons = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
                     case DEBUG:
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
@@ -467,7 +467,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         XposedHelpers.findAndHookMethod(ConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM, Menu.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                if(!Config.modEnabled || !Config.hideVideoCall) {
+                if(!Config.modEnabled || !Config.hideCallButtons) {
                     return;
                 }
                 Menu menu = (Menu) param.args[0];
