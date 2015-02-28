@@ -38,9 +38,9 @@
 
     <com.versobit.kmark.xhangouts.XSwitchPreference
         android:dependency="mod_enabled"
-        android:key="ui_hide_video_call"
-        android:title="@string/pref_title_ui_hide_video_call"
-        android:summary="@string/pref_desc_ui_hide_video_call"
+        android:key="ui_hide_call_buttons"
+        android:title="@string/pref_title_ui_hide_call_buttons"
+        android:summary="@string/pref_desc_ui_hide_call_buttons"
         android:defaultValue="false" />
 
 </PreferenceScreen>

@@ -210,7 +210,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     case UI_ATTACH_ANYTIME:
                         attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
-                    case UI_HIDE_VIDEO_CALL:
+                    case UI_HIDE_CALL_BUTTONS:
                         hideVideoCall = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
                     case DEBUG:
@@ -473,7 +473,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 Menu menu = (Menu) param.args[0];
                 for (int i = 0; i < menu.size(); i++) {
                     MenuItem item = menu.getItem(i);
-                    if(item.getTitle().equals("Video call")) {
+                    if("Call".equals(item.getTitle()) || "Video call".equals(item.getTitle())) {
                         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                     }
                 }
