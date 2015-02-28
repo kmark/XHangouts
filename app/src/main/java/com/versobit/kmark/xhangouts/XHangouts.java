@@ -70,7 +70,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
     private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cev";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cex";
     // private static a(IIIILandroid/net/Uri;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
@@ -85,26 +85,26 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "d";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "l";
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "apd";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "apc";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "byo";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "boi";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "byp";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "boj";
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST = "a";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER = "byj";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER = "byk";
 
-    private static final String HANGOUTS_MMSTRANSACTIONS = "cet";
+    private static final String HANGOUTS_MMSTRANSACTIONS = "cev";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_DEBUGFIELD = "a";
 
-    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cfo";
+    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cfq";
     private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
 
     private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vm";
     private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wg";
 
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "ceo";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "ceq";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
@@ -113,14 +113,14 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_MMSSENDER = "wo";
     private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
 
-    private static final String HANGOUTS_MMS_APN = "cfp";
+    private static final String HANGOUTS_MMS_APN = "cfr";
     private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
     private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
     private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
     private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
     private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
 
-    private static final String HANGOUTS_MMS_EXCEPTION = "ces";
+    private static final String HANGOUTS_MMS_EXCEPTION = "ceu";
 
     private static final String HANGOUTS_MMSC_RESPONSE = "vx";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
@@ -128,8 +128,8 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String ANDROID_UTIL_LOG_CLASS = "android.util.Log";
     private static final String ANDROID_UTIL_LOG_ISLOGGABLE = "isLoggable";
 
-    private static final String TESTED_VERSION_STR = "2.5.81636427";
-    private static final int TESTED_VERSION_INT = 22147334;
+    private static final String TESTED_VERSION_STR = "2.5.83281670";
+    private static final int TESTED_VERSION_INT = 22181734;
 
     // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
     private WeakReference<Context> hangoutsCtx;
