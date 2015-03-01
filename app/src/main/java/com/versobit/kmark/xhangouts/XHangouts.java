@@ -125,9 +125,6 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_MMSC_RESPONSE = "vx";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
 
-    private static final String ANDROID_UTIL_LOG_CLASS = "android.util.Log";
-    private static final String ANDROID_UTIL_LOG_ISLOGGABLE = "isLoggable";
-
     private static final String TESTED_VERSION_STR = "2.5.83281670";
     private static final int TESTED_VERSION_INT = 22181734;
 
@@ -479,10 +476,6 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 }
             }
         });
-
-        // These two lines appear to fully unlock Hangouts internal logging. There's a lot of it...
-        //XposedHelpers.findAndHookMethod(ANDROID_UTIL_LOG_CLASS, loadPackageParam.classLoader, ANDROID_UTIL_LOG_ISLOGGABLE, String.class, int.class, XC_MethodReplacement.returnConstant(true));
-        //XposedHelpers.setStaticBooleanField(XposedHelpers.findClass(HANGOUTS_MMSTRANSACTIONS, loadPackageParam.classLoader), HANGOUTS_MMSTRANSACTIONS_DEBUGFIELD, true);
 
         XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, rWriterSqlHelper, new XC_MethodHook() {
             @Override
