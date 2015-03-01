@@ -16,5 +16,5 @@ See [this thread on XDA](http://forum.xda-developers.com/xposed/modules/xhangout
 Icon by [Adrian Babilinski](https://twitter.com/mrBabilin)!
 
 ## Licensing
-Copyright &copy; 2014 Kevin Mark. XHangouts is licensed under the GNU General Public License, Version 3, which can
+Copyright &copy; 2014-2015 Kevin Mark. XHangouts is licensed under the GNU General Public License, Version 3, which can
 be found in `LICENSE.md`
