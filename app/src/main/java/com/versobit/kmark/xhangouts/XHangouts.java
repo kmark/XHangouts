@@ -226,6 +226,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                 }
             }
+            prefs.close();
         }
     }
 
