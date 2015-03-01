@@ -22,6 +22,7 @@ package com.versobit.kmark.xhangouts;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -65,6 +66,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String ACTIVITY_THREAD_GETSYSCTX = "getSystemContext";
 
     static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
+    private static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
     // TODO: Find a better way to manage these strings
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
@@ -125,11 +127,21 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_MMSC_RESPONSE = "vx";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
 
+    private static final String HANGOUTS_MENU_CONVO_CALL = "realtimechat_conversation_call_menu_item";
+    private static final String HANGOUTS_MENU_CONVO_VIDEOCALL = "start_hangout_menu_item";
+
     private static final String TESTED_VERSION_STR = "2.5.83281670";
     private static final int TESTED_VERSION_INT = 22181734;
 
     // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
     private WeakReference<Context> hangoutsCtx;
+
+    // Impossible default ID since resource IDs start with 0x7f
+    private static final int RES_ID_UNSET = 0;
+
+    // Resources.getIdentifier is expensive so we're caching results
+    private int menuItemCallResId = RES_ID_UNSET;
+    private int menuItemVideoCallResId = RES_ID_UNSET;
 
     private static final class Config {
 
@@ -467,10 +479,17 @@ public final class XHangouts implements IXposedHookLoadPackage {
                 if(!Config.modEnabled || !Config.hideCallButtons) {
                     return;
                 }
+                if(menuItemCallResId == RES_ID_UNSET || menuItemVideoCallResId == RES_ID_UNSET) {
+                    Resources res = hangoutsCtx.get().getResources();
+                    menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
+                    menuItemVideoCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_VIDEOCALL, "id", HANGOUTS_RES_PKG_NAME);
+                    debug(String.format("Found convo menu item resource IDs: 0x%x, 0x%x",
+                            menuItemCallResId, menuItemVideoCallResId));
+                }
                 Menu menu = (Menu) param.args[0];
                 for (int i = 0; i < menu.size(); i++) {
                     MenuItem item = menu.getItem(i);
-                    if("Call".equals(item.getTitle()) || "Video call".equals(item.getTitle())) {
+                    if(item.getItemId() == menuItemCallResId || item.getItemId() == menuItemVideoCallResId) {
                         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                     }
                 }
