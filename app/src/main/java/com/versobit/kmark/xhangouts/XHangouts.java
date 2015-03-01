@@ -143,10 +143,10 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static boolean resizing = true;
         private static boolean rotation = true;
         private static int rotateMode = -1;
-        private static int imageWidth = 640;
-        private static int imageHeight = 640;
+        private static int imageWidth = 1024;
+        private static int imageHeight = 1024;
         private static Setting.ImageFormat imageFormat = Setting.ImageFormat.JPEG;
-        private static int imageQuality = 60;
+        private static int imageQuality = 80;
         private static boolean apnSplicing = false;
         private static Setting.ApnPreset apnPreset = Setting.ApnPreset.CUSTOM;
         private static String mmsc = "";

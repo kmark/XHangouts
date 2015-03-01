@@ -78,7 +78,7 @@ final class MmsTypeQualityDialog extends AlertDialog {
         txtPreview2 = (TextView)v.findViewById(R.id.dialog_mms_type_quality_p2text);
 
         format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
-        quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 60);
+        quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 80);
 
         formatValues = getContext().getResources().getIntArray(R.array.pref_mms_image_type_values);
         lossless = getContext().getString(R.string.dialog_mms_type_quality_lossless);

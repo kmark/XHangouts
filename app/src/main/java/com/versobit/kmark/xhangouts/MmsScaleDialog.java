@@ -54,8 +54,8 @@ final class MmsScaleDialog extends AlertDialog {
         txtHeight = (EditText)v.findViewById(R.id.dialog_mms_scale_height);
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 640);
-        scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 640);
+        scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 1024);
+        scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 1024);
 
         txtWidth.setText(String.valueOf(scaleWidth));
         txtHeight.setText(String.valueOf(scaleHeight));

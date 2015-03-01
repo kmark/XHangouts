@@ -72,8 +72,8 @@ final public class SettingsActivity extends PreferenceActivity {
             final Preference image = findPreference(Setting.MMS_IMAGE_PREFKEY.toString());
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 640);
-            int scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 640);
+            int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 1024);
+            int scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 1024);
             updateMmsScaleSummary(scale, scaleWidth, scaleHeight);
 
             scale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -86,7 +86,7 @@ final public class SettingsActivity extends PreferenceActivity {
             });
 
             Setting.ImageFormat format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
-            int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 60);
+            int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 80);
             updateMmsTypeQualitySummary(image, format, quality);
 
             image.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
