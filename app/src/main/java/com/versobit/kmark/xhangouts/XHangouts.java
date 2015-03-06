@@ -184,7 +184,7 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
         private static String mmsc = "";
         private static String proxyHost = "";
         private static int proxyPort = -1;
-        private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
+        private static Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
         private static boolean attachAnytime = true;
         private static boolean hideCallButtons = false;
         private static Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
@@ -238,7 +238,7 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
                         proxyPort = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
                         continue;
                     case UI_ENTER_KEY:
-                        enterKey = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                        enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
                         continue;
                     case UI_ATTACH_ANYTIME:
                         attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
@@ -465,13 +465,12 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
             protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
                 Config.reload((Context)param.args[0]);
                 if(Config.modEnabled) {
-                    Setting.UiEnterKey enterKey = Setting.UiEnterKey.fromInt(Config.enterKey);
-                    debug(String.format("ComposeMessageView: %s, %s", enterKey.name(), Config.attachAnytime));
-                    if(enterKey != Setting.UiEnterKey.EMOJI_SELECTOR) {
+                    debug(String.format("ComposeMessageView: %s, %s", Config.enterKey.name(), Config.attachAnytime));
+                    if(Config.enterKey != Setting.UiEnterKey.EMOJI_SELECTOR) {
                         EditText et = (EditText)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT);
                         // Remove Emoji selector (works for new line)
                         int inputType = et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
-                        if(enterKey == Setting.UiEnterKey.SEND) {
+                        if(Config.enterKey == Setting.UiEnterKey.SEND) {
                             // Disable multi-line input which shows the send button
                             inputType ^= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
                         }
@@ -496,7 +495,7 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 int actionId = (Integer)param.args[1];
-                if(Config.modEnabled && actionId == EditorInfo.IME_NULL && Config.enterKey == Setting.UiEnterKey.NEWLINE.toInt()) {
+                if(Config.modEnabled && actionId == EditorInfo.IME_NULL && Config.enterKey == Setting.UiEnterKey.NEWLINE) {
                     param.setResult(false); // We do not handle the enter action, and it adds a newline for us
                 }
             }
