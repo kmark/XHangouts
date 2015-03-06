@@ -29,14 +29,14 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
-    <com.versobit.kmark.xhangouts.XSwitchPreference
+    <CheckBoxPreference
         android:dependency="mod_enabled"
         android:key="ui_attach_anytime"
         android:title="@string/pref_title_ui_attach_anytime"
         android:summary="@string/pref_desc_ui_attach_anytime"
         android:defaultValue="true" />
 
-    <com.versobit.kmark.xhangouts.XSwitchPreference
+    <CheckBoxPreference
         android:dependency="mod_enabled"
         android:key="ui_hide_call_buttons"
         android:title="@string/pref_title_ui_hide_call_buttons"
