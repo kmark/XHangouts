@@ -17,7 +17,7 @@
  * along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.versobit.kmark.xhangouts;
+package com.versobit.kmark.xhangouts.ui;
 
 import android.content.Context;
 import android.preference.SwitchPreference;
