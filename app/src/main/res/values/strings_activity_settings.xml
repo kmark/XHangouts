@@ -20,7 +20,6 @@
 <resources>
     <string name="title_activity_settings">XHangouts Settings</string>
     <string name="warning_not_loaded">XHangouts is not activated by Xposed.</string>
-    <string name="restart_hangouts_toast">Restart Hangouts for this to take full effect.</string>
 
     <!-- Strings related to Settings -->
 
@@ -28,7 +27,8 @@
     <string name="pref_header_general">General</string>
 
     <string name="pref_title_mod_enabled">Enable module</string>
-    <string name="pref_desc_mod_enabled">Turn this module on or off without rebooting</string>
+    <string name="pref_desc_mod_enabled">Turn this module on or off without rebooting. Many options
+        require Hangouts to be restarted before they take effect.</string>
 
     <!-- MMS -->
     <string name="pref_header_mms">MMS</string>

@@ -64,7 +64,6 @@ final public class SettingsActivity extends PreferenceActivity {
 
             // Add general preferences.
             addPreferencesFromResource(R.xml.pref_general);
-            setupModEnabledPreference(findPreference(Setting.MOD_ENABLED.toString()));
 
             // Add MMS preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());
@@ -182,16 +181,6 @@ final public class SettingsActivity extends PreferenceActivity {
                     PreferenceManager
                             .getDefaultSharedPreferences(preference.getContext())
                             .getString(preference.getKey(), ""));
-        }
-
-        private void setupModEnabledPreference(final Preference preference) {
-            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), R.string.restart_hangouts_toast, Toast.LENGTH_LONG).show();
-                    return true;
-                }
-            });
         }
 
         private void setupVersionPreference(final Preference preference) {
