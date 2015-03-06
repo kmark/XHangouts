@@ -17,7 +17,7 @@
  * along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.versobit.kmark.xhangouts;
+package com.versobit.kmark.xhangouts.dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,7 +31,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-final class MmsScaleDialog extends AlertDialog {
+import com.versobit.kmark.xhangouts.R;
+import com.versobit.kmark.xhangouts.Setting;
+import com.versobit.kmark.xhangouts.SettingsActivity;
+
+public final class MmsScaleDialog extends AlertDialog {
 
     final private Preference settingPref;
     private SharedPreferences prefs;
@@ -42,7 +46,7 @@ final class MmsScaleDialog extends AlertDialog {
     private int scaleWidth;
     private int scaleHeight;
 
-    MmsScaleDialog(final Preference settingPref) {
+    public MmsScaleDialog(final Preference settingPref) {
         super(settingPref.getContext());
         this.settingPref = settingPref;
     }

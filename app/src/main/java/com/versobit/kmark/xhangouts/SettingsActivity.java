@@ -34,6 +34,10 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.versobit.kmark.xhangouts.dialogs.MmsApnConfigDialog;
+import com.versobit.kmark.xhangouts.dialogs.MmsScaleDialog;
+import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
+
 final public class SettingsActivity extends PreferenceActivity {
 
     static void setDefaultPreferences(Context ctx) {
@@ -215,17 +219,17 @@ final public class SettingsActivity extends PreferenceActivity {
             });
         }
 
-        static void updateMmsScaleSummary(final Preference preference, final int width, final int height) {
+        public static void updateMmsScaleSummary(final Preference preference, final int width, final int height) {
             preference.setSummary(preference.getContext().getString(R.string.pref_desc_mms_scale, width, height));
         }
 
-        static void updateMmsTypeQualitySummary(final Preference preference, final Setting.ImageFormat format, final int quality) {
+        public static void updateMmsTypeQualitySummary(final Preference preference, final Setting.ImageFormat format, final int quality) {
             Context ctx = preference.getContext();
             String strQuality = format == Setting.ImageFormat.PNG ? ctx.getString(R.string.dialog_mms_type_quality_lossless) : String.valueOf(quality);
             preference.setSummary(ctx.getString(R.string.pref_desc_mms_image_type, format.toString(), strQuality.toLowerCase()));
         }
 
-        static void updateMmsApnConfigSummary(final Preference preference, final Setting.ApnPreset preset) {
+        public static void updateMmsApnConfigSummary(final Preference preference, final Setting.ApnPreset preset) {
             preference.setSummary(preset.toString());
         }
     }

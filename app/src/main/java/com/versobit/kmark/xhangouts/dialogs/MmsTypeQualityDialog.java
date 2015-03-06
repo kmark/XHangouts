@@ -17,7 +17,7 @@
  * along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.versobit.kmark.xhangouts;
+package com.versobit.kmark.xhangouts.dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -35,10 +35,14 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.versobit.kmark.xhangouts.R;
+import com.versobit.kmark.xhangouts.Setting;
+import com.versobit.kmark.xhangouts.SettingsActivity;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-final class MmsTypeQualityDialog extends AlertDialog {
+public final class MmsTypeQualityDialog extends AlertDialog {
 
     private final Preference settingPref;
     private SharedPreferences prefs;
@@ -59,7 +63,7 @@ final class MmsTypeQualityDialog extends AlertDialog {
     private Bitmap bmpPreview1;
     private Bitmap bmpPreview2;
 
-    MmsTypeQualityDialog(final Preference settingPref) {
+    public MmsTypeQualityDialog(final Preference settingPref) {
         super(settingPref.getContext());
         this.settingPref = settingPref;
     }

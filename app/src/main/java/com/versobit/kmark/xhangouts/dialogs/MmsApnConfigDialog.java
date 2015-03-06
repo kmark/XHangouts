@@ -17,7 +17,7 @@
  * along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.versobit.kmark.xhangouts;
+package com.versobit.kmark.xhangouts.dialogs;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -33,7 +33,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-final class MmsApnConfigDialog extends AlertDialog {
+import com.versobit.kmark.xhangouts.R;
+import com.versobit.kmark.xhangouts.Setting;
+import com.versobit.kmark.xhangouts.SettingsActivity;
+
+public final class MmsApnConfigDialog extends AlertDialog {
 
     final private Preference settingPref;
     private SharedPreferences prefs;
@@ -49,7 +53,7 @@ final class MmsApnConfigDialog extends AlertDialog {
 
     private boolean selectingPreset = false;
 
-    MmsApnConfigDialog(final Preference settingPref) {
+    public MmsApnConfigDialog(final Preference settingPref) {
         super(settingPref.getContext());
         this.settingPref = settingPref;
     }

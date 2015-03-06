@@ -21,7 +21,7 @@ package com.versobit.kmark.xhangouts;
 
 import java.util.Locale;
 
-enum Setting {
+public enum Setting {
     MOD_ENABLED,
     MMS_RESIZE_ENABLED,
     MMS_ROTATE_ENABLED,
@@ -103,7 +103,7 @@ enum Setting {
         }
     }
 
-    enum ImageFormat {
+    public enum ImageFormat {
         JPEG(0),
         PNG(1);
 
@@ -112,7 +112,7 @@ enum Setting {
             this.value = value;
         }
 
-        static ImageFormat fromInt(int value) {
+        public static ImageFormat fromInt(int value) {
             for(ImageFormat u : values()) {
                 if(value == u.value) {
                     return u;
@@ -121,12 +121,12 @@ enum Setting {
             throw new IllegalArgumentException("No constant with value " + value + " found");
         }
 
-        int toInt() {
+        public int toInt() {
             return value;
         }
     }
 
-    enum ApnPreset {
+    public enum ApnPreset {
         // The order here can be changed as desired but the first integer provided in the constructor
         // must remain the same.
         CUSTOM(0, "Custom", "", "", -1),
@@ -148,7 +148,7 @@ enum Setting {
             this.proxyPort = proxyPort;
         }
 
-        static ApnPreset fromInt(int value) {
+        public static ApnPreset fromInt(int value) {
             for(ApnPreset u : values()) {
                 if(value == u.value) {
                     return u;
@@ -157,7 +157,7 @@ enum Setting {
             throw new IllegalArgumentException("No constant with value " + value + " found");
         }
 
-        int toInt() {
+        public int toInt() {
             return value;
         }
 
@@ -166,15 +166,15 @@ enum Setting {
             return name;
         }
 
-        String getMmsc() {
+        public String getMmsc() {
             return mmsc;
         }
 
-        String getProxyHost() {
+        public String getProxyHost() {
             return proxyHost;
         }
 
-        int getProxyPort() {
+        public int getProxyPort() {
             return proxyPort;
         }
     }
