@@ -119,6 +119,7 @@ final public class SettingsActivity extends PreferenceActivity {
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_ui);
             bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_APP_COLOR.toString()));
 
             // Add About preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());

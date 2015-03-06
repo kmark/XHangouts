@@ -23,15 +23,19 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.res.Resources;
+import android.content.res.XResources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -50,14 +54,16 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public final class XHangouts implements IXposedHookLoadPackage {
+public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     private static final String TAG = "XHangouts";
 
@@ -130,6 +136,23 @@ public final class XHangouts implements IXposedHookLoadPackage {
     private static final String HANGOUTS_MENU_CONVO_CALL = "realtimechat_conversation_call_menu_item";
     private static final String HANGOUTS_MENU_CONVO_VIDEOCALL = "start_hangout_menu_item";
 
+    private static final String[] HANGOUTS_QUANTUM_COLOR_SUFFIXES = {"50", "100", "200", "300",
+            "400", "500", "600", "700", "800", "900", "A100", "A200", "A400", "A700"};
+
+    private static final String ANDROID_SUPPORT_ABCVIEW = "android.support.v7.internal.widget.ActionBarContextView";
+
+    private static final String HANGOUTS_COLOR_BUTTER_BAR_BG = "butter_bar_background";
+    private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
+    private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
+    private static final String HANGOUTS_COLOR_PRIMARY = "primary";
+    private static final String HANGOUTS_COLOR_PRIMARY_DARK = "primary_dark";
+    private static final String HANGOUTS_COLOR_QUANTUM_GOOGGREEN = "quantum_googgreen";
+
+    private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
+    private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
+    private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
+    private static final String HANGOUTS_DRAWABLE_ONGOING_BGP = "hangout_ongoing_bg_pressed";
+
     private static final String TESTED_VERSION_STR = "2.5.83281670";
     private static final int TESTED_VERSION_INT = 22181734;
 
@@ -164,6 +187,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         private static int enterKey = Setting.UiEnterKey.EMOJI_SELECTOR.toInt();
         private static boolean attachAnytime = true;
         private static boolean hideCallButtons = false;
+        private static Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
         private static boolean debug = false;
 
         private static void reload(Context ctx) {
@@ -222,6 +246,9 @@ public final class XHangouts implements IXposedHookLoadPackage {
                     case UI_HIDE_CALL_BUTTONS:
                         hideCallButtons = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                         continue;
+                    case UI_APP_COLOR:
+                        appColor = Setting.AppColor.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                        continue;
                     case DEBUG:
                         debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                 }
@@ -260,6 +287,7 @@ public final class XHangouts implements IXposedHookLoadPackage {
         // Hangouts class definitions
         final Class ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
         final Class ConversationActSuper = XposedHelpers.findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loadPackageParam.classLoader);
+        final Class ActionBarContextView = XposedHelpers.findClass(ANDROID_SUPPORT_ABCVIEW, loadPackageParam.classLoader);
         final Class rWriterInnerClass1 = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1, loadPackageParam.classLoader);
         final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
         final Class transactionSettings = XposedHelpers.findClass(HANGOUTS_TRANSACTIONSETTINGS, loadPackageParam.classLoader);
@@ -497,6 +525,26 @@ public final class XHangouts implements IXposedHookLoadPackage {
             }
         });
 
+        // On Lollipop the ActionBarContextView still uses the GOOGLE_GREEN theme unless we explicitly
+        // set its background drawable. I'm not sure why it doesn't follow the updated resources.
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Had to hook into View.setBackgroundDrawable to find this one...
+            XposedHelpers.findAndHookConstructor(ActionBarContextView, Context.class, AttributeSet.class, int.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    if(!Config.modEnabled || Config.appColor == Setting.AppColor.GOOGLE_GREEN) {
+                        return;
+                    }
+                    // We could check to make sure we're operating on the correct view but Hangouts
+                    // doesn't use these very often (once?) so we should be safe
+                    ((View)param.thisObject).setBackgroundColor(getColorFromResources(
+                            hangoutsCtx.get().getResources(),
+                            Config.appColor.getPrefix() + HANGOUTS_QUANTUM_COLOR_SUFFIXES[5]
+                    ));
+                }
+            });
+        }
+
         XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, rWriterSqlHelper, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -722,6 +770,100 @@ public final class XHangouts implements IXposedHookLoadPackage {
         });
 
         debug("--- LOAD COMPLETE ---", false);
+    }
+
+
+    @Override
+    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam pkgRes) throws Throwable {
+        if(!pkgRes.packageName.equals(HANGOUTS_PKG_NAME)) {
+            return;
+        }
+
+        // Retrieves the context of the app initializing the Hangouts resources.
+        Object activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass(ACTIVITY_THREAD_CLASS, null), ACTIVITY_THREAD_CURRENTACTHREAD);
+        // Works beautifully on Lollipop. On 4.x not so much.
+        if(activityThread != null) {
+            Context systemCtx = (Context)XposedHelpers.callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
+            // The XHangouts SettingsProvider will accept configuration requests from any app.
+            // Not being able to reload the config isn't the end of the world since if we're in the
+            // Hangouts app, settings have already been loaded in handleLoadPackage
+            Config.reload(systemCtx);
+        }
+
+        if(!Config.modEnabled) {
+            return;
+        }
+
+        debug(String.format("initPkgRes: %s", Config.appColor));
+
+        // GOOGLE_GREEN is the default. No need to modify resources.
+        if(Config.appColor == Setting.AppColor.GOOGLE_GREEN) {
+            return;
+        }
+
+        // The resource name prefix representing the desired color (source)
+        String fromPrefix = Config.appColor.getPrefix();
+        // The default GOOGLE_GREEN color we're replacing (destination)
+        String toPrefix = Setting.AppColor.GOOGLE_GREEN.getPrefix();
+
+        int totalColors = HANGOUTS_QUANTUM_COLOR_SUFFIXES.length;
+        // Some colors are without accents, so we subtract them out
+        if(Config.appColor == Setting.AppColor.BROWN || Config.appColor == Setting.AppColor.GREY ||
+                Config.appColor == Setting.AppColor.BLUE_GREY) {
+            totalColors -= 4;
+        }
+        // Hold onto the found colors so we can use them afterwards
+        final int[] appColors = new int[totalColors];
+        // Loop over every available quantum color, replacing them
+        for(int i = 0; i < totalColors; i++) {
+            appColors[i] = getColorFromResources(pkgRes.res, fromPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i]);
+            pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color",
+                    toPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i], appColors[i]);
+        }
+
+        // The above replacements do not style everything. Some manual fixes.
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_JHPS, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources res, int id) throws Throwable {
+                return new ColorDrawable(appColors[3]);
+            }
+        });
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_JHAS, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources res, int id) throws Throwable {
+                return new ColorDrawable(appColors[4]);
+            }
+        });
+
+        // Fixes "Sending as <number>" / Ongoing call bar on 4.x
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_ONGOING_BG,
+                appColors[5]);
+
+        // Fixes "Sending as <number>" / Ongoing call bar on 5.x
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PROMO_ELIG,
+                appColors[5]);
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_ONGOING_BG, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources res, int id) throws Throwable {
+                return new ColorDrawable(appColors[5]);
+            }
+        });
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_ONGOING_BGP, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources res, int id) throws Throwable {
+                return new ColorDrawable(appColors[5]);
+            }
+        });
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUTTER_BAR_BG, appColors[5]);
+
+        // Fixes status bar on 5.x
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY, appColors[5]);
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY_DARK, appColors[7]);
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_QUANTUM_GOOGGREEN, appColors[5]);
+    }
+
+    private static int getColorFromResources(Resources res, String name) {
+        return res.getColor(res.getIdentifier(name, "color", HANGOUTS_RES_PKG_NAME));
     }
 
     private static boolean isMobileConnected(Context ctx) {

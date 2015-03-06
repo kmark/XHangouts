@@ -85,6 +85,58 @@
     <string name="pref_title_ui_hide_call_buttons">Hide call buttons</string>
     <string name="pref_desc_ui_hide_call_buttons">Stuff the call icons back into the dropdown menu</string>
 
+    <string name="pref_title_ui_app_color">App color</string>
+    <string-array name="pref_ui_app_color_titles">
+        <item>Amber</item>
+        <item>Blue Grey</item>
+        <item>Brown</item>
+        <item>Cyan</item>
+        <item>Deep Orange</item>
+        <item>Deep Purple</item>
+        <item>Google Blue</item>
+        <item>Google Green (Default)</item>
+        <item>Google Red</item>
+        <item>Google Yellow</item>
+        <item>Grey</item>
+        <item>Indigo</item>
+        <item>Light Blue</item>
+        <item>Light Green</item>
+        <item>Lime</item>
+        <item>Orange</item>
+        <item>Pink</item>
+        <item>Purple</item>
+        <item>Teal</item>
+        <item>Vanilla Blue</item>
+        <item>Vanilla Green</item>
+        <item>Vanilla Red</item>
+        <item>Yellow</item>
+    </string-array>
+    <string-array name="pref_ui_app_color_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+    </string-array>
+
     <!-- About -->
     <string name="pref_header_about">About</string>
 

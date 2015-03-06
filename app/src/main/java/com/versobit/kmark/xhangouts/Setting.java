@@ -41,6 +41,7 @@ enum Setting {
     UI_ENTER_KEY,
     UI_ATTACH_ANYTIME,
     UI_HIDE_CALL_BUTTONS,
+    UI_APP_COLOR,
     ABOUT_VERSION,
     DEBUG;
 
@@ -175,6 +176,57 @@ enum Setting {
 
         int getProxyPort() {
             return proxyPort;
+        }
+    }
+
+    enum AppColor {
+        AMBER(0, "quantum_amber"),
+        BLUE_GREY(1, "quantum_bluegrey"),
+        BROWN(2, "quantum_brown"),
+        CYAN(3, "quantum_cyan"),
+        DEEP_ORANGE(4, "quantum_deeporange"),
+        DEEP_PURPLE(5, "quantum_deeppurple"),
+        GOOGLE_BLUE(6, "quantum_googblue"),
+        GOOGLE_GREEN(7, "quantum_googgreen"),
+        GOOGLE_RED(8, "quantum_googred"),
+        GOOGLE_YELLOW(9, "quantum_googyellow"),
+        GREY(10, "quantum_grey"),
+        INDIGO(11, "quantum_indigo"),
+        LIGHT_BLUE(12, "quantum_lightblue"),
+        LIGHT_GREEN(13, "quantum_lightgreen"),
+        LIME(14, "quantum_lime"),
+        ORANGE(15, "quantum_orange"),
+        PINK(16, "quantum_pink"),
+        PURPLE(17, "quantum_purple"),
+        TEAL(18, "quantum_teal"),
+        VANILLA_BLUE(19, "quantum_vanillablue"),
+        VANILLA_GREEN(20, "quantum_vanillagreen"),
+        VANILLA_RED(21, "quantum_vanillared"),
+        YELLOW(22, "quantum_yellow");
+
+        private final int value;
+        private final String prefix;
+
+        private AppColor(int value, String prefix) {
+            this.value = value;
+            this.prefix = prefix;
+        }
+
+        static AppColor fromInt(int value) {
+            for(AppColor u : values()) {
+                if(value == u.value) {
+                    return u;
+                }
+            }
+            throw new IllegalArgumentException("No constant with value " + value + " found");
+        }
+
+        int toInt() {
+            return value;
+        }
+
+        String getPrefix() {
+            return prefix;
         }
     }
 }
