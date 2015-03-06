@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Kevin Mark
+ * Copyright (C) 2014-2015 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -19,7 +19,9 @@
 
 package com.versobit.kmark.xhangouts.ui;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.preference.SwitchPreference;
 import android.util.AttributeSet;
 
@@ -36,7 +38,12 @@ public final class XSwitchPreference extends SwitchPreference {
         super(ctx, attrSet);
     }
 
-    public XSwitchPreference(Context ctx, AttributeSet attrSet, int defStyle) {
-        super(ctx, attrSet, defStyle);
+    public XSwitchPreference(Context ctx, AttributeSet attrSet, int defStyleAttr) {
+        super(ctx, attrSet, defStyleAttr);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public XSwitchPreference(Context ctx, AttributeSet attrSet, int defStyleAttr, int defStyleRes) {
+        super(ctx, attrSet, defStyleAttr, defStyleRes);
     }
 }
