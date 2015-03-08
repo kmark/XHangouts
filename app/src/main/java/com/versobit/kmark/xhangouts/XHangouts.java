@@ -547,33 +547,33 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
         XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, rWriterSqlHelper, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug("bfc -> a called");
+                debug(String.format("%s -> %s called", HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST));
             }
         });
 
         XposedHelpers.findAndHookMethod(mmsTransactions, HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1, Context.class, String[].class, String.class, String.class, String.class, String.class, int.class, int.class, int.class, long.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug("bvv -> a1 called");
+                debug(String.format("%s -> %s called", mmsTransactions.getSimpleName(), HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1));
             }
         });
 
         XposedHelpers.findAndHookMethod(mmsTransactions, HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2, Context.class, mmsMsgClass2, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug("bvv -> a2 called (before)");
+                debug(String.format("%s -> %s2 called (before)", mmsTransactions.getSimpleName(), HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2));
             }
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                debug("bvv -> a2 called (after)");
+                debug(String.format("%s -> %s2 called (after)", mmsTransactions.getSimpleName(), HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2));
             }
         });
 
         XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1, Context.class, transactionSettings, mmsMsgClass1, String.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug("bvq -> a1 called");
+                debug(String.format("%s -> %s1 called", mmsSendReceiveManager.getSimpleName(), HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1));
             }
         });
 
@@ -661,14 +661,14 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
                     return;
                 }
 
-                debug("bvq -> a2 called");
+                debug(String.format("%s -> %s2 called", mmsSendReceiveManager.getSimpleName(), HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2));
 
                 if(!isMobileConnected(hangoutsCtx.get())) {
                     return;
                 }
 
                 for(Object o : param.args) {
-                    debug(String.format("bvq -> a2 args: %s", o));
+                    debug(String.format("%s -> %s2 args: %s", mmsSendReceiveManager.getSimpleName(), HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, o));
                 }
 
                 Object mmsc = param.args[2];
@@ -758,9 +758,9 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
         XposedHelpers.findAndHookMethod(mmsSender, HANGOUTS_MMSSENDER_DOSEND, Context.class, String.class, byte[].class, int.class, boolean.class, String.class, int.class, boolean.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug("sk -> a called");
+                debug(String.format("%s -> %s called", mmsSender.getSimpleName(), HANGOUTS_MMSSENDER_DOSEND));
                 for(Object o : param.args) {
-                    debug(String.format("sk -> a args: %s", o));
+                    debug(String.format("%s -> %s args: %s", mmsSender.getSimpleName(), HANGOUTS_MMSSENDER_DOSEND, o));
                 }
                 /*if(param.args[2] != null) {
                     debug("byte array: " + new String((byte[]) param.args[2], "UTF-8"));
