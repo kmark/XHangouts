@@ -113,7 +113,9 @@ public final class MmsApnConfigDialog extends AlertDialog {
             selectingPreset = true;
             txtMmsc.setText(preset.getMmsc());
             txtProxyHostname.setText(preset.getProxyHost());
-            if(preset.getProxyPort() != -1) {
+            if(preset.getProxyPort() == -1) {
+                txtProxyPort.setText("");
+            } else {
                 txtProxyPort.setText(String.valueOf(preset.getProxyPort()));
             }
             // The text watcher is on the same thread so we don't need to worry about a race
