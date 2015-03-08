@@ -51,9 +51,7 @@ public final class MmsTypeQualityDialog extends AlertDialog {
     private SeekBar seekQuality;
     private TextView txtQuality;
     private ImageView imgPreview1;
-    private ImageView imgPreview2;
     private TextView txtPreview1;
-    private TextView txtPreview2;
 
     private Setting.ImageFormat format;
     private int quality;
@@ -61,7 +59,6 @@ public final class MmsTypeQualityDialog extends AlertDialog {
     private int formatValues[];
     private String lossless;
     private Bitmap bmpPreview1;
-    private Bitmap bmpPreview2;
 
     public MmsTypeQualityDialog(final Preference settingPref) {
         super(settingPref.getContext());
@@ -77,9 +74,7 @@ public final class MmsTypeQualityDialog extends AlertDialog {
         seekQuality = (SeekBar)v.findViewById(R.id.dialog_mms_type_quality_quality);
         txtQuality = (TextView)v.findViewById(R.id.dialog_mms_type_quality_qlabel);
         imgPreview1 = (ImageView)v.findViewById(R.id.dialog_mms_type_quality_preview1);
-        imgPreview2 = (ImageView)v.findViewById(R.id.dialog_mms_type_quality_preview2);
         txtPreview1 = (TextView)v.findViewById(R.id.dialog_mms_type_quality_p1text);
-        txtPreview2 = (TextView)v.findViewById(R.id.dialog_mms_type_quality_p2text);
 
         format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
         quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 80);
@@ -88,7 +83,6 @@ public final class MmsTypeQualityDialog extends AlertDialog {
         lossless = getContext().getString(R.string.dialog_mms_type_quality_lossless);
 
         bmpPreview1 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.fajita);
-        bmpPreview2 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.screenshot);
 
         // Only time we need to set the spinner and seek bar
         // FIXME: the integer value of format is not guaranteed to be the positional index of the spinner values, see formatValues
@@ -134,12 +128,6 @@ public final class MmsTypeQualityDialog extends AlertDialog {
             bmpPreview1.compress(cmpFormat, format == Setting.ImageFormat.PNG ? 0 : quality, baos);
             imgPreview1.setImageBitmap(BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size()));
             txtPreview1.setText(getContext().getString(R.string.dialog_mms_type_quality_kb, baos.size() / 1000f));
-            baos.close();
-
-            baos = new ByteArrayOutputStream();
-            bmpPreview2.compress(cmpFormat, format == Setting.ImageFormat.PNG ? 0 : quality, baos);
-            imgPreview2.setImageBitmap(BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size()));
-            txtPreview2.setText(getContext().getString(R.string.dialog_mms_type_quality_kb, baos.size() / 1000f));
             baos.close();
         } catch (IOException ex) {
             //

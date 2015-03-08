@@ -82,34 +82,4 @@
             android:id="@+id/dialog_mms_type_quality_p1text" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/dialog_mms_type_quality_preview2"
-            android:layout_marginTop="5dp"
-            android:src="@drawable/screenshot" />
-
-        <TextView
-            tools:ignore="HardcodedText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/dialog_mms_type_quality_preview2"
-            android:layout_alignRight="@id/dialog_mms_type_quality_preview2"
-            android:layout_alignEnd="@id/dialog_mms_type_quality_preview2"
-            android:textColor="@android:color/black"
-            android:shadowColor="@android:color/white"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="7.25"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="28.15 KB"
-            android:id="@+id/dialog_mms_type_quality_p2text" />
-    </RelativeLayout>
-
 </LinearLayout>
