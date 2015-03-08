@@ -66,6 +66,7 @@ public final class MmsScaleDialog extends AlertDialog {
         txtWidth.addTextChangedListener(textWatcher);
         txtHeight.addTextChangedListener(textWatcher);
 
+        setTitle(R.string.pref_title_mms_scale);
         setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), onSubmit);
 
         setView(v);

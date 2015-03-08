@@ -96,6 +96,7 @@ public final class MmsApnConfigDialog extends AlertDialog {
         txtProxyPort.addTextChangedListener(textWatcher);
 
 
+        setTitle(R.string.pref_title_mms_apn_splicing_apn_config);
         setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), onSubmit);
 
         setView(v);

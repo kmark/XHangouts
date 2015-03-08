@@ -101,6 +101,7 @@ public final class MmsTypeQualityDialog extends AlertDialog {
         spinnerFormat.setOnItemSelectedListener(onSelected);
         seekQuality.setOnSeekBarChangeListener(onSeek);
 
+        setTitle(R.string.pref_title_mms_image_type);
         setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), onSubmit);
 
         setView(v);
