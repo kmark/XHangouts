@@ -43,11 +43,10 @@
         android:summary="@string/pref_desc_ui_hide_call_buttons"
         android:defaultValue="false" />
 
-    <ListPreference
+    <Preference
         android:dependency="mod_enabled"
         android:key="ui_app_color"
         android:title="@string/pref_title_ui_app_color"
-        android:defaultValue="7"
         android:entries="@array/pref_ui_app_color_titles"
         android:entryValues="@array/pref_ui_app_color_values"
         android:negativeButtonText="@null"

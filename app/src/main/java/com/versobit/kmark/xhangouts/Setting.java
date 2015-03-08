@@ -179,37 +179,39 @@ public enum Setting {
         }
     }
 
-    enum AppColor {
-        AMBER(0, "quantum_amber"),
-        BLUE_GREY(1, "quantum_bluegrey"),
-        BROWN(2, "quantum_brown"),
-        CYAN(3, "quantum_cyan"),
-        DEEP_ORANGE(4, "quantum_deeporange"),
-        DEEP_PURPLE(5, "quantum_deeppurple"),
-        GOOGLE_BLUE(6, "quantum_googblue"),
-        GOOGLE_GREEN(7, "quantum_googgreen"),
-        GOOGLE_RED(8, "quantum_googred"),
-        GOOGLE_YELLOW(9, "quantum_googyellow"),
-        GREY(10, "quantum_grey"),
-        INDIGO(11, "quantum_indigo"),
-        LIGHT_BLUE(12, "quantum_lightblue"),
-        LIGHT_GREEN(13, "quantum_lightgreen"),
-        LIME(14, "quantum_lime"),
-        ORANGE(15, "quantum_orange"),
-        PINK(16, "quantum_pink"),
-        PURPLE(17, "quantum_purple"),
-        TEAL(18, "quantum_teal"),
-        VANILLA_BLUE(19, "quantum_vanillablue"),
-        VANILLA_GREEN(20, "quantum_vanillagreen"),
-        VANILLA_RED(21, "quantum_vanillared"),
-        YELLOW(22, "quantum_yellow");
+    public enum AppColor {
+        AMBER(0, "quantum_amber", 0xffffc107),
+        BLUE_GREY(1, "quantum_bluegrey", 0xff607d8b),
+        BROWN(2, "quantum_brown", 0xff795548),
+        CYAN(3, "quantum_cyan", 0xff00bcd4),
+        DEEP_ORANGE(4, "quantum_deeporange", 0xffff5722),
+        DEEP_PURPLE(5, "quantum_deeppurple", 0xff673ab7),
+        GOOGLE_BLUE(6, "quantum_googblue", 0xff4285f4),
+        GOOGLE_GREEN(7, "quantum_googgreen", 0xff0f9d58),
+        GOOGLE_RED(8, "quantum_googred", 0xffdb4437),
+        GOOGLE_YELLOW(9, "quantum_googyellow", 0xfff4b400),
+        GREY(10, "quantum_grey", 0xff9e9e9e),
+        INDIGO(11, "quantum_indigo", 0xff3f51b5),
+        LIGHT_BLUE(12, "quantum_lightblue", 0xff03a9f4),
+        LIGHT_GREEN(13, "quantum_lightgreen", 0xff8bc34a),
+        LIME(14, "quantum_lime", 0xffcddc39),
+        ORANGE(15, "quantum_orange", 0xffff9800),
+        PINK(16, "quantum_pink", 0xffe91e63),
+        PURPLE(17, "quantum_purple", 0xff9c27b0),
+        TEAL(18, "quantum_teal", 0xff009688),
+        VANILLA_BLUE(19, "quantum_vanillablue", 0xff5677fc),
+        VANILLA_GREEN(20, "quantum_vanillagreen", 0xff259b24),
+        VANILLA_RED(21, "quantum_vanillared", 0xffe51c23),
+        YELLOW(22, "quantum_yellow", 0xffffeb3b);
 
         private final int value;
         private final String prefix;
+        private final int color;
 
-        private AppColor(int value, String prefix) {
+        private AppColor(int value, String prefix, int color) {
             this.value = value;
             this.prefix = prefix;
+            this.color = color;
         }
 
         static AppColor fromInt(int value) {
@@ -221,12 +223,16 @@ public enum Setting {
             throw new IllegalArgumentException("No constant with value " + value + " found");
         }
 
-        int toInt() {
+        public int toInt() {
             return value;
         }
 
         String getPrefix() {
             return prefix;
+        }
+
+        public int getBaseColor() {
+            return color;
         }
     }
 }

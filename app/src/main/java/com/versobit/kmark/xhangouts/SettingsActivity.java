@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.versobit.kmark.xhangouts.dialogs.MmsApnConfigDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsScaleDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
+import com.versobit.kmark.xhangouts.dialogs.UiAppColorDialog;
 
 final public class SettingsActivity extends PreferenceActivity {
 
@@ -122,7 +123,19 @@ final public class SettingsActivity extends PreferenceActivity {
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_ui);
             bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
-            bindPreferenceSummaryToValue(findPreference(Setting.UI_APP_COLOR.toString()));
+            Preference colorConfig = findPreference(Setting.UI_APP_COLOR.toString());
+            updateUiAppColorSummary(colorConfig,
+                    Setting.AppColor.fromInt(prefs.getInt(Setting.UI_APP_COLOR.toString(), 7)));
+
+            colorConfig.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    UiAppColorDialog dialog = new UiAppColorDialog(preference);
+                    dialog.show();
+                    return true;
+                }
+            });
+
 
             // Add About preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());
@@ -220,6 +233,11 @@ final public class SettingsActivity extends PreferenceActivity {
 
         public static void updateMmsApnConfigSummary(final Preference preference, final Setting.ApnPreset preset) {
             preference.setSummary(preset.toString());
+        }
+
+        public static void updateUiAppColorSummary(final Preference preference, final Setting.AppColor color) {
+            String[] names = preference.getContext().getResources().getStringArray(R.array.pref_ui_app_color_titles);
+            preference.setSummary(names[color.toInt()]);
         }
     }
 }
