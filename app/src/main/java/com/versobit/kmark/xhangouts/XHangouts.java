@@ -302,7 +302,7 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 debug("Context set.");
-                hangoutsCtx = new WeakReference<Context>((Context)param.thisObject);
+                hangoutsCtx = new WeakReference<>((Context)param.thisObject);
             }
         });
 
