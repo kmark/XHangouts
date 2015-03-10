@@ -27,6 +27,9 @@ import android.content.res.XResources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
@@ -45,6 +48,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -141,6 +145,9 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
 
     private static final String ANDROID_SUPPORT_ABCVIEW = "android.support.v7.internal.widget.ActionBarContextView";
 
+    private static final String ANDROID_WIDGET_PROGRESSBAR = "android.widget.ProgressBar";
+    private static final float ANDROID_WIDGET_PROGRESSBAR_HUE = ColorUtils.hueFromRgb(0xff009688);
+
     private static final String HANGOUTS_COLOR_BUTTER_BAR_BG = "butter_bar_background";
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
@@ -152,6 +159,8 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
     private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
     private static final String HANGOUTS_DRAWABLE_ONGOING_BGP = "hangout_ongoing_bg_pressed";
+    private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
+    private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
 
     private static final String TESTED_VERSION_STR = "2.5.83281670";
     private static final int TESTED_VERSION_INT = 22181734;
@@ -288,6 +297,7 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
         final Class ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
         final Class ConversationActSuper = XposedHelpers.findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loadPackageParam.classLoader);
         final Class ActionBarContextView = XposedHelpers.findClass(ANDROID_SUPPORT_ABCVIEW, loadPackageParam.classLoader);
+        final Class ProgressBar = XposedHelpers.findClass(ANDROID_WIDGET_PROGRESSBAR, loadPackageParam.classLoader);
         final Class rWriterInnerClass1 = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1, loadPackageParam.classLoader);
         final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
         final Class transactionSettings = XposedHelpers.findClass(HANGOUTS_TRANSACTIONSETTINGS, loadPackageParam.classLoader);
@@ -540,6 +550,28 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
                             hangoutsCtx.get().getResources(),
                             Config.appColor.getPrefix() + HANGOUTS_QUANTUM_COLOR_SUFFIXES[5]
                     ));
+                }
+            });
+
+            // Hangouts does not style the indeterminate circular progress indicators since they
+            // already fit the green Hangouts theme on Lollipop. Shifting its hue makes it fit in with color changes.
+            XposedHelpers.findAndHookConstructor(ProgressBar, Context.class, AttributeSet.class, int.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    if (!Config.modEnabled || Config.appColor == Setting.AppColor.GOOGLE_GREEN) {
+                        return;
+                    }
+                    ProgressBar pb = (ProgressBar)param.thisObject;
+                    Drawable drawable = pb.getIndeterminateDrawable();
+                    if (drawable == null) {
+                        return;
+                    }
+                    drawable.setColorFilter(
+                            ColorUtils.adjustHue(
+                                    ColorUtils.hueFromRgb(Config.appColor.getBaseColor()) - ANDROID_WIDGET_PROGRESSBAR_HUE
+                            )
+                    );
+                    pb.setIndeterminateDrawable(drawable);
                 }
             });
         }
@@ -834,6 +866,19 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
             }
         });
 
+        final Drawable actBarTab = pkgRes.res.getDrawable(
+                pkgRes.res.getIdentifier(HANGOUTS_DRAWABLE_AB_TAB, "drawable", HANGOUTS_RES_PKG_NAME)
+        );
+        final float hueDiff = ColorUtils.hueFromRgb(appColors[5]) - HANGOUTS_DRAWABLE_AB_TAB_HUE;
+        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_AB_TAB, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources res, int id) throws Throwable {
+                Drawable coloredTab = actBarTab.mutate().getConstantState().newDrawable();
+                coloredTab.setColorFilter(ColorUtils.adjustHue(hueDiff));
+                return coloredTab;
+            }
+        });
+
         // Fixes "Sending as <number>" / Ongoing call bar on 4.x
         pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_ONGOING_BG,
                 appColors[5]);
@@ -897,5 +942,88 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
 
     private static void log(Throwable throwable) {
         XposedBridge.log(throwable);
+    }
+
+    private static final class ColorUtils {
+        // Thanks to Richard Lalancette at Stack Overflow and others for putting together adjustHue
+        // http://stackoverflow.com/a/7917978/238374
+        // https://groups.google.com/d/msg/android-developers/niFcg8OBmVM/Bj1j9s1cvFEJ
+        // http://gskinner.com/blog/archives/2007/12/colormatrix_cla.html
+        private static ColorFilter adjustHue(float value) {
+            ColorMatrix cm = new ColorMatrix();
+            adjustHue(cm, value);
+            return new ColorMatrixColorFilter(cm);
+        }
+
+        private static void adjustHue(ColorMatrix cm, float value) {
+            value = cleanValue(value, 180f) / 180f * (float) Math.PI;
+
+            if(value == 0) {
+                return;
+            }
+            float cosVal = (float)Math.cos(value);
+            float sinVal = (float)Math.sin(value);
+            float lumR = 0.213f;
+            float lumG = 0.715f;
+            float lumB = 0.072f;
+            float[] mat = new float[] {
+                    lumR + cosVal * (1 - lumR) + sinVal * (-lumR),
+                    lumG + cosVal * (-lumG) + sinVal * (-lumG),
+                    lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0,
+                    lumR + cosVal * (-lumR) + sinVal * (0.143f),
+                    lumG + cosVal * (1 - lumG) + sinVal * (0.140f),
+                    lumB + cosVal * (-lumB) + sinVal * (-0.283f), 0, 0,
+                    lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)),
+                    lumG + cosVal * (-lumG) + sinVal * (lumG),
+                    lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0,
+                    0f, 0f, 0f, 1f, 0f,
+                    0f, 0f, 0f, 0f, 1f
+            };
+            cm.postConcat(new ColorMatrix(mat));
+        }
+
+        // https://groups.google.com/d/msg/android-developers/niFcg8OBmVM/zRC-NNKSSfAJ
+        private static float cleanValue(float p_val, float p_limit) {
+            return Math.min(p_limit, Math.max(-p_limit, p_val));
+        }
+
+        // Retrieves the hue value in degrees from a packed (A)RGB color.
+        // Adapted from a C algorithm by Eugene Vishnevsky.
+        // http://www.cs.rit.edu/~ncs/color/t_convert.html
+        private static float hueFromRgb(int rgb) {
+            int r = (rgb >> 16) & 0xFF;
+            int g = (rgb >> 8) & 0xFF;
+            int b = rgb & 0xFF;
+
+            float min = Math.min(Math.min(r, g), b);
+            float max = Math.max(Math.max(r, g), b);
+            float delta = max - min;
+
+            if(max == 0x00 || min == 0xFF) {
+                // Black or white
+                return 0;
+            }
+
+            float h;
+
+            if(r == max) {
+                // Between yellow and magenta
+                h = (g - b) / delta;
+            } else if(g == max) {
+                // Between cyan and yellow
+                h = 2 + (b - r) / delta;
+            } else {
+                // Between magenta and cyan
+                h = 4 + (r - g) / delta;
+            }
+
+            // Degrees
+            h *= 60;
+            if(h < 0) {
+                h += 360;
+            }
+
+            return h;
+        }
     }
 }
