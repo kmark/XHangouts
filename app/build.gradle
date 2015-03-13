@@ -15,13 +15,13 @@ def gitRev = { ->
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 22
+    buildToolsVersion "22"
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 10
         versionName "1.7-" + gitRev()
         signingConfig signingConfigs.config
