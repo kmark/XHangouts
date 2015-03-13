@@ -24,7 +24,6 @@ android {
         targetSdkVersion 22
         versionCode 10
         versionName "1.7-" + gitRev()
-        signingConfig signingConfigs.config
     }
 }
 
