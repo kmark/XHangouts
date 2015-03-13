@@ -82,7 +82,7 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
     private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cex";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cne";
     // private static a(IIIILandroid/net/Uri;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
@@ -90,51 +90,50 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     // private static e(Ljava/lang/String;)Ljava/lang/String
     private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "e";
 
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.v2.ComposeMessageView";
+    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.impl.ComposeMessageView";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "h";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "d";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "l";
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "apc";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "ari";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "byp";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "boj";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bfr";
+    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "buu";
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST = "a";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER = "byk";
+    private static final String HANGOUTS_BABEL_NETWORKQUEUE_INTERFACE = "bfs";
 
-    private static final String HANGOUTS_MMSTRANSACTIONS = "cev";
+    private static final String HANGOUTS_MMSTRANSACTIONS = "cnc";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
-    private static final String HANGOUTS_MMSTRANSACTIONS_DEBUGFIELD = "a";
 
-    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cfq";
+    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cnx";
     private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
 
-    private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vm";
-    private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wg";
+    private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vo";
+    private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wi";
 
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "ceq";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "cmx";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD = "b";
 
-    private static final String HANGOUTS_MMSSENDER = "wo";
+    private static final String HANGOUTS_MMSSENDER = "wq";
     private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
 
-    private static final String HANGOUTS_MMS_APN = "cfr";
+    private static final String HANGOUTS_MMS_APN = "cny";
     private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
     private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
     private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
     private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
     private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
 
-    private static final String HANGOUTS_MMS_EXCEPTION = "ceu";
+    private static final String HANGOUTS_MMS_EXCEPTION = "cnb";
 
-    private static final String HANGOUTS_MMSC_RESPONSE = "vx";
+    private static final String HANGOUTS_MMSC_RESPONSE = "vz";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
 
     private static final String HANGOUTS_MENU_CONVO_CALL = "realtimechat_conversation_call_menu_item";
@@ -162,8 +161,8 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
     private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
 
-    private static final String TESTED_VERSION_STR = "2.5.83281670";
-    private static final int TESTED_VERSION_INT = 22181734;
+    private static final String TESTED_VERSION_STR = "3.0.87531466";
+    private static final int TESTED_VERSION_INT = 22260166;
 
     // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
     private WeakReference<Context> hangoutsCtx;
@@ -299,7 +298,8 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
         final Class ActionBarContextView = XposedHelpers.findClass(ANDROID_SUPPORT_ABCVIEW, loadPackageParam.classLoader);
         final Class ProgressBar = XposedHelpers.findClass(ANDROID_WIDGET_PROGRESSBAR, loadPackageParam.classLoader);
         final Class rWriterInnerClass1 = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1, loadPackageParam.classLoader);
-        final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
+        final Class NetworkQueueInterface = XposedHelpers.findClass(HANGOUTS_BABEL_NETWORKQUEUE_INTERFACE, loadPackageParam.classLoader);
+        //final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
         final Class transactionSettings = XposedHelpers.findClass(HANGOUTS_TRANSACTIONSETTINGS, loadPackageParam.classLoader);
         final Class mmsSendReceiveManager = XposedHelpers.findClass(HANGOUTS_MMSSENDRECEIVEMANAGER, loadPackageParam.classLoader);
         final Class mmsMsgClass1 = XposedHelpers.findClass(HANGOUTS_MMS_MESSAGECLASS1, loadPackageParam.classLoader);
@@ -552,31 +552,9 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
                     ));
                 }
             });
-
-            // Hangouts does not style the indeterminate circular progress indicators since they
-            // already fit the green Hangouts theme on Lollipop. Shifting its hue makes it fit in with color changes.
-            XposedHelpers.findAndHookConstructor(ProgressBar, Context.class, AttributeSet.class, int.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    if (!Config.modEnabled || Config.appColor == Setting.AppColor.GOOGLE_GREEN) {
-                        return;
-                    }
-                    ProgressBar pb = (ProgressBar)param.thisObject;
-                    Drawable drawable = pb.getIndeterminateDrawable();
-                    if (drawable == null) {
-                        return;
-                    }
-                    drawable.setColorFilter(
-                            ColorUtils.adjustHue(
-                                    ColorUtils.hueFromRgb(Config.appColor.getBaseColor()) - ANDROID_WIDGET_PROGRESSBAR_HUE
-                            )
-                    );
-                    pb.setIndeterminateDrawable(drawable);
-                }
-            });
         }
 
-        XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, rWriterSqlHelper, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, NetworkQueueInterface, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 debug(String.format("%s -> %s called", HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST));
