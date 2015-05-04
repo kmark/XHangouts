@@ -23,3 +23,7 @@ local.properties
 *~
 *.swp
 .DS_Store
+
+# Signing stuff
+/*/signing.gradle
+
