@@ -19,266 +19,71 @@
 
 package com.versobit.kmark.xhangouts;
 
-import android.content.ContentResolver;
+import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.content.res.Resources;
-import android.content.res.XResources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ColorFilter;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Build;
-import android.text.InputType;
-import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
-import java.util.List;
+import com.versobit.kmark.xhangouts.mods.MmsApnSplicing;
+import com.versobit.kmark.xhangouts.mods.MmsResizing;
+import com.versobit.kmark.xhangouts.mods.UiAttachAnytime;
+import com.versobit.kmark.xhangouts.mods.UiCallButtons;
+import com.versobit.kmark.xhangouts.mods.UiColorize;
+import com.versobit.kmark.xhangouts.mods.UiEnterKey;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import static de.robv.android.xposed.XposedHelpers.callMethod;
+import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
+import static de.robv.android.xposed.XposedHelpers.findClass;
+
 public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
-    private static final String TAG = "XHangouts";
+    private static final String TAG = XHangouts.class.getSimpleName();
 
     private static final String ACTIVITY_THREAD_CLASS = "android.app.ActivityThread";
     private static final String ACTIVITY_THREAD_CURRENTACTHREAD = "currentActivityThread";
     private static final String ACTIVITY_THREAD_GETSYSCTX = "getSystemContext";
 
-    static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
-    private static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
+    private static final Class ACTIVITY_THREAD = findClass(ACTIVITY_THREAD_CLASS, null);
 
-    // TODO: Find a better way to manage these strings
-    private static final String HANGOUTS_ESAPP_CLASS = "com.google.android.apps.hangouts.phone.EsApplication";
-    private static final String HANGOUTS_ESAPP_ONCREATE = "onCreate";
-
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cne";
-    // private static a(IIIILandroid/net/Uri;)[B
-    private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
-
-    private static final String HANGOUTS_ESPROVIDER_CLASS = "com.google.android.apps.hangouts.content.EsProvider";
-    // private static e(Ljava/lang/String;)Ljava/lang/String
-    private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "e";
-
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.impl.ComposeMessageView";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "h";
-    // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON = "d";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT = "l";
-
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "ari";
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
-
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bfr";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "buu";
-    private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST = "a";
-    private static final String HANGOUTS_BABEL_NETWORKQUEUE_INTERFACE = "bfs";
-
-    private static final String HANGOUTS_MMSTRANSACTIONS = "cnc";
-    private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
-    private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
-
-    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cnx";
-    private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
-
-    private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vo";
-    private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wi";
-
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "cmx";
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD = "b";
-
-    private static final String HANGOUTS_MMSSENDER = "wq";
-    private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
-
-    private static final String HANGOUTS_MMS_APN = "cny";
-    private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
-    private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
-    private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
-    private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
-    private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
-
-    private static final String HANGOUTS_MMS_EXCEPTION = "cnb";
-
-    private static final String HANGOUTS_MMSC_RESPONSE = "vz";
-    private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
-
-    private static final String HANGOUTS_MENU_CONVO_CALL = "realtimechat_conversation_call_menu_item";
-    private static final String HANGOUTS_MENU_CONVO_VIDEOCALL = "start_hangout_menu_item";
-
-    private static final String[] HANGOUTS_QUANTUM_COLOR_SUFFIXES = {"50", "100", "200", "300",
-            "400", "500", "600", "700", "800", "900", "A100", "A200", "A400", "A700"};
-
-    private static final String ANDROID_SUPPORT_ABCVIEW = "android.support.v7.internal.widget.ActionBarContextView";
-
-    private static final String ANDROID_WIDGET_PROGRESSBAR = "android.widget.ProgressBar";
-    private static final float ANDROID_WIDGET_PROGRESSBAR_HUE = ColorUtils.hueFromRgb(0xff009688);
-
-    private static final String HANGOUTS_COLOR_BUTTER_BAR_BG = "butter_bar_background";
-    private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
-    private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
-    private static final String HANGOUTS_COLOR_PRIMARY = "primary";
-    private static final String HANGOUTS_COLOR_PRIMARY_DARK = "primary_dark";
-    private static final String HANGOUTS_COLOR_QUANTUM_GOOGGREEN = "quantum_googgreen";
-
-    private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
-    private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
-    private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
-    private static final String HANGOUTS_DRAWABLE_ONGOING_BGP = "hangout_ongoing_bg_pressed";
-    private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
-    private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
+    public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
+    public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
     private static final String TESTED_VERSION_STR = "3.0.87531466";
     private static final int TESTED_VERSION_INT = 22260166;
 
-    // Not certain if I need a WeakReference here. Without it could prevent the Context from being closed?
-    private WeakReference<Context> hangoutsCtx;
+    private final Config config = new Config();
 
-    // Impossible default ID since resource IDs start with 0x7f
-    private static final int RES_ID_UNSET = 0;
-
-    // Resources.getIdentifier is expensive so we're caching results
-    private int menuItemCallResId = RES_ID_UNSET;
-    private int menuItemVideoCallResId = RES_ID_UNSET;
-
-    private static final class Config {
-
-        private static final Uri ALL_PREFS_URI = Uri.parse("content://" + SettingsProvider.AUTHORITY + "/all");
-
-        // Give us some sane defaults, just in case
-        private static boolean modEnabled = true;
-        private static boolean resizing = true;
-        private static boolean rotation = true;
-        private static int rotateMode = -1;
-        private static int imageWidth = 1024;
-        private static int imageHeight = 1024;
-        private static Setting.ImageFormat imageFormat = Setting.ImageFormat.JPEG;
-        private static int imageQuality = 80;
-        private static boolean apnSplicing = false;
-        private static Setting.ApnPreset apnPreset = Setting.ApnPreset.CUSTOM;
-        private static String mmsc = "";
-        private static String proxyHost = "";
-        private static int proxyPort = -1;
-        private static Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
-        private static boolean attachAnytime = true;
-        private static boolean hideCallButtons = false;
-        private static Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
-        private static boolean debug = false;
-
-        private static void reload(Context ctx) {
-            Cursor prefs = ctx.getContentResolver().query(ALL_PREFS_URI, null, null, null, null);
-            if(prefs == null) {
-                log("Failed to retrieve settings!");
-                return;
-            }
-            while(prefs.moveToNext()) {
-                switch (Setting.fromString(prefs.getString(SettingsProvider.QUERY_ALL_KEY))) {
-                    case MOD_ENABLED:
-                        modEnabled = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                        continue;
-                    case MMS_RESIZE_ENABLED:
-                        resizing = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                        continue;
-                    case MMS_ROTATE_ENABLED:
-                        rotation = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                        continue;
-                    case MMS_ROTATE_MODE:
-                        rotateMode = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case MMS_SCALE_WIDTH:
-                        imageWidth = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case MMS_SCALE_HEIGHT:
-                        imageHeight = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case MMS_IMAGE_TYPE:
-                        imageFormat = Setting.ImageFormat.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
-                        continue;
-                    case MMS_IMAGE_QUALITY:
-                        imageQuality = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case MMS_APN_SPLICING_ENABLED:
-                        apnSplicing = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                        continue;
-                    case MMS_APN_SPLICING_APN_CONFIG_PRESET:
-                        apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
-                        continue;
-                    case MMS_APN_SPLICING_APN_CONFIG_MMSC:
-                        mmsc = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME:
-                        proxyHost = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT:
-                        proxyPort = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
-                        continue;
-                    case UI_ENTER_KEY:
-                        enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
-                        continue;
-                    case UI_ATTACH_ANYTIME:
-                        attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                        continue;
-                    case UI_HIDE_CALL_BUTTONS:
-                        hideCallButtons = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                        continue;
-                    case UI_APP_COLOR:
-                        appColor = Setting.AppColor.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
-                        continue;
-                    case DEBUG:
-                        debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
-                }
-            }
-            prefs.close();
-        }
-    }
+    private final Module[] modules = new Module[] {
+            new MmsResizing(config),
+            new MmsApnSplicing(config),
+            new UiEnterKey(config),
+            new UiAttachAnytime(config),
+            new UiCallButtons(config),
+            new UiColorize(config)
+    };
 
     @Override
-    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        if(loadPackageParam.packageName.equals(BuildConfig.APPLICATION_ID)) {
-            XposedHelpers.findAndHookMethod(XApp.class.getCanonicalName(), loadPackageParam.classLoader, "isActive", XC_MethodReplacement.returnConstant(true));
+    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpp) throws Throwable {
+        if(lpp.packageName.equals(BuildConfig.APPLICATION_ID)) {
+            findAndHookMethod(XApp.class, "isActive", XC_MethodReplacement.returnConstant(true));
         }
-        if(!loadPackageParam.packageName.equals(HANGOUTS_PKG_NAME)) {
+
+        if(!lpp.packageName.equals(HANGOUTS_PKG_NAME)) {
             return;
         }
 
-        Object activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass(ACTIVITY_THREAD_CLASS, null), ACTIVITY_THREAD_CURRENTACTHREAD);
-        final Context systemCtx = (Context)XposedHelpers.callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
+        Object activityThread = callStaticMethod(ACTIVITY_THREAD, ACTIVITY_THREAD_CURRENTACTHREAD);
+        Context systemCtx = (Context)callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
 
-        Config.reload(systemCtx);
-        if(!Config.modEnabled) {
+        config.reload(systemCtx);
+        if(!config.modEnabled) {
             return;
         }
 
@@ -292,620 +97,59 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
             log(String.format("Warning: Your Hangouts version differs from the version XHangouts was built against: v%s (%d)", TESTED_VERSION_STR, TESTED_VERSION_INT));
         }
 
-        // Hangouts class definitions
-        final Class ComposeMessageView = XposedHelpers.findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loadPackageParam.classLoader);
-        final Class ConversationActSuper = XposedHelpers.findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loadPackageParam.classLoader);
-        final Class ActionBarContextView = XposedHelpers.findClass(ANDROID_SUPPORT_ABCVIEW, loadPackageParam.classLoader);
-        final Class ProgressBar = XposedHelpers.findClass(ANDROID_WIDGET_PROGRESSBAR, loadPackageParam.classLoader);
-        final Class rWriterInnerClass1 = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1, loadPackageParam.classLoader);
-        final Class NetworkQueueInterface = XposedHelpers.findClass(HANGOUTS_BABEL_NETWORKQUEUE_INTERFACE, loadPackageParam.classLoader);
-        //final Class rWriterSqlHelper = XposedHelpers.findClass(HANGOUTS_BABEL_REQUESTWRITER_SQLHELPER, loadPackageParam.classLoader);
-        final Class transactionSettings = XposedHelpers.findClass(HANGOUTS_TRANSACTIONSETTINGS, loadPackageParam.classLoader);
-        final Class mmsSendReceiveManager = XposedHelpers.findClass(HANGOUTS_MMSSENDRECEIVEMANAGER, loadPackageParam.classLoader);
-        final Class mmsMsgClass1 = XposedHelpers.findClass(HANGOUTS_MMS_MESSAGECLASS1, loadPackageParam.classLoader);
-        final Class mmsMsgClass2 = XposedHelpers.findClass(HANGOUTS_MMS_MESSAGECLASS2, loadPackageParam.classLoader);
-        final Class mmsTransactions = XposedHelpers.findClass(HANGOUTS_MMSTRANSACTIONS, loadPackageParam.classLoader);
-        final Class mmsSender = XposedHelpers.findClass(HANGOUTS_MMSSENDER, loadPackageParam.classLoader);
-
-        // Get application context to use later
-        XposedHelpers.findAndHookMethod(HANGOUTS_ESAPP_CLASS, loadPackageParam.classLoader, HANGOUTS_ESAPP_ONCREATE, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                debug("Context set.");
-                hangoutsCtx = new WeakReference<>((Context)param.thisObject);
-            }
-        });
-
-
-        // This is called when the user hits the send button on an image MMS
-        // FIXME: there seem to be a few instances where this is not called, find alternate code paths
-        XposedHelpers.findAndHookMethod(HANGOUTS_PROCESS_MMS_IMG_CLASS, loadPackageParam.classLoader, HANGOUTS_PROCESS_MMS_IMG_METHOD, int.class, int.class, int.class, int.class, Uri.class, new XC_MethodHook() {
-            // int1 = ? (usually zero, it seems)
-            // int2 = max scaled width, appears to be 640 if landscape or square, 480 if portrait
-            // int3 = max scaled height, appears to be 640 if portrait, 480 if landscape or square
-            // int4 ?, seems to be width * height - 1024 = 306176
-            // Uri1 content:// path that references the input image
-
-            // At least one instance has been reported of int2, int3, and int4 being populated with
-            // much larger values resulting in an image much too large to be sent via MMS
-
-            // We're not replacing the method so that even if we fail, which is conceivable, we
-            // safely fall back to the original Hangouts result. This also means that if the Hangout
-            // function call does something weird that needs to be done (that we don't do) it still
-            // gets done. Downside is that we're running code that may never be used.
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Config.reload(systemCtx);
-                if(!Config.modEnabled || !Config.resizing) {
-                    return;
-                }
-
-                // Thanks to cottonBallPaws @ http://stackoverflow.com/a/4250279/238374
-
-                final int paramWidth = (Integer)param.args[1];
-                final int paramHeight = (Integer)param.args[2];
-                final Uri imgUri = (Uri)param.args[4];
-
-                // Prevents leak of Hangouts account email to the debug log
-                final String safeUri = imgUri.toString().substring(0, imgUri.toString().indexOf("?"));
-
-                debug(String.format("New MMS image! %d, %d, %s, %s, %s", paramWidth, paramHeight, safeUri, param.args[0], param.args[3]));
-                String quality = Config.imageFormat == Setting.ImageFormat.PNG ? "lossless" : String.valueOf(Config.imageQuality);
-                debug(String.format("Configuration: %d×%d, %s at %s quality", Config.imageWidth, Config.imageHeight,
-                        Config.imageFormat.toString(), quality));
-
-                ContentResolver esAppResolver = hangoutsCtx.get().getContentResolver();
-                InputStream imgStream = esAppResolver.openInputStream(imgUri);
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                BitmapFactory.decodeStream(imgStream, null, options);
-                imgStream.close();
-
-                int srcW = options.outWidth;
-                int srcH = options.outHeight;
-
-                debug(String.format("Original: %d×%d", srcW, srcH));
-
-                int rotation = 0;
-                if(Config.rotation) {
-                    rotation = Config.rotateMode;
-                    if(rotation == -1) {
-                        // Find the rotated "real" dimensions to determine proper final scaling
-                        // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
-                        String scratchId = imgUri.getPathSegments().get(1);
-                        String filePath = (String) XposedHelpers.callStaticMethod(XposedHelpers.findClass(HANGOUTS_ESPROVIDER_CLASS, loadPackageParam.classLoader), HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, scratchId);
-                        if(new File(filePath).exists()) {
-                            debug(String.format("Cache file located: %s", filePath));
-                            ExifInterface exif = new ExifInterface(filePath);
-                            // Let's pretend other orientation modes don't exist
-                            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                                case ExifInterface.ORIENTATION_ROTATE_90:
-                                    rotation = 90;
-                                    break;
-                                case ExifInterface.ORIENTATION_ROTATE_180:
-                                    rotation = 180;
-                                    break;
-                                case ExifInterface.ORIENTATION_ROTATE_270:
-                                    rotation = 270;
-                                    break;
-                                default:
-                                    rotation = 0;
-                            }
-                        } else {
-                            rotation = 0;
-                            log("Cache file does not exist! Skipping orientation correction.");
-                            debug(String.format("Bad cache path: %s", filePath));
-                            // We could work around this and write the image byte stream out and then
-                            // read it back in but that would take a relatively long time. I've
-                            // only seen the scratch pad method fail once (when I called the wrong
-                            // function from EsProvider).
-                        }
-                    }
-                    if (rotation != 0) {
-                        // Technically we could just swap width and height if rotation = 90 or 270 but
-                        // this is a much more fun reference implementation.
-                        // TODO: apply rotation to max values as well? Rotated images are scaled more than non
-                        Matrix imgMatrix = new Matrix();
-                        imgMatrix.postRotate(rotation);
-                        RectF imgRect = new RectF();
-                        imgMatrix.mapRect(imgRect, new RectF(0, 0, srcW, srcH));
-                        srcW = Math.round(imgRect.width());
-                        srcH = Math.round(imgRect.height());
-                        debug(String.format("Rotated: %d×%d, Rotation: %d°", srcW, srcH, rotation));
-                    }
-                }
-
-                // Find the highest possible sample size divisor that is still larger than our maxes
-                int inSS = 1;
-                while((srcW / 2 > Config.imageWidth) || (srcH / 2 > Config.imageHeight)) {
-                    srcW /= 2;
-                    srcH /= 2;
-                    inSS *= 2;
-                }
-
-                // Use the longest side to determine scale, this should always be <= 1
-                float scale = ((float)(srcW > srcH ? Config.imageWidth : Config.imageHeight)) / (srcW > srcH ? srcW : srcH);
-
-                debug(String.format("Estimated: %d×%d, Sample Size: 1/%d, Scale: %f", srcW, srcH, inSS, scale));
-
-                // Load the sampled image into memory
-                options.inJustDecodeBounds = false;
-                options.inDither = false;
-                options.inSampleSize = inSS;
-                options.inScaled = false;
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                imgStream = esAppResolver.openInputStream(imgUri);
-                Bitmap sampled = BitmapFactory.decodeStream(imgStream, null, options);
-                imgStream.close();
-                debug(String.format("Sampled: %d×%d", sampled.getWidth(), sampled.getHeight()));
-
-                // Load our scale and rotation changes into a matrix and use it to create the final bitmap
-                Matrix m = new Matrix();
-                m.postScale(scale, scale);
-                m.postRotate(rotation);
-                Bitmap scaled = Bitmap.createBitmap(sampled, 0, 0, sampled.getWidth(), sampled.getHeight(), m, true);
-                sampled.recycle();
-                debug(String.format("Scaled: %d×%d", scaled.getWidth(), scaled.getHeight()));
-
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                Bitmap.CompressFormat compressFormat = null;
-                final int compressQ = Config.imageFormat == Setting.ImageFormat.PNG ? 0 : Config.imageQuality;
-                switch (Config.imageFormat) {
-                    case PNG:
-                        compressFormat = Bitmap.CompressFormat.PNG;
-                        break;
-                    case JPEG:
-                        compressFormat = Bitmap.CompressFormat.JPEG;
-                        break;
-                }
-                scaled.compress(compressFormat, compressQ, output);
-                final int bytes = output.size();
-                scaled.recycle();
-
-                param.setResult(output.toByteArray());
-                output.close();
-                debug(String.format("MMS image processing complete. %d bytes", bytes));
-            }
-        });
-
-        XposedHelpers.findAndHookConstructor(ComposeMessageView, Context.class, AttributeSet.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-                Config.reload((Context)param.args[0]);
-                if(Config.modEnabled) {
-                    debug(String.format("ComposeMessageView: %s, %s", Config.enterKey.name(), Config.attachAnytime));
-                    if(Config.enterKey != Setting.UiEnterKey.EMOJI_SELECTOR) {
-                        EditText et = (EditText)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT);
-                        // Remove Emoji selector (works for new line)
-                        int inputType = et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
-                        if(Config.enterKey == Setting.UiEnterKey.SEND) {
-                            // Disable multi-line input which shows the send button
-                            inputType ^= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
-                        }
-                        et.setInputType(inputType);
-                    }
-                    if(Config.attachAnytime) {
-                        ImageButton d = (ImageButton)XposedHelpers.getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON);
-                        d.setOnLongClickListener(new View.OnLongClickListener() {
-                            @Override
-                            public boolean onLongClick(View v) {
-                                ((Runnable)XposedHelpers.callStaticMethod(ComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ADDATTACHMENT, param.thisObject)).run();
-                                return true;
-                            }
-                        });
-                    }
-                }
-            }
-        });
-
-        // Called by at least SwiftKey and Fleksy on new line, but not the AOSP or Google keyboard
-        XposedHelpers.findAndHookMethod(ComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION, TextView.class, int.class, KeyEvent.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                int actionId = (Integer)param.args[1];
-                if(Config.modEnabled && actionId == EditorInfo.IME_NULL && Config.enterKey == Setting.UiEnterKey.NEWLINE) {
-                    param.setResult(false); // We do not handle the enter action, and it adds a newline for us
-                }
-            }
-        });
-
-        XposedHelpers.findAndHookMethod(ConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM, Menu.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                if(!Config.modEnabled || !Config.hideCallButtons) {
-                    return;
-                }
-                if(menuItemCallResId == RES_ID_UNSET || menuItemVideoCallResId == RES_ID_UNSET) {
-                    Resources res = hangoutsCtx.get().getResources();
-                    menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
-                    menuItemVideoCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_VIDEOCALL, "id", HANGOUTS_RES_PKG_NAME);
-                    debug(String.format("Found convo menu item resource IDs: 0x%x, 0x%x",
-                            menuItemCallResId, menuItemVideoCallResId));
-                }
-                Menu menu = (Menu) param.args[0];
-                for (int i = 0; i < menu.size(); i++) {
-                    MenuItem item = menu.getItem(i);
-                    if(item.getItemId() == menuItemCallResId || item.getItemId() == menuItemVideoCallResId) {
-                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-                    }
-                }
-            }
-        });
-
-        // On Lollipop the ActionBarContextView still uses the GOOGLE_GREEN theme unless we explicitly
-        // set its background drawable. I'm not sure why it doesn't follow the updated resources.
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // Had to hook into View.setBackgroundDrawable to find this one...
-            XposedHelpers.findAndHookConstructor(ActionBarContextView, Context.class, AttributeSet.class, int.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    if(!Config.modEnabled || Config.appColor == Setting.AppColor.GOOGLE_GREEN) {
-                        return;
-                    }
-                    // We could check to make sure we're operating on the correct view but Hangouts
-                    // doesn't use these very often (once?) so we should be safe
-                    ((View)param.thisObject).setBackgroundColor(getColorFromResources(
-                            hangoutsCtx.get().getResources(),
-                            Config.appColor.getPrefix() + HANGOUTS_QUANTUM_COLOR_SUFFIXES[5]
-                    ));
-                }
-            });
+        // Call hook method on all modules
+        for(Module mod : modules) {
+            mod.hook(lpp.classLoader);
         }
 
-        XposedHelpers.findAndHookMethod(HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, loadPackageParam.classLoader, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST, Context.class, rWriterInnerClass1, NetworkQueueInterface, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug(String.format("%s -> %s called", HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2, HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2_SENDMMSREQUEST));
-            }
-        });
-
-        XposedHelpers.findAndHookMethod(mmsTransactions, HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1, Context.class, String[].class, String.class, String.class, String.class, String.class, int.class, int.class, int.class, long.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug(String.format("%s -> %s called", mmsTransactions.getSimpleName(), HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1));
-            }
-        });
-
-        XposedHelpers.findAndHookMethod(mmsTransactions, HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2, Context.class, mmsMsgClass2, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug(String.format("%s -> %s2 called (before)", mmsTransactions.getSimpleName(), HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2));
-            }
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                debug(String.format("%s -> %s2 called (after)", mmsTransactions.getSimpleName(), HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2));
-            }
-        });
-
-        XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1, Context.class, transactionSettings, mmsMsgClass1, String.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug(String.format("%s -> %s1 called", mmsSendReceiveManager.getSimpleName(), HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1));
-            }
-        });
-
-        // This prevents the initial request for MMS APN connectivity. It populates a new
-        // TransactionSettings instance with APN data. This is normally done by the broadcast
-        // receiver as it listens for connectivity state changes. Instead of waiting this method
-        // returns with a valid result almost instantly forcing the MMS process to continue.
-        XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK, Context.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Config.reload((Context)param.args[0]);
-                if(!Config.apnSplicing) {
-                    return;
-                }
-                if(Config.apnPreset == Setting.ApnPreset.CUSTOM && Config.mmsc.isEmpty()) {
-                    log("APN splicing enabled but no MMSC has been specified.");
-                    return;
-                }
-
-                debug(String.format("MMS APN splicing configuration: %s, %s, %s, %d",
-                        Config.apnPreset.toString(), Config.mmsc, Config.proxyHost, Config.proxyPort));
-
-                String localMmsc = Config.mmsc;
-                String localProxyHost = Config.proxyHost;
-                int localProxyPort = Config.proxyPort;
-                if(Config.apnPreset != Setting.ApnPreset.CUSTOM) {
-                    localMmsc = Config.apnPreset.getMmsc();
-                    localProxyHost = Config.apnPreset.getProxyHost();
-                    localProxyPort = Config.apnPreset.getProxyPort();
-                }
-                if(localProxyHost.isEmpty()) {
-                    localProxyHost = null;
-                    localProxyPort = -1;
-                } else {
-                    localProxyPort = localProxyPort == -1 ? 80 : localProxyPort;
-                }
-
-                Object timerField = XposedHelpers.getStaticObjectField(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD);
-                // This /should/ synchronize with the actual static field not our local representation of it
-                synchronized (timerField) {
-
-                    // Do not splice if not connected to mobile
-                    if(!isMobileConnected(hangoutsCtx.get())) {
-                        debug("Not on a mobile connection. Not splicing.");
-                        return;
-                    }
-
-                    debug("GOING FOR IT!");
-
-                    // Create APN
-                    Class mmsApn = XposedHelpers.findClass(HANGOUTS_MMS_APN, loadPackageParam.classLoader);
-                    Constructor<?> newMmsApn = XposedHelpers.findConstructorExact(mmsApn, String.class, String.class, int.class);
-                    // MMSC, Proxy, Port
-                    Object instanceMmsApn = newMmsApn.newInstance(localMmsc, localProxyHost, localProxyPort);
-                    XposedHelpers.setObjectField(instanceMmsApn, HANGOUTS_MMS_APN_RAWMMSCFIELD, localMmsc);
-
-                    // Creates a TransactionSettings object (this is normally done by the broadcast receiver)
-                    Constructor<?> newTransactionSettings = XposedHelpers.findConstructorExact(transactionSettings);
-                    newTransactionSettings.setAccessible(true);
-                    Object instanceTransactionSettings = newTransactionSettings.newInstance();
-
-                    // Add APN to the list
-                    List apnList = (List)XposedHelpers.getObjectField(instanceTransactionSettings, HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
-                    apnList.clear();
-                    // You bet your ass this is an unchecked call, Android Studio
-                    apnList.add(instanceMmsApn);
-
-                    // Return the needed TransactionSettings object
-                    param.setResult(instanceTransactionSettings);
-                }
-            }
-        });
-
-        // This hook replaces a call to the executeMmsRequest method of the MmsSendReceiveManager.
-        // It calls the method that actually sends the MMS HTTP request. For some reason our little
-        // connectivity shortcut causes this to fail. Instead of spending even more time trying to
-        // figure out why that is, I've just replaced the entire method with something that's far
-        // less picky about what you feed it. Returning null is sometimes a valid result. Admittedly
-        // this replacement may not be nearly as robust as the original implementation.
-        XposedHelpers.findAndHookMethod(mmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, Context.class, transactionSettings, String.class, int.class, byte[].class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Config.reload((Context)param.args[0]);
-                if(!Config.apnSplicing) {
-                    return;
-                }
-
-                debug(String.format("%s -> %s2 called", mmsSendReceiveManager.getSimpleName(), HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2));
-
-                if(!isMobileConnected(hangoutsCtx.get())) {
-                    return;
-                }
-
-                for(Object o : param.args) {
-                    debug(String.format("%s -> %s2 args: %s", mmsSendReceiveManager.getSimpleName(), HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, o));
-                }
-
-                Object mmsc = param.args[2];
-                Object isProxy = false;
-                Object proxy = null;
-                Object port = -1;
-                for(Object o : param.args) {
-                    debug(String.format("args1: %s", o));
-                }
-
-                // When sending String will be null, int will be 1
-                // When receiving String will be the message URL, int will be 2, byte[] will be null
-                // When sending the delivery report String will be null, int will be 1
-
-                if(param.args[2] == null) {
-                    // We do not have a custom URL so we need to pull one from the APN list
-
-                    // Get the first MMS APN in the list
-                    List apnList = (List)XposedHelpers.getObjectField(param.args[1], HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
-                    for(Object o : apnList) {
-                        debug("APN: " + o.toString());
-                    }
-                    Object apn = apnList.get(0);
-                    mmsc = XposedHelpers.getObjectField(apn, HANGOUTS_MMS_APN_MMSCFIELD);
-                    isProxy = XposedHelpers.callMethod(apn, HANGOUTS_MMS_APN_ISPROXYSET);
-                    proxy = XposedHelpers.getObjectField(apn, HANGOUTS_MMS_APN_PROXYFIELD);
-                    port = XposedHelpers.getObjectField(apn, HANGOUTS_MMS_APN_PORTFIELD);
-                }
-                debug(String.format("Executing MMS HTTP request. %s, %s, %s, %s, %s, %s, %s, %s",
-                        param.args[0], mmsc, param.args[4], param.args[3],
-                        isProxy, proxy, port, false));
-
-                byte[] result;
-                try {
-                    result = (byte[])XposedHelpers.callStaticMethod(mmsSender, HANGOUTS_MMSSENDER_DOSEND,
-                            param.args[0],
-                            mmsc,
-                            param.args[4],
-                            param.args[3],
-                            isProxy,
-                            proxy,
-                            port,
-                            false);
-                } catch (XposedHelpers.InvocationTargetError ex) {
-                    log("MMS HTTP request failed!");
-                    debug(ex.getCause());
-                    Constructor mmsException = XposedHelpers.findConstructorExact(HANGOUTS_MMS_EXCEPTION, loadPackageParam.classLoader, String.class);
-                    param.setThrowable((Throwable)mmsException.newInstance("MMS HTTP request failed: " + ex.getCause()));
-                    return;
-                }
-                // XposedHelpers.callMethod(methodHookParam.args[1], "a", apn);
-
-
-                if(result == null) {
-                    debug("RESULT NULL, RETURNING NULL");
-                    param.setResult(null);
-                    return;
-                }
-                debug("RESULT");
-                // debug(new String(result, "UTF-8"));
-                if(result.length > 0) {
-                    try {
-                        Class mmscResponse = XposedHelpers.findClass(HANGOUTS_MMSC_RESPONSE, loadPackageParam.classLoader);
-                        Object instanceMmscResponse = XposedHelpers.findConstructorExact(mmscResponse, byte[].class).newInstance(result);
-                        debug("LOCAL RT IS GOOD");
-                        param.setResult(XposedHelpers.callMethod(instanceMmscResponse, HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1));
-                        return;
-                    } catch (RuntimeException ex) {
-                        debug("LOCALRT? RUNTIME EXCEPTION");
-                        param.setResult(null);
-                        return;
-                    }
-                }
-                debug("ZERO LENGTH, RETURNING NULL");
-                param.setResult(null);
-            }
-        });
-
-        // Ctx = RequestWriter
-        // Str1 = MMSC (MMS url when not sending)
-        // byte[] = post data? (null when not sending)
-        // int1 = 1 (2 when not sending)
-        // bool1 = false (true if proxy)
-        // Str2 = null (proxy URL?)
-        // int2 = -1 (proxy port? just port? -1 must mean default 80 port or no proxy)
-        // bool2 = false (true if ipv6)
-        XposedHelpers.findAndHookMethod(mmsSender, HANGOUTS_MMSSENDER_DOSEND, Context.class, String.class, byte[].class, int.class, boolean.class, String.class, int.class, boolean.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                debug(String.format("%s -> %s called", mmsSender.getSimpleName(), HANGOUTS_MMSSENDER_DOSEND));
-                for(Object o : param.args) {
-                    debug(String.format("%s -> %s args: %s", mmsSender.getSimpleName(), HANGOUTS_MMSSENDER_DOSEND, o));
-                }
-                /*if(param.args[2] != null) {
-                    debug("byte array: " + new String((byte[]) param.args[2], "UTF-8"));
-                }*/
-            }
-        });
-
-        debug("--- LOAD COMPLETE ---", false);
+        debug("--- XHANGOUTS LOAD COMPLETE ---", false);
     }
 
 
     @Override
     public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam pkgRes) throws Throwable {
-        if(!pkgRes.packageName.equals(HANGOUTS_PKG_NAME)) {
+        if(!HANGOUTS_PKG_NAME.equals(pkgRes.packageName)) {
             return;
         }
 
-        // Retrieves the context of the app initializing the Hangouts resources.
-        Object activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass(ACTIVITY_THREAD_CLASS, null), ACTIVITY_THREAD_CURRENTACTHREAD);
-        // Works beautifully on Lollipop. On 4.x not so much.
-        if(activityThread != null) {
-            Context systemCtx = (Context)XposedHelpers.callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
-            // The XHangouts SettingsProvider will accept configuration requests from any app.
+        // Hit or miss depending on a number of factors I have yet to enumerate
+        Context ctx = AndroidAppHelper.currentApplication();
+        if(ctx == null) {
+            Object activityThread = callStaticMethod(ACTIVITY_THREAD, ACTIVITY_THREAD_CURRENTACTHREAD);
+            if(activityThread != null) {
+                ctx = (Context)callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
+            }
+        }
+        if(ctx != null) {
+            // The XHangouts SettingsProvider will accept configuration requests from any app or context.
             // Not being able to reload the config isn't the end of the world since if we're in the
             // Hangouts app, settings have already been loaded in handleLoadPackage
-            Config.reload(systemCtx);
+            config.reload(ctx);
         }
 
-        if(!Config.modEnabled) {
+        if(!config.modEnabled) {
             return;
         }
 
-        debug(String.format("initPkgRes: %s", Config.appColor));
-
-        // GOOGLE_GREEN is the default. No need to modify resources.
-        if(Config.appColor == Setting.AppColor.GOOGLE_GREEN) {
-            return;
+        // Call resources method on all modules
+        for(Module mod : modules) {
+            mod.resources(pkgRes.res);
         }
 
-        // The resource name prefix representing the desired color (source)
-        String fromPrefix = Config.appColor.getPrefix();
-        // The default GOOGLE_GREEN color we're replacing (destination)
-        String toPrefix = Setting.AppColor.GOOGLE_GREEN.getPrefix();
-
-        int totalColors = HANGOUTS_QUANTUM_COLOR_SUFFIXES.length;
-        // Some colors are without accents, so we subtract them out
-        if(Config.appColor == Setting.AppColor.BROWN || Config.appColor == Setting.AppColor.GREY ||
-                Config.appColor == Setting.AppColor.BLUE_GREY) {
-            totalColors -= 4;
-        }
-        // Hold onto the found colors so we can use them afterwards
-        final int[] appColors = new int[totalColors];
-        // Loop over every available quantum color, replacing them
-        for(int i = 0; i < totalColors; i++) {
-            appColors[i] = getColorFromResources(pkgRes.res, fromPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i]);
-            pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color",
-                    toPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i], appColors[i]);
-        }
-
-        // The above replacements do not style everything. Some manual fixes.
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_JHPS, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[3]);
-            }
-        });
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_JHAS, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[4]);
-            }
-        });
-
-        final Drawable actBarTab = pkgRes.res.getDrawable(
-                pkgRes.res.getIdentifier(HANGOUTS_DRAWABLE_AB_TAB, "drawable", HANGOUTS_RES_PKG_NAME)
-        );
-        final float hueDiff = ColorUtils.hueFromRgb(appColors[5]) - HANGOUTS_DRAWABLE_AB_TAB_HUE;
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_AB_TAB, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                Drawable coloredTab = actBarTab.mutate().getConstantState().newDrawable();
-                coloredTab.setColorFilter(ColorUtils.adjustHue(hueDiff));
-                return coloredTab;
-            }
-        });
-
-        // Fixes "Sending as <number>" / Ongoing call bar on 4.x
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_ONGOING_BG,
-                appColors[5]);
-
-        // Fixes "Sending as <number>" / Ongoing call bar on 5.x
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PROMO_ELIG,
-                appColors[5]);
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_ONGOING_BG, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[5]);
-            }
-        });
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_ONGOING_BGP, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[5]);
-            }
-        });
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUTTER_BAR_BG, appColors[5]);
-
-        // Fixes status bar on 5.x
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY, appColors[5]);
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY_DARK, appColors[7]);
-        pkgRes.res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_QUANTUM_GOOGGREEN, appColors[5]);
     }
 
-    private static int getColorFromResources(Resources res, String name) {
-        return res.getColor(res.getIdentifier(name, "color", HANGOUTS_RES_PKG_NAME));
-    }
-
-    private static boolean isMobileConnected(Context ctx) {
-        ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-        return ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE && ni.isConnected();
-    }
-
-    private static void debug(String msg) {
+    private void debug(String msg) {
         debug(msg, true);
     }
 
-    private static void debug(String msg, boolean tag) {
-        if(Config.debug) {
-            log(msg, tag);
+    private void debug(String msg, boolean useTag) {
+        if(config.debug) {
+            log(msg, useTag);
         }
     }
 
-    private static void debug(Throwable throwable) {
-        if(Config.debug) {
+    private void debug(Throwable throwable) {
+        if(config.debug) {
             log(throwable);
         }
     }
@@ -914,94 +158,11 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
         log(msg, true);
     }
 
-    private static void log(String msg, boolean tag) {
-        XposedBridge.log((tag ? TAG + ": " : "") + msg);
+    static void log(String msg, boolean useTag) {
+        XposedBridge.log((useTag ? TAG + ": " : "") + msg);
     }
 
     private static void log(Throwable throwable) {
         XposedBridge.log(throwable);
-    }
-
-    private static final class ColorUtils {
-        // Thanks to Richard Lalancette at Stack Overflow and others for putting together adjustHue
-        // http://stackoverflow.com/a/7917978/238374
-        // https://groups.google.com/d/msg/android-developers/niFcg8OBmVM/Bj1j9s1cvFEJ
-        // http://gskinner.com/blog/archives/2007/12/colormatrix_cla.html
-        private static ColorFilter adjustHue(float value) {
-            ColorMatrix cm = new ColorMatrix();
-            adjustHue(cm, value);
-            return new ColorMatrixColorFilter(cm);
-        }
-
-        private static void adjustHue(ColorMatrix cm, float value) {
-            value = cleanValue(value, 180f) / 180f * (float) Math.PI;
-
-            if(value == 0) {
-                return;
-            }
-            float cosVal = (float)Math.cos(value);
-            float sinVal = (float)Math.sin(value);
-            float lumR = 0.213f;
-            float lumG = 0.715f;
-            float lumB = 0.072f;
-            float[] mat = new float[] {
-                    lumR + cosVal * (1 - lumR) + sinVal * (-lumR),
-                    lumG + cosVal * (-lumG) + sinVal * (-lumG),
-                    lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0,
-                    lumR + cosVal * (-lumR) + sinVal * (0.143f),
-                    lumG + cosVal * (1 - lumG) + sinVal * (0.140f),
-                    lumB + cosVal * (-lumB) + sinVal * (-0.283f), 0, 0,
-                    lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)),
-                    lumG + cosVal * (-lumG) + sinVal * (lumG),
-                    lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0,
-                    0f, 0f, 0f, 1f, 0f,
-                    0f, 0f, 0f, 0f, 1f
-            };
-            cm.postConcat(new ColorMatrix(mat));
-        }
-
-        // https://groups.google.com/d/msg/android-developers/niFcg8OBmVM/zRC-NNKSSfAJ
-        private static float cleanValue(float p_val, float p_limit) {
-            return Math.min(p_limit, Math.max(-p_limit, p_val));
-        }
-
-        // Retrieves the hue value in degrees from a packed (A)RGB color.
-        // Adapted from a C algorithm by Eugene Vishnevsky.
-        // http://www.cs.rit.edu/~ncs/color/t_convert.html
-        private static float hueFromRgb(int rgb) {
-            int r = (rgb >> 16) & 0xFF;
-            int g = (rgb >> 8) & 0xFF;
-            int b = rgb & 0xFF;
-
-            float min = Math.min(Math.min(r, g), b);
-            float max = Math.max(Math.max(r, g), b);
-            float delta = max - min;
-
-            if(max == 0x00 || min == 0xFF) {
-                // Black or white
-                return 0;
-            }
-
-            float h;
-
-            if(r == max) {
-                // Between yellow and magenta
-                h = (g - b) / delta;
-            } else if(g == max) {
-                // Between cyan and yellow
-                h = 2 + (b - r) / delta;
-            } else {
-                // Between magenta and cyan
-                h = 4 + (r - g) / delta;
-            }
-
-            // Degrees
-            h *= 60;
-            if(h < 0) {
-                h += 360;
-            }
-
-            return h;
-        }
     }
 }

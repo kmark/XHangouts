@@ -79,7 +79,7 @@ public enum Setting {
         return name != null ? name : name().toLowerCase();
     }
 
-    enum UiEnterKey {
+    public enum UiEnterKey {
         EMOJI_SELECTOR(0),
         NEWLINE(1),
         SEND(2);
@@ -227,7 +227,7 @@ public enum Setting {
             return value;
         }
 
-        String getPrefix() {
+        public String getPrefix() {
             return prefix;
         }
 
