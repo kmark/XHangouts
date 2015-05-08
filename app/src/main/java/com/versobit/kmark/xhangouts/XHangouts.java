@@ -55,8 +55,9 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
-    private static final String TESTED_VERSION_STR = "3.0.87531466";
-    private static final int TESTED_VERSION_INT = 22260166;
+    private static final String TESTED_VERSION_STR = "3.1.89134953";
+    private static final int TESTED_VERSION_INT = 22289234;
+    private static final int VERSION_TOLERANCE = 10;
 
     private final Config config = new Config();
 
@@ -92,9 +93,12 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
 
         final PackageInfo pi = systemCtx.getPackageManager().getPackageInfo(HANGOUTS_PKG_NAME, 0);
         debug(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
-        // TODO: replace this with something more robust?
-        if(pi.versionCode != TESTED_VERSION_INT) {
-            log(String.format("Warning: Your Hangouts version differs from the version XHangouts was built against: v%s (%d)", TESTED_VERSION_STR, TESTED_VERSION_INT));
+
+        // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
+        if(pi.versionCode > TESTED_VERSION_INT + VERSION_TOLERANCE ||
+                pi.versionCode < TESTED_VERSION_INT - VERSION_TOLERANCE) {
+            log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
+                    TESTED_VERSION_STR, TESTED_VERSION_INT), false);
         }
 
         // Call hook method on all modules
