@@ -34,6 +34,8 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers.InvocationTargetError;
+import de.robv.android.xposed.XposedHelpers.ClassNotFoundError;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -103,7 +105,13 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
 
         // Call hook method on all modules
         for(Module mod : modules) {
-            mod.hook(lpp.classLoader);
+            // Attempt to hook other modules even if one of them fails with an Xposed error
+            try {
+                mod.hook(lpp.classLoader);
+            } catch (ClassNotFoundError | InvocationTargetError | NoSuchMethodError ex) {
+                log("Error: " + ex.getClass().getSimpleName() + " in " + mod.getClass().getSimpleName() + "...", false);
+                debug(ex);
+            }
         }
 
         debug("--- XHANGOUTS LOAD COMPLETE ---", false);
