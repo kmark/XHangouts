@@ -55,14 +55,17 @@ final public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
-        //noinspection ConstantConditions
-        if(!XApp.isActive()) {
-            Toast.makeText(this, R.string.warning_not_loaded, Toast.LENGTH_LONG).show();
+        if(getFragmentManager().findFragmentById(android.R.id.content) == null) {
+            //noinspection ConstantConditions
+            if(!XApp.isActive()) {
+                Toast.makeText(this, R.string.warning_not_loaded, Toast.LENGTH_LONG).show();
+            }
         }
+        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
     public static final class SettingsFragment extends PreferenceFragment {
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
