@@ -42,10 +42,21 @@
             android:label="@string/title_activity_settings" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
             </intent-filter>
         </activity>
+
+        <!-- Toggleable alias for SettingsActivity used for the launcher -->
+        <activity-alias
+            android:name=".SettingsActivityLauncher"
+            android:label="@string/title_activity_settings"
+            android:targetActivity=".SettingsActivity"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <provider
             android:name=".SettingsProvider"

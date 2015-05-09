@@ -25,4 +25,10 @@
         android:summary="@string/pref_desc_mod_enabled"
         android:defaultValue="true" />
 
+    <CheckBoxPreference
+        android:key="launcher_icon"
+        android:title="@string/pref_title_launcher_icon"
+        android:summary="@string/pref_desc_launcher_icon"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

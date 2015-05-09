@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +41,8 @@ import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
 import com.versobit.kmark.xhangouts.dialogs.UiAppColorDialog;
 
 final public class SettingsActivity extends PreferenceActivity {
+
+    private static final String ALIAS = BuildConfig.APPLICATION_ID + ".SettingsActivityLauncher";
 
     static void setDefaultPreferences(Context ctx) {
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_general, false);
@@ -66,6 +69,19 @@ final public class SettingsActivity extends PreferenceActivity {
 
             // Add general preferences.
             addPreferencesFromResource(R.xml.pref_general);
+
+            findPreference(Setting.LAUNCHER_ICON.toString()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    getActivity().getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(getActivity(), ALIAS),
+                            (boolean)newValue ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP
+                    );
+                    return true;
+                }
+            });
 
             // Add MMS preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());

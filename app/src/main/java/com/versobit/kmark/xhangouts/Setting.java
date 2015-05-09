@@ -23,6 +23,7 @@ import java.util.Locale;
 
 public enum Setting {
     MOD_ENABLED,
+    LAUNCHER_ICON,
     MMS_RESIZE_ENABLED,
     MMS_ROTATE_ENABLED,
     MMS_ROTATE_MODE,
