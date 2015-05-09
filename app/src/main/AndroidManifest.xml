@@ -18,6 +18,7 @@
     along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.versobit.kmark.xhangouts" >
 
     <application
@@ -50,7 +51,8 @@
             android:name=".SettingsProvider"
             android:authorities="com.versobit.kmark.xhangouts.settings"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true"
+            tools:ignore="ExportedContentProvider">
         </provider>
     </application>
 
