@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2015 Kevin Mark
+
+    This file is part of XHangouts.
+
+    XHangouts is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    XHangouts is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="dialog_about_copyright" translatable="false" tools:ignore="TypographyDashes">Copyright © 2014-2015 Kevin Mark </string>
+    <string name="dialog_about_donate">XHangouts is developed in my spare time and will always
+        remain free and open-source software. If you find this application useful please feel free to
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HUXS9XTC6VMY4">donate</a>.</string>
+    <string name="dialog_about_github">GitHub</string>
+    <string name="dialog_about_github_link" translatable="false">https://github.com/kmark/XHangouts</string>
+    <string name="dialog_about_xda">XDA</string>
+    <string name="dialog_about_xda_link" translatable="false">http://forum.xda-developers.com/xposed/modules/xhangouts-mms-fixes-google-hangouts-t2888102</string>
+    <string name="dialog_about_license"><a href="#">License</a></string>
+    <string name="dialog_about_license_title">License</string>
+    <string name="dialog_about_thanks">Thank you!</string>
+
+</resources>

@@ -148,8 +148,6 @@
     <string name="pref_title_about_version_loaded">Loaded</string>
     <string name="pref_title_about_version_notloaded">Not loaded</string>
 
-    <string name="xda_thread">http://forum.xda-developers.com/xposed/modules/xhangouts-mms-fixes-google-hangouts-t2888102</string>
-
     <string name="pref_title_about_debug">Debug mode</string>
     <string name="pref_desc_about_debug_on">Xposed logging is on</string>
     <string name="pref_desc_about_debug_off">Xposed logging is off</string>

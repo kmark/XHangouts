@@ -35,6 +35,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.versobit.kmark.xhangouts.dialogs.AboutDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsApnConfigDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsScaleDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
@@ -233,7 +234,7 @@ final public class SettingsActivity extends PreferenceActivity {
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ctx.getString(R.string.xda_thread))));
+                    new AboutDialog().show(getFragmentManager(), AboutDialog.FRAGMENT_TAG);
                     return false;
                 }
             });
