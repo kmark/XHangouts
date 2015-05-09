@@ -63,7 +63,7 @@ public final class UiEnterKey extends Module {
         };
     }
 
-    private XC_MethodHook onNewComposeMessageView = new XC_MethodHook() {
+    private final XC_MethodHook onNewComposeMessageView = new XC_MethodHook() {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
             config.reload((Context) param.args[0]);
@@ -90,7 +90,7 @@ public final class UiEnterKey extends Module {
         }
     };
 
-    private XC_MethodHook onEditorAction = new XC_MethodHook() {
+    private final XC_MethodHook onEditorAction = new XC_MethodHook() {
         // Called by at least SwiftKey and Fleksy on new line, but not the AOSP or Google keyboard
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

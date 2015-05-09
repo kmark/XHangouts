@@ -70,7 +70,7 @@ public final class UiAppColorDialog extends DialogFragment {
                 .create();
     }
 
-    private View.OnClickListener onColorClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onColorClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             ViewHolder tag = (ViewHolder)v.getTag();
@@ -80,7 +80,7 @@ public final class UiAppColorDialog extends DialogFragment {
         }
     };
 
-    private class AppColorAdapter extends BaseAdapter {
+    private final class AppColorAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -129,7 +129,7 @@ public final class UiAppColorDialog extends DialogFragment {
         }
     }
 
-    private static class ViewHolder {
+    private final static class ViewHolder {
         Setting.AppColor color;
         View root;
         View colorView;

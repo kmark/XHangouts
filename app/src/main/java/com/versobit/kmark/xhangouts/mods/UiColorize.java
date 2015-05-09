@@ -86,7 +86,7 @@ public final class UiColorize extends Module {
         };
     }
 
-    private XC_MethodHook onNewActionBarContextView = new XC_MethodHook() {
+    private final XC_MethodHook onNewActionBarContextView = new XC_MethodHook() {
         // Had to hook into View.setBackgroundDrawable to find this one...
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {

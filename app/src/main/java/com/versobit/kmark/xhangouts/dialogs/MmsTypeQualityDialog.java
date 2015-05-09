@@ -138,7 +138,7 @@ public final class MmsTypeQualityDialog extends DialogFragment {
         }
     }
 
-    private AdapterView.OnItemSelectedListener onSelected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener onSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             format = Setting.ImageFormat.fromInt(formatValues[position]);
@@ -151,7 +151,7 @@ public final class MmsTypeQualityDialog extends DialogFragment {
         }
     };
 
-    private SeekBar.OnSeekBarChangeListener onSeek = new SeekBar.OnSeekBarChangeListener() {
+    private final SeekBar.OnSeekBarChangeListener onSeek = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             quality = Math.round(map(progress, 0, seekBar.getMax(), 0, 100));
@@ -169,7 +169,7 @@ public final class MmsTypeQualityDialog extends DialogFragment {
         }
     };
 
-    private DialogInterface.OnClickListener onSubmit = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener onSubmit = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             prefs.edit().putInt(Setting.MMS_IMAGE_TYPE.toString(), format.toInt())

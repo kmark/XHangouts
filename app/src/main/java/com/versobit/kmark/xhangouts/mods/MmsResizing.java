@@ -70,7 +70,7 @@ public final class MmsResizing extends Module {
         };
     }
 
-    private XC_MethodHook processMmsImage = new XC_MethodHook() {
+    private final XC_MethodHook processMmsImage = new XC_MethodHook() {
         // This is called when the user hits the send button on an image MMS
         // FIXME: there seem to be a few instances where this is not called, find alternate code paths
 

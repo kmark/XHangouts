@@ -110,7 +110,7 @@ public final class MmsApnSplicing extends Module {
         };
     }
 
-    private XC_MethodHook aquireMmsNetwork = new XC_MethodHook() {
+    private final XC_MethodHook aquireMmsNetwork = new XC_MethodHook() {
         // This prevents the initial request for MMS APN connectivity. It populates a new
         // TransactionSettings instance with APN data. This is normally done by the broadcast
         // receiver as it listens for connectivity state changes. Instead of waiting this method
@@ -181,7 +181,7 @@ public final class MmsApnSplicing extends Module {
         }
     };
 
-    private XC_MethodHook executeMmsRequest = new XC_MethodHook() {
+    private final XC_MethodHook executeMmsRequest = new XC_MethodHook() {
         // This hook replaces a call to the executeMmsRequest method of the MmsSendReceiveManager.
         // It calls the method that actually sends the MMS HTTP request. For some reason our little
         // connectivity shortcut causes this to fail. Instead of spending even more time trying to

@@ -57,7 +57,7 @@ public final class UiAttachAnytime extends Module {
         };
     }
 
-    private XC_MethodHook onNewComposeMessageView = new XC_MethodHook() {
+    private final XC_MethodHook onNewComposeMessageView = new XC_MethodHook() {
         @Override
         protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
             config.reload((Context) param.args[0]);
