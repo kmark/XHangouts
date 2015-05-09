@@ -19,13 +19,12 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -36,6 +35,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.versobit.kmark.xhangouts.dialogs.AboutDialog;
+import com.versobit.kmark.xhangouts.dialogs.ISettingsPrefDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsApnConfigDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsScaleDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
@@ -106,6 +106,7 @@ final public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+            updatePrefDialog(MmsScaleDialog.FRAGMENT_TAG, scale);
 
             Setting.ImageFormat format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
             int quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 80);
@@ -119,6 +120,7 @@ final public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+            updatePrefDialog(MmsTypeQualityDialog.FRAGMENT_TAG, image);
 
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
 
@@ -134,6 +136,7 @@ final public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+            updatePrefDialog(MmsApnConfigDialog.FRAGMENT_TAG, apnConfig);
 
             // Add UI Tweaks preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());
@@ -153,6 +156,7 @@ final public class SettingsActivity extends PreferenceActivity {
                     return true;
                 }
             });
+            updatePrefDialog(UiAppColorDialog.FRAGMENT_TAG, colorConfig);
 
 
             // Add About preferences, and a corresponding header.
@@ -161,6 +165,13 @@ final public class SettingsActivity extends PreferenceActivity {
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_about);
             setupVersionPreference(findPreference(Setting.ABOUT_VERSION.toString()));
+        }
+
+        private void updatePrefDialog(String tag, Preference pref) {
+            Fragment frag = getFragmentManager().findFragmentByTag(tag);
+            if(frag != null && frag instanceof ISettingsPrefDialog) {
+                ((ISettingsPrefDialog)frag).setSettingPref(pref);
+            }
         }
 
         /**

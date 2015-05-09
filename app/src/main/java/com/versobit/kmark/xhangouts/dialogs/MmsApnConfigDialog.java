@@ -40,7 +40,7 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.SettingsActivity;
 
-public final class MmsApnConfigDialog extends DialogFragment {
+public final class MmsApnConfigDialog extends DialogFragment implements ISettingsPrefDialog {
 
     public static final String FRAGMENT_TAG = "fragment_dialog_mmsapnconfig";
 

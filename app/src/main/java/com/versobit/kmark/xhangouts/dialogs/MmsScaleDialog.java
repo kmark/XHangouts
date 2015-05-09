@@ -37,7 +37,7 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.SettingsActivity;
 
-public final class MmsScaleDialog extends DialogFragment {
+public final class MmsScaleDialog extends DialogFragment implements ISettingsPrefDialog {
 
     public static final String FRAGMENT_TAG = "fragment_dialog_mmsscale";
 

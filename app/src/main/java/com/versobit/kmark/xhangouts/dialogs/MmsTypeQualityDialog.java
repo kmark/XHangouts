@@ -44,7 +44,7 @@ import com.versobit.kmark.xhangouts.SettingsActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public final class MmsTypeQualityDialog extends DialogFragment {
+public final class MmsTypeQualityDialog extends DialogFragment implements ISettingsPrefDialog {
 
     public static final String FRAGMENT_TAG = "fragment_dialog_mmstypequality";
 
