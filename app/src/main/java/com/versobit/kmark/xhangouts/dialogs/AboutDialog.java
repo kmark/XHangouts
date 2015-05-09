@@ -135,7 +135,7 @@ public final class AboutDialog extends DialogFragment {
     private final View.OnClickListener onLicenseClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //new LicenseDialog().show(getFragmentManager(), LicenseDialog.FRAGMENT_TAG);
+            new LicenseDialog().show(getFragmentManager(), LicenseDialog.FRAGMENT_TAG);
         }
     };
 }
