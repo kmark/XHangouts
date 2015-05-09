@@ -52,6 +52,7 @@ final public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        //noinspection ConstantConditions
         if(!XApp.isActive()) {
             Toast.makeText(this, R.string.warning_not_loaded, Toast.LENGTH_LONG).show();
         }
