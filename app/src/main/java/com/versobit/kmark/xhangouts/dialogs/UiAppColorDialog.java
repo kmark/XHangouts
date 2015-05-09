@@ -38,7 +38,7 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.SettingsActivity;
 
-public class UiAppColorDialog extends DialogFragment {
+public final class UiAppColorDialog extends DialogFragment {
 
     public static final String FRAGMENT_TAG = "fragment_dialog_uiappcolor";
 
