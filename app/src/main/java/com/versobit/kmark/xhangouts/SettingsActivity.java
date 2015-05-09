@@ -226,6 +226,7 @@ final public class SettingsActivity extends PreferenceActivity {
             } catch (PackageManager.NameNotFoundException ex) {
                 //
             }
+            //noinspection ConstantConditions
             String loaded = XApp.isActive() ? ctx.getString(R.string.pref_title_about_version_loaded) :
                     ctx.getString(R.string.pref_title_about_version_notloaded);
             preference.setSummary(ctx.getString(R.string.pref_desc_about_version, gHangoutsVerName, gHangoutsVerCode, loaded));
