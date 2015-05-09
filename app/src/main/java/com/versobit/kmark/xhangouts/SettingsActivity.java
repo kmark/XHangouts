@@ -217,7 +217,7 @@ final public class SettingsActivity extends PreferenceActivity {
         private void setupVersionPreference(final Preference preference) {
             final Context ctx = getActivity();
             preference.setTitle(ctx.getString(R.string.pref_title_about_version, BuildConfig.VERSION_NAME));
-            String gHangoutsVerName = "unknown";
+            String gHangoutsVerName = "???";
             int gHangoutsVerCode = 0;
             try {
                 PackageInfo pi = ctx.getPackageManager().getPackageInfo(XHangouts.HANGOUTS_PKG_NAME, 0);
