@@ -19,7 +19,10 @@
 
 package com.versobit.kmark.xhangouts.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,9 +40,11 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.SettingsActivity;
 
-public final class MmsApnConfigDialog extends AlertDialog {
+public final class MmsApnConfigDialog extends DialogFragment {
 
-    final private Preference settingPref;
+    public static final String FRAGMENT_TAG = "fragment_dialog_mmsapnconfig";
+
+    private Preference settingPref = null;
     private SharedPreferences prefs;
 
     private Setting.ApnPreset[] apnPresetList;
@@ -53,15 +58,15 @@ public final class MmsApnConfigDialog extends AlertDialog {
 
     private boolean selectingPreset = false;
 
-    public MmsApnConfigDialog(final Preference settingPref) {
-        super(settingPref.getContext());
-        this.settingPref = settingPref;
+    public MmsApnConfigDialog setSettingPref(Preference pref) {
+        settingPref = pref;
+        return this;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        View v = getLayoutInflater().inflate(R.layout.dialog_mms_apn_config, null);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    @Override @SuppressLint("InflateParams")
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_mms_apn_config, null);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         spinPreset = (Spinner)v.findViewById(R.id.dialog_mms_apn_config_preset);
         txtMmsc = (EditText)v.findViewById(R.id.dialog_mms_apn_config_mmsc);
@@ -74,7 +79,7 @@ public final class MmsApnConfigDialog extends AlertDialog {
             ordApnPresets[p.ordinal()] = p.toString();
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_medium_item, ordApnPresets);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_medium_item, ordApnPresets);
         adapter.setDropDownViewResource(R.layout.spinner_medium_dropdown_item);
         spinPreset.setAdapter(adapter);
         spinPreset.setOnItemSelectedListener(onSelected);
@@ -95,12 +100,11 @@ public final class MmsApnConfigDialog extends AlertDialog {
         txtProxyHostname.addTextChangedListener(textWatcher);
         txtProxyPort.addTextChangedListener(textWatcher);
 
-
-        setTitle(R.string.pref_title_mms_apn_splicing_apn_config);
-        setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), onSubmit);
-
-        setView(v);
-        super.onCreate(savedInstanceState);
+        return new AlertDialog.Builder(getActivity(), getTheme())
+                .setView(v)
+                .setTitle(R.string.pref_title_mms_apn_splicing_apn_config)
+                .setPositiveButton(android.R.string.ok, onSubmit)
+                .create();
     }
 
     private final AdapterView.OnItemSelectedListener onSelected = new AdapterView.OnItemSelectedListener() {
@@ -145,11 +149,12 @@ public final class MmsApnConfigDialog extends AlertDialog {
                 preset = Setting.ApnPreset.CUSTOM;
                 spinPreset.setSelection(0);
             }
-            getButton(BUTTON_POSITIVE).setEnabled(txtMmsc.getText().length() != 0);
+            ((AlertDialog)getDialog()).getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setEnabled(txtMmsc.getText().length() != 0);
         }
     };
 
-    private final OnClickListener onSubmit = new OnClickListener() {
+    private final DialogInterface.OnClickListener onSubmit = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             String mmsc = txtMmsc.getText().toString();

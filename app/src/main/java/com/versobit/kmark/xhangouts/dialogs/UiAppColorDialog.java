@@ -21,6 +21,8 @@ package com.versobit.kmark.xhangouts.dialogs;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -36,30 +38,36 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.SettingsActivity;
 
-public class UiAppColorDialog extends AlertDialog {
+public class UiAppColorDialog extends DialogFragment {
+
+    public static final String FRAGMENT_TAG = "fragment_dialog_uiappcolor";
 
     private static final Setting.AppColor[] colors = Setting.AppColor.values();
-    private final String[] colorNames;
-    final private Preference settingPref;
-    final private SharedPreferences prefs;
-    final private LayoutInflater inflater;
+    private String[] colorNames = null;
+    private Preference settingPref = null;
+    private SharedPreferences prefs = null;
+    private LayoutInflater inflater = null;
 
-    public UiAppColorDialog(Preference settingPref) {
-        super(settingPref.getContext());
-        this.colorNames = getContext().getResources().getStringArray(R.array.pref_ui_app_color_titles);
+    public UiAppColorDialog setSettingPref(Preference settingPref) {
         this.settingPref = settingPref;
-        this.prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        this.inflater = LayoutInflater.from(getContext());
+        return this;
     }
 
     @Override @SuppressLint("InflateParams")
-    protected void onCreate(Bundle savedInstanceState) {
-        View v = getLayoutInflater().inflate(R.layout.dialog_ui_app_color, null);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        colorNames = getResources().getStringArray(R.array.pref_ui_app_color_titles);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        inflater = getActivity().getLayoutInflater();
+
+        View v = inflater.inflate(R.layout.dialog_ui_app_color, null);
+
         GridView grid = (GridView)v.findViewById(R.id.dialog_ui_app_color_grid);
         grid.setAdapter(new AppColorAdapter());
-        setTitle(R.string.pref_title_ui_app_color);
-        setView(v);
-        super.onCreate(savedInstanceState);
+
+        return new AlertDialog.Builder(getActivity(), getTheme())
+                .setView(v)
+                .setTitle(R.string.pref_title_ui_app_color)
+                .create();
     }
 
     private View.OnClickListener onColorClickListener = new View.OnClickListener() {

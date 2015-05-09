@@ -19,8 +19,10 @@
 
 package com.versobit.kmark.xhangouts.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,9 +37,11 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.SettingsActivity;
 
-public final class MmsScaleDialog extends AlertDialog {
+public final class MmsScaleDialog extends DialogFragment {
 
-    final private Preference settingPref;
+    public static final String FRAGMENT_TAG = "fragment_dialog_mmsscale";
+
+    private Preference settingPref = null;
     private SharedPreferences prefs;
 
     private EditText txtWidth;
@@ -46,17 +50,18 @@ public final class MmsScaleDialog extends AlertDialog {
     private int scaleWidth;
     private int scaleHeight;
 
-    public MmsScaleDialog(final Preference settingPref) {
-        super(settingPref.getContext());
-        this.settingPref = settingPref;
+    public MmsScaleDialog setSettingPref(Preference pref) {
+        settingPref = pref;
+        return this;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        View v = getLayoutInflater().inflate(R.layout.dialog_mms_scale, null);
+    @Override @SuppressLint("InflateParams")
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_mms_scale, null);
+
         txtWidth = (EditText)v.findViewById(R.id.dialog_mms_scale_width);
         txtHeight = (EditText)v.findViewById(R.id.dialog_mms_scale_height);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 1024);
         scaleHeight = prefs.getInt(Setting.MMS_SCALE_HEIGHT.toString(), 1024);
@@ -66,11 +71,11 @@ public final class MmsScaleDialog extends AlertDialog {
         txtWidth.addTextChangedListener(textWatcher);
         txtHeight.addTextChangedListener(textWatcher);
 
-        setTitle(R.string.pref_title_mms_scale);
-        setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), onSubmit);
-
-        setView(v);
-        super.onCreate(savedInstanceState);
+        return new AlertDialog.Builder(getActivity(), getTheme())
+                .setView(v)
+                .setTitle(R.string.pref_title_mms_scale)
+                .setPositiveButton(android.R.string.ok, onSubmit)
+                .create();
     }
 
     private final TextWatcher textWatcher = new TextWatcher() {
@@ -86,11 +91,12 @@ public final class MmsScaleDialog extends AlertDialog {
 
         @Override
         public void afterTextChanged(Editable s) {
-            getButton(BUTTON_POSITIVE).setEnabled(txtWidth.length() > 0 && txtHeight.length() > 0);
+            ((AlertDialog)getDialog()).getButton(DialogInterface.BUTTON_POSITIVE)
+                    .setEnabled(txtWidth.length() > 0 && txtHeight.length() > 0);
         }
     };
 
-    private final OnClickListener onSubmit = new OnClickListener() {
+    private final DialogInterface.OnClickListener onSubmit = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             try {

@@ -89,8 +89,8 @@ final public class SettingsActivity extends PreferenceActivity {
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_mms);
 
-            final Preference scale = findPreference(Setting.MMS_SCALE_PREFKEY.toString());
-            final Preference image = findPreference(Setting.MMS_IMAGE_PREFKEY.toString());
+            Preference scale = findPreference(Setting.MMS_SCALE_PREFKEY.toString());
+            Preference image = findPreference(Setting.MMS_IMAGE_PREFKEY.toString());
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             int scaleWidth = prefs.getInt(Setting.MMS_SCALE_WIDTH.toString(), 1024);
@@ -100,8 +100,8 @@ final public class SettingsActivity extends PreferenceActivity {
             scale.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    MmsScaleDialog dialog = new MmsScaleDialog(scale);
-                    dialog.show();
+                    new MmsScaleDialog().setSettingPref(preference)
+                            .show(getFragmentManager(), MmsScaleDialog.FRAGMENT_TAG);
                     return true;
                 }
             });
@@ -113,23 +113,23 @@ final public class SettingsActivity extends PreferenceActivity {
             image.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    MmsTypeQualityDialog dialog = new MmsTypeQualityDialog(image);
-                    dialog.show();
+                    new MmsTypeQualityDialog().setSettingPref(preference)
+                            .show(getFragmentManager(), MmsTypeQualityDialog.FRAGMENT_TAG);
                     return true;
                 }
             });
 
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
 
-            final Preference apnConfig = findPreference(Setting.MMS_APN_SPLICING_APN_CONFIG_PREFKEY.toString());
-            final Setting.ApnPreset apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(Setting.MMS_APN_SPLICING_APN_CONFIG_PRESET.toString(), Setting.ApnPreset.CUSTOM.toInt()));
+            Preference apnConfig = findPreference(Setting.MMS_APN_SPLICING_APN_CONFIG_PREFKEY.toString());
+            Setting.ApnPreset apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(Setting.MMS_APN_SPLICING_APN_CONFIG_PRESET.toString(), Setting.ApnPreset.CUSTOM.toInt()));
             updateMmsApnConfigSummary(apnConfig, apnPreset);
 
             apnConfig.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    MmsApnConfigDialog dialog = new MmsApnConfigDialog(apnConfig);
-                    dialog.show();
+                    new MmsApnConfigDialog().setSettingPref(preference)
+                            .show(getFragmentManager(), MmsApnConfigDialog.FRAGMENT_TAG);
                     return true;
                 }
             });
@@ -147,8 +147,8 @@ final public class SettingsActivity extends PreferenceActivity {
             colorConfig.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    UiAppColorDialog dialog = new UiAppColorDialog(preference);
-                    dialog.show();
+                    new UiAppColorDialog().setSettingPref(preference)
+                            .show(getFragmentManager(), UiAppColorDialog.FRAGMENT_TAG);
                     return true;
                 }
             });

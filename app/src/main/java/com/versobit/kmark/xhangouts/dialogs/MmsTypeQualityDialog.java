@@ -19,8 +19,10 @@
 
 package com.versobit.kmark.xhangouts.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -42,9 +44,11 @@ import com.versobit.kmark.xhangouts.SettingsActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public final class MmsTypeQualityDialog extends AlertDialog {
+public final class MmsTypeQualityDialog extends DialogFragment {
 
-    private final Preference settingPref;
+    public static final String FRAGMENT_TAG = "fragment_dialog_mmstypequality";
+
+    private Preference settingPref = null;
     private SharedPreferences prefs;
 
     private Spinner spinnerFormat;
@@ -60,15 +64,15 @@ public final class MmsTypeQualityDialog extends AlertDialog {
     private String lossless;
     private Bitmap bmpPreview1;
 
-    public MmsTypeQualityDialog(final Preference settingPref) {
-        super(settingPref.getContext());
-        this.settingPref = settingPref;
+    public MmsTypeQualityDialog setSettingPref(Preference pref) {
+        settingPref = pref;
+        return this;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        View v = getLayoutInflater().inflate(R.layout.dialog_mms_type_quality, null);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    @Override @SuppressLint("InflateParams")
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View v = getActivity().getLayoutInflater().inflate(R.layout.dialog_mms_type_quality, null);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         spinnerFormat = (Spinner)v.findViewById(R.id.dialog_mms_type_quality_type);
         seekQuality = (SeekBar)v.findViewById(R.id.dialog_mms_type_quality_quality);
@@ -79,10 +83,10 @@ public final class MmsTypeQualityDialog extends AlertDialog {
         format = Setting.ImageFormat.fromInt(prefs.getInt(Setting.MMS_IMAGE_TYPE.toString(), Setting.ImageFormat.JPEG.toInt()));
         quality = prefs.getInt(Setting.MMS_IMAGE_QUALITY.toString(), 80);
 
-        formatValues = getContext().getResources().getIntArray(R.array.pref_mms_image_type_values);
-        lossless = getContext().getString(R.string.dialog_mms_type_quality_lossless);
+        formatValues = getResources().getIntArray(R.array.pref_mms_image_type_values);
+        lossless = getString(R.string.dialog_mms_type_quality_lossless);
 
-        bmpPreview1 = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.fajita);
+        bmpPreview1 = BitmapFactory.decodeResource(getResources(), R.drawable.fajita);
 
         // Only time we need to set the spinner and seek bar
         // FIXME: the integer value of format is not guaranteed to be the positional index of the spinner values, see formatValues
@@ -95,11 +99,11 @@ public final class MmsTypeQualityDialog extends AlertDialog {
         spinnerFormat.setOnItemSelectedListener(onSelected);
         seekQuality.setOnSeekBarChangeListener(onSeek);
 
-        setTitle(R.string.pref_title_mms_image_type);
-        setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), onSubmit);
-
-        setView(v);
-        super.onCreate(savedInstanceState);
+        return new AlertDialog.Builder(getActivity(), getTheme())
+                .setView(v)
+                .setTitle(R.string.pref_title_mms_image_type)
+                .setPositiveButton(android.R.string.ok, onSubmit)
+                .create();
     }
 
     private void refresh() {
@@ -108,7 +112,7 @@ public final class MmsTypeQualityDialog extends AlertDialog {
 
     private void refresh(final boolean everything) {
         String strQuality = format == Setting.ImageFormat.PNG ? lossless : String.valueOf(quality);
-        txtQuality.setText(getContext().getString(R.string.dialog_mms_type_quality_qlabel, strQuality));
+        txtQuality.setText(getString(R.string.dialog_mms_type_quality_qlabel, strQuality));
         seekQuality.setEnabled(format != Setting.ImageFormat.PNG);
 
         // Most devices will struggle to do this more than once per second, so we don't
@@ -127,7 +131,7 @@ public final class MmsTypeQualityDialog extends AlertDialog {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bmpPreview1.compress(cmpFormat, format == Setting.ImageFormat.PNG ? 0 : quality, baos);
             imgPreview1.setImageBitmap(BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size()));
-            txtPreview1.setText(getContext().getString(R.string.dialog_mms_type_quality_kb, baos.size() / 1000f));
+            txtPreview1.setText(getString(R.string.dialog_mms_type_quality_kb, baos.size() / 1000f));
             baos.close();
         } catch (IOException ex) {
             //
@@ -165,7 +169,7 @@ public final class MmsTypeQualityDialog extends AlertDialog {
         }
     };
 
-    private OnClickListener onSubmit = new OnClickListener() {
+    private DialogInterface.OnClickListener onSubmit = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             prefs.edit().putInt(Setting.MMS_IMAGE_TYPE.toString(), format.toInt())
