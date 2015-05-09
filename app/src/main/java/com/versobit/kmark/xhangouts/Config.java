@@ -22,12 +22,18 @@ package com.versobit.kmark.xhangouts;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.SystemClock;
 
 import de.robv.android.xposed.XposedBridge;
 
 public final class Config {
 
     private static final Uri ALL_PREFS_URI = Uri.parse("content://" + SettingsProvider.AUTHORITY + "/all");
+
+    // Prevent reloading from occurring less than 2 seconds
+    private static final long RELOAD_INTERVAL = 2000;
+
+    private long lastReload = 0;
 
     // Give us some sane defaults, just in case
     public boolean modEnabled = true;
@@ -50,6 +56,11 @@ public final class Config {
     public boolean debug = false;
 
     public void reload(Context ctx) {
+        // Prevent wasteful reloads
+        if(lastReload + RELOAD_INTERVAL > SystemClock.elapsedRealtime()) {
+            return;
+        }
+
         Cursor prefs = ctx.getContentResolver().query(ALL_PREFS_URI, null, null, null, null);
         if(prefs == null) {
             XposedBridge.log("XHangouts: Failed to retrieve settings!");
