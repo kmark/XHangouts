@@ -38,7 +38,7 @@ import de.robv.android.xposed.callbacks.IXUnhook;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public class UiQuickSettings extends Module {
+public final class UiQuickSettings extends Module {
 
     private static final String HANGOUTS_NAV_MENUITEM_BASE = "bev";
     private static final String HANGOUTS_NAV_MENUITEM_HELP = "bbn";
