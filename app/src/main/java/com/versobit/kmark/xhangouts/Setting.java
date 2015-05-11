@@ -42,6 +42,7 @@ public enum Setting {
     UI_ENTER_KEY,
     UI_ATTACH_ANYTIME,
     UI_HIDE_CALL_BUTTONS,
+    UI_SEND_LOCK,
     UI_APP_COLOR,
     ABOUT_VERSION,
     DEBUG;

@@ -73,6 +73,12 @@ public final class UiSendLock extends Module {
                 return;
             }
 
+            debug(String.valueOf(config.sendLock));
+
+            if(!config.sendLock) {
+                return;
+            }
+
             ((ImageButton)getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_SENDBUTTON))
                     .setOnLongClickListener(onSendLongClick);
         }
@@ -106,7 +112,7 @@ public final class UiSendLock extends Module {
     private final XC_MethodHook preventOverwrite = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            if(config.modEnabled) {
+            if(config.modEnabled && config.sendLock) {
                 // Prevent the setOnLongClick from being overwritten
                 param.setResult(null);
             }

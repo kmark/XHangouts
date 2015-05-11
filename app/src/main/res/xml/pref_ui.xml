@@ -43,6 +43,13 @@
         android:summary="@string/pref_desc_ui_hide_call_buttons"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:dependency="mod_enabled"
+        android:key="ui_send_lock"
+        android:title="@string/pref_title_ui_send_lock"
+        android:summary="@string/pref_desc_ui_send_lock"
+        android:defaultValue="false" />
+
     <Preference
         android:dependency="mod_enabled"
         android:key="ui_app_color"

@@ -52,6 +52,7 @@ public final class Config {
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
     public boolean attachAnytime = true;
     public boolean hideCallButtons = false;
+    public boolean sendLock = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean debug = false;
 
@@ -115,6 +116,9 @@ public final class Config {
                     continue;
                 case UI_HIDE_CALL_BUTTONS:
                     hideCallButtons = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    continue;
+                case UI_SEND_LOCK:
+                    sendLock = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                     continue;
                 case UI_APP_COLOR:
                     appColor = Setting.AppColor.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
