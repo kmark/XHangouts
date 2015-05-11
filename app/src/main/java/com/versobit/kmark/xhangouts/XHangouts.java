@@ -75,7 +75,10 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpp) throws Throwable {
         if(lpp.packageName.equals(BuildConfig.APPLICATION_ID)) {
-            findAndHookMethod(XApp.class, "isActive", XC_MethodReplacement.returnConstant(true));
+            // Passing in just XApp.class does not work :(
+            findAndHookMethod(XApp.class.getName(), lpp.classLoader, "isActive",
+                    XC_MethodReplacement.returnConstant(true));
+            return;
         }
 
         if(!lpp.packageName.equals(HANGOUTS_PKG_NAME)) {
