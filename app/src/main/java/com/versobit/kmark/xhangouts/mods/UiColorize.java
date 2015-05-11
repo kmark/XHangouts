@@ -50,9 +50,6 @@ public final class UiColorize extends Module {
 
     private static final String ANDROID_SUPPORT_ABCVIEW = "android.support.v7.internal.widget.ActionBarContextView";
 
-    private static final String ANDROID_WIDGET_PROGRESSBAR = "android.widget.ProgressBar";
-    private static final float ANDROID_WIDGET_PROGRESSBAR_HUE = ColorUtils.hueFromRgb(0xff009688);
-
     private static final String HANGOUTS_COLOR_BUTTER_BAR_BG = "butter_bar_background";
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
