@@ -72,9 +72,8 @@ public final class UiAttachAnytime extends Module {
                 return;
             }
 
-            ImageButton d = (ImageButton)getObjectField(param.thisObject,
-                    HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON);
-            d.setOnLongClickListener(new View.OnLongClickListener() {
+            ((ImageButton)getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_EMOJIBUTTON))
+                    .setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     ((Runnable)callStaticMethod(cComposeMessageView,
