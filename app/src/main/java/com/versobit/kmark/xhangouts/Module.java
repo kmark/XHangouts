@@ -21,6 +21,7 @@ package com.versobit.kmark.xhangouts;
 
 import android.content.res.XResources;
 
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.IXUnhook;
 
@@ -33,6 +34,8 @@ public abstract class Module {
         this.tag = tag;
         this.config = config;
     }
+
+    public void init(IXposedHookZygoteInit.StartupParam startup) { }
 
     public IXUnhook[] hook(ClassLoader loader) {
         return new IXUnhook[] { };

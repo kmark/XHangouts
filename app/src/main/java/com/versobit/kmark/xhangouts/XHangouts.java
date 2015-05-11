@@ -64,8 +64,6 @@ public final class XHangouts implements IXposedHookZygoteInit,
     private static final int TESTED_VERSION_INT = 22289234;
     private static final int VERSION_TOLERANCE = 10;
 
-    public static String modulePath = null;
-
     private final Config config = new Config();
 
     private final Module[] modules = new Module[] {
@@ -80,7 +78,9 @@ public final class XHangouts implements IXposedHookZygoteInit,
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
-        modulePath = startupParam.modulePath;
+        for(Module mod : modules) {
+            mod.init(startupParam);
+        }
     }
 
     @Override

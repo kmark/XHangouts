@@ -27,10 +27,10 @@ import com.versobit.kmark.xhangouts.BuildConfig;
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.R;
-import com.versobit.kmark.xhangouts.XHangouts;
 
 import java.lang.reflect.Array;
 
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.IXUnhook;
@@ -49,11 +49,18 @@ public class UiQuickSettings extends Module {
     private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
     private static final String ACTUAL_TITLE = "XHangouts v" + BuildConfig.VERSION_NAME.split("-", 2)[0];
 
+    private String modulePath = null;
+
     private Class classMenuItemBase = null;
     private Class classMenuItemBaseArray = null;
 
     public UiQuickSettings(Config config) {
         super(UiQuickSettings.class.getSimpleName(), config);
+    }
+
+    @Override
+    public void init(IXposedHookZygoteInit.StartupParam startup) {
+        modulePath = startup.modulePath;
     }
 
     @Override
@@ -120,7 +127,7 @@ public class UiQuickSettings extends Module {
     @Override
     public void resources(XResources res) {
         // Get the resources for this module
-        XModuleResources xModRes = XModuleResources.createInstance(XHangouts.modulePath, res);
+        XModuleResources xModRes = XModuleResources.createInstance(modulePath, res);
 
         // Add a new "fake" resource and instantly replace it with the string we actually want
         res.setReplacement(res.addResource(xModRes, R.string.hangouts_menu_title), ACTUAL_TITLE);
