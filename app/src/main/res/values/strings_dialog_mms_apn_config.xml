@@ -25,4 +25,6 @@
     <string name="dialog_mms_apn_config_required">Required</string>
     <string name="dialog_mms_apn_config_optional">Optional</string>
     <string name="dialog_mms_apn_config_proxy_port_hint">80</string>
+    <string name="dialog_mms_apn_config_more_info">More Info</string>
+    <string name="dialog_mms_apn_config_more_url">http://forum.xda-developers.com/showpost.php?p=56464872&amp;postcount=130</string>
 </resources>

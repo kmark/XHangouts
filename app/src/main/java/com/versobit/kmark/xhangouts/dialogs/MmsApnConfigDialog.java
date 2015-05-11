@@ -24,7 +24,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -103,6 +105,7 @@ public final class MmsApnConfigDialog extends DialogFragment implements ISetting
         return new AlertDialog.Builder(getActivity(), getTheme())
                 .setView(v)
                 .setTitle(R.string.pref_title_mms_apn_splicing_apn_config)
+                .setNeutralButton(R.string.dialog_mms_apn_config_more_info, onMoreInfo)
                 .setPositiveButton(android.R.string.ok, onSubmit)
                 .create();
     }
@@ -176,6 +179,14 @@ public final class MmsApnConfigDialog extends DialogFragment implements ISetting
                     .putString(Setting.MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME.toString(), proxyHost)
                     .putInt(Setting.MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT.toString(), proxyPort).apply();
             SettingsActivity.SettingsFragment.updateMmsApnConfigSummary(settingPref, preset);
+        }
+    };
+
+    private final DialogInterface.OnClickListener onMoreInfo = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            getActivity().startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(getString(R.string.dialog_mms_apn_config_more_url))));
         }
     };
 }
