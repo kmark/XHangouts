@@ -34,8 +34,8 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers.InvocationTargetError;
 import de.robv.android.xposed.XposedHelpers.ClassNotFoundError;
+import de.robv.android.xposed.XposedHelpers.InvocationTargetError;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
