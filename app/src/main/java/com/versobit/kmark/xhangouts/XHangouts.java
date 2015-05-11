@@ -29,6 +29,7 @@ import com.versobit.kmark.xhangouts.mods.UiAttachAnytime;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
+import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -72,7 +73,8 @@ public final class XHangouts implements IXposedHookZygoteInit, IXposedHookLoadPa
             new UiEnterKey(config),
             new UiAttachAnytime(config),
             new UiCallButtons(config),
-            new UiColorize(config)
+            new UiColorize(config),
+            new UiQuickSettings(config)
     };
 
     @Override

@@ -20,4 +20,7 @@
 <resources>
     <string name="app_name">XHangouts</string>
     <string name="xposed_desc">The ultimate Google Hangouts extension.</string>
+
+    <!-- This a dummy value for the sake of replacement and usage within UiQuickSettings -->
+    <string name="hangouts_menu_title">Ce-r_f2ayAST</string>
 </resources>
