@@ -124,5 +124,6 @@ public final class Config {
             }
         }
         prefs.close();
+        lastReload = SystemClock.elapsedRealtime();
     }
 }
