@@ -46,7 +46,8 @@ import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class XHangouts implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources {
+public final class XHangouts implements IXposedHookZygoteInit,
+        IXposedHookLoadPackage,  IXposedHookInitPackageResources {
 
     private static final String TAG = XHangouts.class.getSimpleName();
 
@@ -122,7 +123,8 @@ public final class XHangouts implements IXposedHookZygoteInit, IXposedHookLoadPa
             try {
                 mod.hook(lpp.classLoader);
             } catch (ClassNotFoundError | InvocationTargetError | NoSuchMethodError ex) {
-                log("Error: " + ex.getClass().getSimpleName() + " in " + mod.getClass().getSimpleName() + "...", false);
+                log("Error: " + ex.getClass().getSimpleName() + " in "
+                        + mod.getClass().getSimpleName() + "...", false);
                 debug(ex);
             }
         }
@@ -132,7 +134,8 @@ public final class XHangouts implements IXposedHookZygoteInit, IXposedHookLoadPa
 
 
     @Override
-    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam pkgRes) throws Throwable {
+    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam pkgRes)
+            throws Throwable {
         if(!HANGOUTS_PKG_NAME.equals(pkgRes.packageName)) {
             return;
         }
