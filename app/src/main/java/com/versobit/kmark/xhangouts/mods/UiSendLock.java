@@ -41,7 +41,8 @@ public final class UiSendLock extends Module {
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.impl.ComposeMessageView";
     private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_SENDBUTTON = "c";
 
-    private Shell.Builder shell;
+    private Shell.Builder shell = null;
+    private volatile Shell.Interactive activeShell = null;
 
     public UiSendLock(Config config) {
         super(UiSendLock.class.getSimpleName(), config);
@@ -81,12 +82,24 @@ public final class UiSendLock extends Module {
         @Override
         public boolean onLongClick(View v) {
             // Lock
-            shell.open();
+            activeShell = shell.open();
             // Send
             v.callOnClick();
             // Reset lock
             newShell();
+            // Safely close the shell after it's done
+            new Thread(waitAndCloseShell).start();
             return true;
+        }
+    };
+
+    private final Runnable waitAndCloseShell = new Runnable() {
+        @Override
+        public void run() {
+            if(activeShell != null) {
+                activeShell.waitForIdle();
+                activeShell.close();
+            }
         }
     };
 
