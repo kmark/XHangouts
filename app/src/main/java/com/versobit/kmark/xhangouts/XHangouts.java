@@ -32,6 +32,7 @@ import com.versobit.kmark.xhangouts.mods.UiEnterKey;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers.ClassNotFoundError;
@@ -44,7 +45,7 @@ import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitPackageResources {
+public final class XHangouts implements IXposedHookZygoteInit, IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     private static final String TAG = XHangouts.class.getSimpleName();
 
@@ -61,6 +62,8 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
     private static final int TESTED_VERSION_INT = 22289234;
     private static final int VERSION_TOLERANCE = 10;
 
+    public static String modulePath = null;
+
     private final Config config = new Config();
 
     private final Module[] modules = new Module[] {
@@ -71,6 +74,11 @@ public final class XHangouts implements IXposedHookLoadPackage, IXposedHookInitP
             new UiCallButtons(config),
             new UiColorize(config)
     };
+
+    @Override
+    public void initZygote(StartupParam startupParam) throws Throwable {
+        modulePath = startupParam.modulePath;
+    }
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpp) throws Throwable {
