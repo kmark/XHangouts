@@ -20,6 +20,8 @@
 package com.versobit.kmark.xhangouts.mods;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.res.XModuleResources;
 import android.content.res.XResources;
 
@@ -27,6 +29,7 @@ import com.versobit.kmark.xhangouts.BuildConfig;
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.R;
+import com.versobit.kmark.xhangouts.SettingsActivity;
 
 import java.lang.reflect.Array;
 
@@ -91,8 +94,10 @@ public final class UiQuickSettings extends Module {
     private static final XC_MethodReplacement onMenuItemClick = new XC_MethodReplacement() {
         @Override
         protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
-            Activity act = (Activity)param.args[0];
-            act.startActivity(act.getPackageManager().getLaunchIntentForPackage(BuildConfig.APPLICATION_ID));
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setComponent(new ComponentName(BuildConfig.APPLICATION_ID,
+                    SettingsActivity.class.getName()));
+            ((Activity)param.args[0]).startActivity(i);
             return null;
         }
     };
