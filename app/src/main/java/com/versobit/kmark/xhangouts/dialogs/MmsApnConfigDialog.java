@@ -102,12 +102,14 @@ public final class MmsApnConfigDialog extends DialogFragment implements ISetting
         txtProxyHostname.addTextChangedListener(textWatcher);
         txtProxyPort.addTextChangedListener(textWatcher);
 
-        return new AlertDialog.Builder(getActivity(), getTheme())
+        AlertDialog dialog = new AlertDialog.Builder(getActivity(), getTheme())
                 .setView(v)
                 .setTitle(R.string.pref_title_mms_apn_splicing_apn_config)
-                .setNeutralButton(R.string.dialog_mms_apn_config_more_info, onMoreInfo)
+                .setNeutralButton(R.string.dialog_mms_apn_config_more_info, null)
                 .setPositiveButton(android.R.string.ok, onSubmit)
                 .create();
+        dialog.setOnShowListener(onShow);
+        return dialog;
     }
 
     private final AdapterView.OnItemSelectedListener onSelected = new AdapterView.OnItemSelectedListener() {
@@ -182,9 +184,17 @@ public final class MmsApnConfigDialog extends DialogFragment implements ISetting
         }
     };
 
-    private final DialogInterface.OnClickListener onMoreInfo = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnShowListener onShow = new DialogInterface.OnShowListener() {
         @Override
-        public void onClick(DialogInterface dialog, int which) {
+        public void onShow(DialogInterface dialog) {
+            // The dialog will dismiss unless we set the listener this way
+            ((AlertDialog)dialog).getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(onMoreInfo);
+        }
+    };
+
+    private final View.OnClickListener onMoreInfo = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
             getActivity().startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse(getString(R.string.dialog_mms_apn_config_more_url))));
         }
