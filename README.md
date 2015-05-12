@@ -23,6 +23,8 @@ Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hang
 * Personalize Hangouts! Choose from 23 different material design colors.
 * Hide the video and audio call toolbar buttons.
 * Toggle the app's launcher presence
+* Access XHangouts easily from an entry in the Hangouts menu
+* Send a message and lock your device with one tap
 * Works on Xposed for Lollipop!
 * Free and open-source software. No nags. No data collection. No secrets.
 
