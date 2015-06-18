@@ -55,13 +55,13 @@ public final class MmsApnSplicing extends Module {
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
 
-    private static final String HANGOUTS_TRANSACTIONSETTINGS = "cnx";
+    private static final String HANGOUTS_TRANSACTIONSETTINGS = "coa";
     private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
 
     private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vo";
     private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wi";
 
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "cmx";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "cna";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
@@ -70,14 +70,14 @@ public final class MmsApnSplicing extends Module {
     private static final String HANGOUTS_MMSSENDER = "wq";
     private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
 
-    private static final String HANGOUTS_MMS_APN = "cny";
+    private static final String HANGOUTS_MMS_APN = "cob";
     private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
     private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
     private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
     private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
     private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
 
-    private static final String HANGOUTS_MMS_EXCEPTION = "cnb";
+    private static final String HANGOUTS_MMS_EXCEPTION = "cne";
 
     private static final String HANGOUTS_MMSC_RESPONSE = "vz";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";

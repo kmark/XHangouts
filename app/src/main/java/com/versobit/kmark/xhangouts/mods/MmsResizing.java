@@ -45,7 +45,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class MmsResizing extends Module {
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cne";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cnh";
     // private static a(IIIILandroid/net/Uri;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
