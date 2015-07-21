@@ -57,8 +57,13 @@ public final class Config {
     public boolean debug = false;
 
     public void reload(Context ctx) {
+        reload(ctx, RELOAD_INTERVAL);
+    }
+
+    public void reload(Context ctx, long interval) {
         // Prevent wasteful reloads
-        if(lastReload + RELOAD_INTERVAL > SystemClock.elapsedRealtime()) {
+        // Reloads can take anywhere from just 0.03ms to as much as 150ms or more
+        if(lastReload + interval > SystemClock.elapsedRealtime()) {
             return;
         }
 
