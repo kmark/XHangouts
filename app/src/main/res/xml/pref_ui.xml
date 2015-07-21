@@ -50,6 +50,13 @@
         android:summary="@string/pref_desc_ui_send_lock"
         android:defaultValue="false" />
 
+    <CheckBoxPreference
+        android:dependency="mod_enabled"
+        android:key="ui_disable_proximity"
+        android:title="@string/pref_title_ui_disable_proximity"
+        android:summary="@string/pref_desc_ui_disable_proximity"
+        android:defaultValue="false" />
+
     <Preference
         android:dependency="mod_enabled"
         android:key="ui_app_color"

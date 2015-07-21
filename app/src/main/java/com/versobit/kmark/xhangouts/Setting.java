@@ -43,6 +43,7 @@ public enum Setting {
     UI_ATTACH_ANYTIME,
     UI_HIDE_CALL_BUTTONS,
     UI_SEND_LOCK,
+    UI_DISABLE_PROXIMITY,
     UI_APP_COLOR,
     ABOUT_VERSION,
     DEBUG;
