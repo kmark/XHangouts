@@ -9,7 +9,7 @@
 Google Hangouts is a great messaging app for those of us who make considerable use of the Google
 Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hangouts experience on Android. From resolving deep technical issues to cool graphical UI tweaks.
 
-[Featured on XDA Xposed Tuesday!](https://www.youtube.com/watch?v=U_tBQSaY1Ts) (now outdated)
+[Featured twice on XDA Xposed Tuesday!](https://www.youtube.com/watch?v=n9C2uqrw_g4) (features v2.1)
 
 ## Features
 * Easily enable or disable features without rebooting
