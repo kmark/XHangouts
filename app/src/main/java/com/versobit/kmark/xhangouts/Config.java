@@ -82,8 +82,15 @@ public final class Config {
             XposedBridge.log("XHangouts: Failed to retrieve settings!");
             return;
         }
+        Setting setting;
         while(prefs.moveToNext()) {
-            switch (Setting.fromString(prefs.getString(SettingsProvider.QUERY_ALL_KEY))) {
+            try {
+                setting = Setting.fromString(prefs.getString(SettingsProvider.QUERY_ALL_KEY));
+            } catch (IllegalArgumentException ex) {
+                // If we can't find an enum entry for a setting, avoid crashing and continue
+                continue;
+            }
+            switch (setting) {
                 case MOD_ENABLED:
                     modEnabled = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                     continue;
