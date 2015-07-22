@@ -53,6 +53,7 @@ public final class Config {
     public boolean attachAnytime = true;
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
+    public boolean disableProximity = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean debug = false;
 
@@ -119,6 +120,9 @@ public final class Config {
                     continue;
                 case UI_SEND_LOCK:
                     sendLock = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    continue;
+                case UI_DISABLE_PROXIMITY:
+                    disableProximity = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
                     continue;
                 case UI_APP_COLOR:
                     appColor = Setting.AppColor.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
