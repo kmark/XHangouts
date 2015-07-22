@@ -19,16 +19,24 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.app.Application;
 import android.content.res.XResources;
 
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.IXUnhook;
 
+import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
+import static de.robv.android.xposed.XposedHelpers.findClass;
+
 public abstract class Module {
 
+    private static final String HANGOUTS_ES_APPLICATION = "com.google.android.apps.hangouts.phone.EsApplication";
+    private static final String HANGOUTS_ES_APPLICATION_GETAPP = "d";
+
     private final String tag;
-    protected Config config;
+    protected final Config config;
+    private Class EsApplication = null;
 
     public Module(String tag, Config config) {
         this.tag = tag;
@@ -38,10 +46,15 @@ public abstract class Module {
     public void init(IXposedHookZygoteInit.StartupParam startup) { }
 
     public IXUnhook[] hook(ClassLoader loader) {
+        EsApplication = findClass(HANGOUTS_ES_APPLICATION, loader);
         return new IXUnhook[] { };
     }
 
     public void resources(XResources res) { }
+
+    protected Application getApplication() {
+        return (Application)callStaticMethod(EsApplication, HANGOUTS_ES_APPLICATION_GETAPP);
+    }
 
     protected void debug(String msg) {
         debug(msg, true);
