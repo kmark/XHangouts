@@ -19,14 +19,6 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
-// import android.content.Context;
-// import android.text.InputType;
-// import android.util.AttributeSet;
-// import android.view.KeyEvent;
-// import android.view.inputmethod.EditorInfo;
-// import android.widget.EditText;
-// import android.widget.TextView;
-
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Setting;
@@ -69,12 +61,10 @@ public final class UiDisableProximity extends Module {
             if(!config.disableProximity) {
                 return;
             }
-            debug(String.valueOf(param.args[0]));
 
             int device_type = (int) param.args[0];
 
             if(device_type == 8) {
-                debug(LOG_SET_RESULT);
                 param.setResult(null);
             }
             return;
