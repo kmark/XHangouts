@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2015 Kevin Mark
+
+    This file is part of XHangouts.
+
+    XHangouts is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    XHangouts is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xh="http://schemas.android.com/apk/res-auto">
+
+    <CheckBoxPreference
+        android:key="sound_enabled"
+        android:dependency="mod_enabled"
+        android:title="@string/pref_title_sound_enabled"
+        android:summary="@string/pref_desc_sound_enabled"
+        android:defaultValue="false" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="100"
+        android:key="sound_alert"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_alert"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="101"
+        android:key="sound_audiocallin"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_audiocallin"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="102"
+        android:key="sound_audiocallout"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_audiocallout"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="103"
+        android:key="sound_join"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_join"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="104"
+        android:key="sound_leave"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_leave"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="105"
+        android:key="sound_outgoing"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_outgoing"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="106"
+        android:key="sound_ringtone"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_ringtone"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="107"
+        android:key="sound_incall"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_incall"
+        android:summary="@string/pref_desc_sound_default" />
+
+    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
+        xh:requestCode="108"
+        android:key="sound_message"
+        android:dependency="sound_enabled"
+        android:title="@string/pref_title_sound_message"
+        android:summary="@string/pref_desc_sound_default" />
+
+</PreferenceScreen>

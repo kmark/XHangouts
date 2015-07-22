@@ -22,6 +22,7 @@ package com.versobit.kmark.xhangouts;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -32,6 +33,12 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.versobit.kmark.xhangouts.dialogs.AboutDialog;
@@ -40,6 +47,10 @@ import com.versobit.kmark.xhangouts.dialogs.MmsApnConfigDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsScaleDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
 import com.versobit.kmark.xhangouts.dialogs.UiAppColorDialog;
+import com.versobit.kmark.xhangouts.ui.FilePickerPreference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 final public class SettingsActivity extends PreferenceActivity {
 
@@ -49,6 +60,7 @@ final public class SettingsActivity extends PreferenceActivity {
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_general, false);
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_mms, false);
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_ui, false);
+        PreferenceManager.setDefaultValues(ctx, R.xml.pref_sound, false);
         PreferenceManager.setDefaultValues(ctx, R.xml.pref_about, false);
     }
 
@@ -64,7 +76,25 @@ final public class SettingsActivity extends PreferenceActivity {
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
-    public static final class SettingsFragment extends PreferenceFragment {
+    public static final class SettingsFragment extends PreferenceFragment implements AdapterView.OnItemLongClickListener {
+
+        Map<Integer, FilePickerPreference> filePickerRequests = new HashMap<>();
+
+        // Inject OnItemLongClickListener into the backing ListView
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View v = super.onCreateView(inflater, container, savedInstanceState);
+            ((ListView)v.findViewById(android.R.id.list)).setOnItemLongClickListener(this);
+            return v;
+        }
+
+        // Delegate long clicks for preferences that support it
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            Object preference = parent.getAdapter().getItem(position);
+            return preference instanceof View.OnLongClickListener &&
+                    ((View.OnLongClickListener) preference).onLongClick(view);
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -161,6 +191,11 @@ final public class SettingsActivity extends PreferenceActivity {
             });
             updatePrefDialog(UiAppColorDialog.FRAGMENT_TAG, colorConfig);
 
+            // Add Sound preferences, and a corresponding header.
+            header = new PreferenceCategory(getActivity());
+            header.setTitle(R.string.pref_header_sound);
+            getPreferenceScreen().addPreference(header);
+            addPreferencesFromResource(R.xml.pref_sound);
 
             // Add About preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());
@@ -271,6 +306,19 @@ final public class SettingsActivity extends PreferenceActivity {
         public static void updateUiAppColorSummary(final Preference preference, final Setting.AppColor color) {
             String[] names = preference.getContext().getResources().getStringArray(R.array.pref_ui_app_color_titles);
             preference.setSummary(names[color.toInt()]);
+        }
+
+        public void filePickerStartActForResult(FilePickerPreference pref, Intent intent, int requestCode) {
+            filePickerRequests.put(requestCode, pref);
+            startActivityForResult(intent, requestCode);
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            FilePickerPreference pref = filePickerRequests.remove(requestCode);
+            if(pref != null) {
+                pref.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 }

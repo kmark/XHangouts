@@ -25,6 +25,7 @@ import android.content.pm.PackageInfo;
 
 import com.versobit.kmark.xhangouts.mods.MmsApnSplicing;
 import com.versobit.kmark.xhangouts.mods.MmsResizing;
+import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiAttachAnytime;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
@@ -75,7 +76,8 @@ public final class XHangouts implements IXposedHookZygoteInit,
             new UiCallButtons(config),
             new UiColorize(config),
             new UiQuickSettings(config),
-            new UiSendLock(config)
+            new UiSendLock(config),
+            new Sound(config),
     };
 
     @Override

@@ -32,4 +32,5 @@ android {
 dependencies {
     provided files('libs/XposedBridgeApi-54.jar')
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
+    compile project(':afilechooser')
 }

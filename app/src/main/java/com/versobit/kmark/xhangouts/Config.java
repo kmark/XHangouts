@@ -54,6 +54,16 @@ public final class Config {
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
+    public boolean soundEnabled = false;
+    public String soundAlert = "";
+    public String soundAudioCallIn = "";
+    public String soundAudioCallOut = "";
+    public String soundJoin = "";
+    public String soundLeave = "";
+    public String soundOutgoing = "";
+    public String soundRingtone = "";
+    public String soundInCall = "";
+    public String soundMessage = "";
     public boolean debug = false;
 
     public void reload(Context ctx) {
@@ -127,6 +137,36 @@ public final class Config {
                     continue;
                 case UI_APP_COLOR:
                     appColor = Setting.AppColor.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                    continue;
+                case SOUND_ENABLED:
+                    soundEnabled = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    continue;
+                case SOUND_ALERT:
+                    soundAlert = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_AUDIOCALLIN:
+                    soundAudioCallIn = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_AUDIOCALLOUT:
+                    soundAudioCallOut = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_JOIN:
+                    soundJoin = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_LEAVE:
+                    soundLeave = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_OUTGOING:
+                    soundOutgoing = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_RINGTONE:
+                    soundRingtone = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_INCALL:
+                    soundInCall = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    continue;
+                case SOUND_MESSAGE:
+                    soundMessage = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
                     continue;
                 case DEBUG:
                     debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;

@@ -21,6 +21,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.versobit.kmark.xhangouts" >
 
+    <!-- Used for accessing sound files -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".XApp"
         android:allowBackup="true"
@@ -46,6 +49,19 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.ipaulpro.afilechooser.FileChooserActivity"
+            android:icon="@drawable/ic_chooser"
+            android:enabled="@bool/use_activity"
+            android:exported="false"
+            android:label="@string/choose_file">
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
         <!-- Toggleable alias for SettingsActivity used for the launcher -->
         <activity-alias
             android:name=".SettingsActivityLauncher"
@@ -64,6 +80,18 @@
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedContentProvider">
+        </provider>
+        
+        <provider
+            android:name="com.ianhanniballake.localstorage.LocalStorageProvider"
+            android:authorities="com.versobit.kmark.xhangouts.documents"
+            android:enabled="@bool/use_provider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
         </provider>
     </application>
 
