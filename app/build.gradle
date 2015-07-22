@@ -1,19 +1,26 @@
-apply plugin: 'com.android.application'
-
-def gitRev = { ->
+def gitRev = {
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
-            commandLine './gitRev.sh'
+            commandLine 'git', 'rev-parse', '--short', 'HEAD'
             standardOutput = stdout
         }
         return stdout.toString().trim()
     }
     catch (ignored) {
-        return "nogit";
+        return 'nogit';
     }
 }
 
+Closure<String[]> getVersionDef = {
+    new File('app/versionDef.txt').text.trim().split('\\r?\\n')
+}
+
+Closure<String> getVersionName = {
+    getVersionDef()[1] + '-' + gitRev()
+}
+
+apply plugin: 'com.android.application'
 apply from: 'signing.gradle'
 
 android {
@@ -24,8 +31,8 @@ android {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 13
-        versionName "2.1-" + gitRev()
+        versionCode getVersionDef()[0].toInteger()
+        versionName getVersionName()
     }
 }
 
