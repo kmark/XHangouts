@@ -41,6 +41,7 @@ public final class UiDisableProximity extends Module {
 
     private static final String ANDROID_HARDWARE_SENSORMANAGER = "android.hardware.SensorManager";
     private static final String ANDROID_HARDWARE_SENSORMANAGER_DEFAULT = "getDefaultSensor";
+    private static final String LOG_SET_RESULT = "set result";
 
     public UiDisableProximity(Config config) {
         super(UiDisableProximity.class.getSimpleName(), config);
@@ -58,7 +59,7 @@ public final class UiDisableProximity extends Module {
 
     private final XC_MethodHook getDefaultSensor = new XC_MethodHook() {
         @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             if(!config.modEnabled) {
                 return;
             }
@@ -68,9 +69,15 @@ public final class UiDisableProximity extends Module {
             if(!config.disableProximity) {
                 return;
             }
+            debug(String.valueOf(param.args[0]));
 
-            //if param[0] == 8 then make the return value null
+            int device_type = (int) param.args[0];
 
+            if(device_type == 8) {
+                debug(LOG_SET_RESULT);
+                param.setResult(null);
+            }
+            return;
         }
     };
 

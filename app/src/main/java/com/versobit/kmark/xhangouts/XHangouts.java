@@ -76,7 +76,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
             new UiCallButtons(config),
             new UiColorize(config),
             new UiQuickSettings(config),
-            new UiSendLock(config)
+            new UiSendLock(config),
             new UiDisableProximity(config)
     };
 
