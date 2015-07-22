@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2015 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -21,7 +21,8 @@ package com.versobit.kmark.xhangouts.mods;
 
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Setting;
+
+import android.hardware.Sensor;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
@@ -33,12 +34,10 @@ public final class UiDisableProximity extends Module {
 
     private static final String ANDROID_HARDWARE_SENSORMANAGER = "android.hardware.SensorManager";
     private static final String ANDROID_HARDWARE_SENSORMANAGER_DEFAULT = "getDefaultSensor";
-    private static final String LOG_SET_RESULT = "set result";
 
     public UiDisableProximity(Config config) {
         super(UiDisableProximity.class.getSimpleName(), config);
     }
-
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
@@ -52,6 +51,7 @@ public final class UiDisableProximity extends Module {
     private final XC_MethodHook getDefaultSensor = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
             if(!config.modEnabled) {
                 return;
             }
@@ -62,9 +62,9 @@ public final class UiDisableProximity extends Module {
                 return;
             }
 
-            int device_type = (int) param.args[0];
+            int sensorType = (int) param.args[0];
 
-            if(device_type == 8) {
+            if(sensorType == Sensor.TYPE_PROXIMITY) {
                 param.setResult(null);
             }
             return;
