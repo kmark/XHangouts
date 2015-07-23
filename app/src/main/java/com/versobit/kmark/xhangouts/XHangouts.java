@@ -131,8 +131,8 @@ public final class XHangouts implements IXposedHookZygoteInit,
             try {
                 mod.hook(lpp.classLoader);
             } catch (ClassNotFoundError | InvocationTargetError | NoSuchMethodError ex) {
-                log("Error: " + ex.getClass().getSimpleName() + " in "
-                        + mod.getClass().getSimpleName() + "...");
+                log(String.format("Error: %s in %s...", ex.getClass().getSimpleName(),
+                        mod.getClass().getSimpleName()));
                 debug(ex);
             }
         }
