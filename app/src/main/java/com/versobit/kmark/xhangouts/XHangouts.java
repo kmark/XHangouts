@@ -29,11 +29,11 @@ import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiAttachAnytime;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
-import com.versobit.kmark.xhangouts.mods.UiHideEmoji;
+import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
+import com.versobit.kmark.xhangouts.mods.UiHideEmoji;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
-import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
