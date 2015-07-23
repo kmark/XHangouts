@@ -125,6 +125,11 @@ public final class XHangouts implements IXposedHookZygoteInit,
                     TESTED_VERSION_STR, TESTED_VERSION_INT), false);
         }
 
+        // Avoid running modulesList unless required
+        if(config.debug) {
+            log(String.format("Modules: %s", modulesList()), false);
+        }
+
         // Call hook method on all modules
         for(Module mod : modules) {
             // Attempt to hook other modules even if one of them fails with an Xposed error
@@ -172,6 +177,22 @@ public final class XHangouts implements IXposedHookZygoteInit,
             mod.resources(pkgRes.res);
         }
 
+    }
+
+    // Based on Arrays.toString(Object[])
+    private String modulesList() {
+        if(modules.length == 0) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder(modules.length * 7);
+        sb.append('[');
+        sb.append(modules[0].getClass().getSimpleName());
+        for(int i = 1; i < modules.length; i++) {
+            sb.append(", ");
+            sb.append(modules[i].getClass().getSimpleName());
+        }
+        sb.append(']');
+        return sb.toString();
     }
 
     private void debug(String msg) {
