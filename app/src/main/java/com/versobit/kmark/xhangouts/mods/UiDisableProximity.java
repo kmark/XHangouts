@@ -19,10 +19,10 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
-import com.versobit.kmark.xhangouts.Module;
-import com.versobit.kmark.xhangouts.Config;
-
 import android.hardware.Sensor;
+
+import com.versobit.kmark.xhangouts.Config;
+import com.versobit.kmark.xhangouts.Module;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
@@ -44,14 +44,14 @@ public final class UiDisableProximity extends Module {
         Class SensorManagerClass = findClass(ANDROID_HARDWARE_SENSORMANAGER, loader);
 
         return new IXUnhook[] {
-                findAndHookMethod(SensorManagerClass, ANDROID_HARDWARE_SENSORMANAGER_DEFAULT, int.class, getDefaultSensor)
+                findAndHookMethod(SensorManagerClass, ANDROID_HARDWARE_SENSORMANAGER_DEFAULT,
+                        int.class, getDefaultSensor)
         };
     }
 
     private final XC_MethodHook getDefaultSensor = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
             if(!config.modEnabled) {
                 return;
             }
@@ -62,12 +62,9 @@ public final class UiDisableProximity extends Module {
                 return;
             }
 
-            int sensorType = (int) param.args[0];
-
-            if(sensorType == Sensor.TYPE_PROXIMITY) {
+            if((int)param.args[0] == Sensor.TYPE_PROXIMITY) {
                 param.setResult(null);
             }
-            return;
         }
     };
 

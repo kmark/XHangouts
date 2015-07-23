@@ -27,8 +27,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Config;
+import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -95,7 +95,8 @@ public final class UiEnterKey extends Module {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             int actionId = (Integer)param.args[1];
-            if(config.modEnabled && actionId == EditorInfo.IME_NULL && config.enterKey == Setting.UiEnterKey.NEWLINE) {
+            if(config.modEnabled && actionId == EditorInfo.IME_NULL
+                    && config.enterKey == Setting.UiEnterKey.NEWLINE) {
                 param.setResult(false); // We do not handle the enter action, and it adds a newline for us
             }
         }

@@ -20,7 +20,6 @@
 package com.versobit.kmark.xhangouts.mods;
 
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
@@ -30,7 +29,6 @@ import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
-import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiHideEmoji extends Module {
 
