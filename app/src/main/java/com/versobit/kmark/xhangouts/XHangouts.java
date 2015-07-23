@@ -29,6 +29,7 @@ import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiAttachAnytime;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
+import com.versobit.kmark.xhangouts.mods.UiHideEmoji;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
@@ -74,6 +75,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
             new MmsApnSplicing(config),
             new UiEnterKey(config),
             new UiAttachAnytime(config),
+            new UiHideEmoji(config),
             new UiCallButtons(config),
             new UiColorize(config),
             new UiQuickSettings(config),

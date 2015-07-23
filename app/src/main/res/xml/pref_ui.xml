@@ -38,6 +38,13 @@
 
     <CheckBoxPreference
         android:dependency="mod_enabled"
+        android:key="ui_hide_emoji"
+        android:title="@string/pref_title_ui_hide_emoji"
+        android:summary="@string/pref_desc_ui_hide_emoji"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:dependency="mod_enabled"
         android:key="ui_hide_call_buttons"
         android:title="@string/pref_title_ui_hide_call_buttons"
         android:summary="@string/pref_desc_ui_hide_call_buttons"

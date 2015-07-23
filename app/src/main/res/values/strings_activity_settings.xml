@@ -85,6 +85,9 @@
     <string name="pref_title_ui_attach_anytime">Attach anytime</string>
     <string name="pref_desc_ui_attach_anytime">Long press the emoji button to add an attachment</string>
 
+    <string name="pref_title_ui_hide_emoji">Hide emoji button</string>
+    <string name="pref_desc_ui_hide_emoji">Not compatible with attach anytime</string>
+
     <string name="pref_title_ui_hide_call_buttons">Hide call buttons</string>
     <string name="pref_desc_ui_hide_call_buttons">Stuff the call icons back into the dropdown menu</string>
 

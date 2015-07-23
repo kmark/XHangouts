@@ -55,6 +55,7 @@ public final class Config {
     public int proxyPort = -1;
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
     public boolean attachAnytime = true;
+    public boolean hideEmoji = false;
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
     public boolean disableProximity = false;
@@ -140,6 +141,9 @@ public final class Config {
                     continue;
                 case UI_ATTACH_ANYTIME:
                     attachAnytime = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_HIDE_EMOJI:
+                    hideEmoji = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_HIDE_CALL_BUTTONS:
                     hideCallButtons = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
