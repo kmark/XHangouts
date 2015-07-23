@@ -181,7 +181,8 @@ public final class XHangouts implements IXposedHookZygoteInit,
         if(modules.length == 0) {
             return "[]";
         }
-        StringBuilder sb = new StringBuilder(modules.length * 7);
+        // 12 = avg num of chars in class name of modules
+        StringBuilder sb = new StringBuilder(modules.length * 12);
         sb.append('[');
         sb.append(modules[0].getClass().getSimpleName());
         for(int i = 1; i < modules.length; i++) {
