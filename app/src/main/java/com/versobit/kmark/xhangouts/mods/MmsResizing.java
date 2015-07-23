@@ -90,7 +90,6 @@ public final class MmsResizing extends Module {
 
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            //config.reload(sysCtx);
             if(!config.modEnabled || !config.resizing) {
                 return;
             }

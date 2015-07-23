@@ -80,7 +80,7 @@ public final class Sound extends Module {
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             Context ctx = getApplication();
             config.reload(ctx);
-            if(!config.soundEnabled) {
+            if(!config.modEnabled || !config.soundEnabled) {
                 return;
             }
 

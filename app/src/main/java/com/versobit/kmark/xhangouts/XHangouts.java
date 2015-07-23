@@ -108,9 +108,6 @@ public final class XHangouts implements IXposedHookZygoteInit,
         Context systemCtx = (Context)callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
 
         config.reload(systemCtx);
-        if(!config.modEnabled) {
-            return;
-        }
 
         debug("--- LOADING XHANGOUTS ---", false);
         debug(String.format("XHangouts v%s (%d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE), false);

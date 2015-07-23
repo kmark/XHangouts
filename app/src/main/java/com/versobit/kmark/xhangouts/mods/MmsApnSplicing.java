@@ -118,7 +118,7 @@ public final class MmsApnSplicing extends Module {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             config.reload((Context)param.args[0]);
-            if(!config.apnSplicing) {
+            if(!config.modEnabled || !config.apnSplicing) {
                 return;
             }
             if(config.apnPreset == Setting.ApnPreset.CUSTOM && config.mmsc.isEmpty()) {
@@ -191,7 +191,7 @@ public final class MmsApnSplicing extends Module {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             config.reload((Context)param.args[0]);
-            if(!config.apnSplicing) {
+            if(!config.modEnabled || !config.apnSplicing) {
                 return;
             }
 
