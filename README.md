@@ -25,6 +25,9 @@ Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hang
 * Toggle the app's launcher presence
 * Access XHangouts easily from an entry in the Hangouts menu
 * Send a message and lock your device with one tap
+* Customize ringtones and sounds
+* Disable the proximity sensor
+* Give yourself more room to type by hiding the emoji button
 * Works on Xposed for Lollipop!
 * Free and open-source software. No nags. No data collection. No secrets.
 
