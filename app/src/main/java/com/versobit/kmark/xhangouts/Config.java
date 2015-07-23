@@ -26,6 +26,10 @@ import android.os.SystemClock;
 
 import de.robv.android.xposed.XposedBridge;
 
+import static com.versobit.kmark.xhangouts.SettingsProvider.QUERY_ALL_KEY;
+import static com.versobit.kmark.xhangouts.SettingsProvider.QUERY_ALL_VALUE;
+import static com.versobit.kmark.xhangouts.SettingsProvider.TRUE;
+
 public final class Config {
 
     private static final Uri ALL_PREFS_URI = Uri.parse("content://" + SettingsProvider.AUTHORITY + "/all");
@@ -86,101 +90,101 @@ public final class Config {
         Setting setting;
         while(prefs.moveToNext()) {
             try {
-                setting = Setting.fromString(prefs.getString(SettingsProvider.QUERY_ALL_KEY));
+                setting = Setting.fromString(prefs.getString(QUERY_ALL_KEY));
             } catch (IllegalArgumentException ex) {
                 // If we can't find an enum entry for a setting, avoid crashing and continue
                 continue;
             }
             switch (setting) {
                 case MOD_ENABLED:
-                    modEnabled = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    modEnabled = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case MMS_RESIZE_ENABLED:
-                    resizing = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    resizing = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case MMS_ROTATE_ENABLED:
-                    rotation = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    rotation = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case MMS_ROTATE_MODE:
-                    rotateMode = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                    rotateMode = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case MMS_SCALE_WIDTH:
-                    imageWidth = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                    imageWidth = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case MMS_SCALE_HEIGHT:
-                    imageHeight = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                    imageHeight = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case MMS_IMAGE_TYPE:
-                    imageFormat = Setting.ImageFormat.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                    imageFormat = Setting.ImageFormat.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
                 case MMS_IMAGE_QUALITY:
-                    imageQuality = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                    imageQuality = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case MMS_APN_SPLICING_ENABLED:
-                    apnSplicing = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    apnSplicing = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case MMS_APN_SPLICING_APN_CONFIG_PRESET:
-                    apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                    apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
                 case MMS_APN_SPLICING_APN_CONFIG_MMSC:
-                    mmsc = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    mmsc = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME:
-                    proxyHost = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    proxyHost = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT:
-                    proxyPort = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE);
+                    proxyPort = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case UI_ENTER_KEY:
-                    enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                    enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
                 case UI_ATTACH_ANYTIME:
-                    attachAnytime = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    attachAnytime = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_HIDE_CALL_BUTTONS:
-                    hideCallButtons = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    hideCallButtons = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_SEND_LOCK:
-                    sendLock = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    sendLock = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_DISABLE_PROXIMITY:
-                    disableProximity = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    disableProximity = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_APP_COLOR:
-                    appColor = Setting.AppColor.fromInt(prefs.getInt(SettingsProvider.QUERY_ALL_VALUE));
+                    appColor = Setting.AppColor.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
                 case SOUND_ENABLED:
-                    soundEnabled = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    soundEnabled = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case SOUND_ALERT:
-                    soundAlert = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundAlert = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_AUDIOCALLIN:
-                    soundAudioCallIn = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundAudioCallIn = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_AUDIOCALLOUT:
-                    soundAudioCallOut = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundAudioCallOut = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_JOIN:
-                    soundJoin = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundJoin = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_LEAVE:
-                    soundLeave = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundLeave = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_OUTGOING:
-                    soundOutgoing = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundOutgoing = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_RINGTONE:
-                    soundRingtone = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundRingtone = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_INCALL:
-                    soundInCall = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundInCall = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_MESSAGE:
-                    soundMessage = prefs.getString(SettingsProvider.QUERY_ALL_VALUE);
+                    soundMessage = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case DEBUG:
-                    debug = prefs.getInt(SettingsProvider.QUERY_ALL_VALUE) == SettingsProvider.TRUE;
+                    debug = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
             }
         }
         prefs.close();
