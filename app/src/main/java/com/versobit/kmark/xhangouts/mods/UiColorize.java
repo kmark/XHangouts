@@ -70,7 +70,7 @@ public final class UiColorize extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class ActionBarContextView = findClass(ANDROID_SUPPORT_ABCVIEW, loader);
+        Class cActionBarContextView = findClass(ANDROID_SUPPORT_ABCVIEW, loader);
 
         // On Lollipop the ActionBarContextView still uses the GOOGLE_GREEN theme unless we explicitly
         // set its background drawable. I'm not sure why it doesn't follow the updated resources.
@@ -78,7 +78,7 @@ public final class UiColorize extends Module {
             return new IXUnhook[] { };
         }
         return new IXUnhook[] {
-                findAndHookConstructor(ActionBarContextView,
+                findAndHookConstructor(cActionBarContextView,
                         Context.class, AttributeSet.class, int.class, onNewActionBarContextView)
         };
     }

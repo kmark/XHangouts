@@ -54,8 +54,8 @@ public final class UiQuickSettings extends Module {
 
     private String modulePath = null;
 
-    private Class classMenuItemBase = null;
-    private Class classMenuItemBaseArray = null;
+    private Class cMenuItemBase = null;
+    private Class cMenuItemBaseArray = null;
 
     public UiQuickSettings(Config config) {
         super(UiQuickSettings.class.getSimpleName(), config);
@@ -68,26 +68,26 @@ public final class UiQuickSettings extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        classMenuItemBase = findClass(HANGOUTS_NAV_MENUITEM_BASE, loader);
-        classMenuItemBaseArray = Array.newInstance(classMenuItemBase, 0).getClass();
-        Class classMenuItemHelp = findClass(HANGOUTS_NAV_MENUITEM_HELP, loader);
-        Class classMenuPop = findClass(HANGOUTS_MENU_POPULATOR, loader);
+        cMenuItemBase = findClass(HANGOUTS_NAV_MENUITEM_BASE, loader);
+        cMenuItemBaseArray = Array.newInstance(cMenuItemBase, 0).getClass();
+        Class cMenuItemHelp = findClass(HANGOUTS_NAV_MENUITEM_HELP, loader);
+        Class cMenuPop = findClass(HANGOUTS_MENU_POPULATOR, loader);
 
         return new IXUnhook[] {
                 // Field corrections
-                findAndHookMethod(classMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE)),
-                findAndHookMethod(classMenuItemBase, "a", Activity.class, onMenuItemClick),
-                findAndHookMethod(classMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON)),
-                findAndHookMethod(classMenuItemBase, "c", XC_MethodReplacement.returnConstant(7)),
-                findAndHookMethod(classMenuItemBase, "d", XC_MethodReplacement.returnConstant(2)),
-                findAndHookMethod(classMenuItemBase, "e", XC_MethodReplacement.returnConstant(7)),
+                findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE)),
+                findAndHookMethod(cMenuItemBase, "a", Activity.class, onMenuItemClick),
+                findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON)),
+                findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(7)),
+                findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(2)),
+                findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(7)),
 
                 // Push the Help & feedback entry down
-                findAndHookMethod(classMenuItemHelp, "c", XC_MethodReplacement.returnConstant(8)),
-                findAndHookMethod(classMenuItemHelp, "e", XC_MethodReplacement.returnConstant(8)),
+                findAndHookMethod(cMenuItemHelp, "c", XC_MethodReplacement.returnConstant(8)),
+                findAndHookMethod(cMenuItemHelp, "e", XC_MethodReplacement.returnConstant(8)),
 
                 // Populate dat menu
-                findAndHookMethod(classMenuPop, "a", Class.class, Object[].class, populateMenu)
+                findAndHookMethod(cMenuPop, "a", Class.class, Object[].class, populateMenu)
         };
     }
 
@@ -107,7 +107,7 @@ public final class UiQuickSettings extends Module {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             // If it's not an array of that class we're not interested
-            if(!classMenuItemBaseArray.isInstance(param.args[1])) {
+            if(!cMenuItemBaseArray.isInstance(param.args[1])) {
                 return;
             }
 
@@ -123,7 +123,7 @@ public final class UiQuickSettings extends Module {
             Object[] newArray = new Object[array.length + 1];
             System.arraycopy(array, 0, newArray, 0, array.length);
             // Create the base class which is now usable for our purposes
-            newArray[newArray.length - 1] = classMenuItemBase.newInstance();
+            newArray[newArray.length - 1] = cMenuItemBase.newInstance();
             // Hand it over to the actual method
             param.args[1] = newArray;
         }

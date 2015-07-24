@@ -53,12 +53,12 @@ public final class UiEnterKey extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class ComposeMessageView = findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loader);
+        Class cComposeMessageView = findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loader);
 
         return new IXUnhook[] {
-                findAndHookConstructor(ComposeMessageView,
+                findAndHookConstructor(cComposeMessageView,
                         Context.class, AttributeSet.class, onNewComposeMessageView),
-                findAndHookMethod(ComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION,
+                findAndHookMethod(cComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION,
                         TextView.class, int.class, KeyEvent.class, onEditorAction)
         };
     }

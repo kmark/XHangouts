@@ -55,10 +55,10 @@ public final class UiCallButtons extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class ConversationActSuper = findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loader);
+        Class cConversationActSuper = findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loader);
 
         return new IXUnhook[] {
-                findAndHookMethod(ConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM,
+                findAndHookMethod(cConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM,
                         Menu.class, onPrepareOptionsMenu)
         };
     }

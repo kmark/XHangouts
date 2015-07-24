@@ -61,11 +61,11 @@ public final class MmsResizing extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class ProcessMmsImg = findClass(HANGOUTS_PROCESS_MMS_IMG_CLASS, loader);
+        Class cProcessMmsImg = findClass(HANGOUTS_PROCESS_MMS_IMG_CLASS, loader);
         cEsProvider = findClass(HANGOUTS_ESPROVIDER_CLASS, loader);
 
         return new IXUnhook[]{
-                findAndHookMethod(ProcessMmsImg, HANGOUTS_PROCESS_MMS_IMG_METHOD,
+                findAndHookMethod(cProcessMmsImg, HANGOUTS_PROCESS_MMS_IMG_METHOD,
                         int.class, int.class, int.class, int.class, Uri.class, processMmsImage)
         };
     }
