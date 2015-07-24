@@ -29,13 +29,6 @@
         android:defaultValue="false" />
 
     <com.versobit.kmark.xhangouts.ui.FilePickerPreference
-        xh:requestCode="100"
-        android:key="sound_alert"
-        android:dependency="sound_enabled"
-        android:title="@string/pref_title_sound_alert"
-        android:summary="@string/pref_desc_sound_default" />
-
-    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
         xh:requestCode="101"
         android:key="sound_audiocallin"
         android:dependency="sound_enabled"
@@ -68,13 +61,6 @@
         android:key="sound_outgoing"
         android:dependency="sound_enabled"
         android:title="@string/pref_title_sound_outgoing"
-        android:summary="@string/pref_desc_sound_default" />
-
-    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
-        xh:requestCode="106"
-        android:key="sound_ringtone"
-        android:dependency="sound_enabled"
-        android:title="@string/pref_title_sound_ringtone"
         android:summary="@string/pref_desc_sound_default" />
 
     <com.versobit.kmark.xhangouts.ui.FilePickerPreference

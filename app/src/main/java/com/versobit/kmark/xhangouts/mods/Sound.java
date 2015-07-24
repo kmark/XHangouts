@@ -37,13 +37,11 @@ public final class Sound extends Module {
     private static final String HANGOUTS_UTIL_CLASS = "f";
     private static final String HANGOUTS_UTIL_CLASS_GET_RES_URI = "k";
 
-    private static final String HANGOUTS_SOUND_ALERT = "hangout_alert";
     private static final String HANGOUTS_SOUND_AUDIO_CALL_IN = "hangout_audio_call_incoming_ringtone";
     private static final String HANGOUTS_SOUND_AUDIO_CALL_OUT = "hangout_audio_call_outgoing_ringtone";
     private static final String HANGOUTS_SOUND_JOIN = "hangout_join";
     private static final String HANGOUTS_SOUND_LEAVE = "hangout_leave";
     private static final String HANGOUTS_SOUND_OUTGOING = "hangout_outgoing_ringtone";
-    private static final String HANGOUTS_SOUND_RINGTONE = "hangout_ringtone";
     private static final String HANGOUTS_SOUND_IN_CALL = "hangouts_incoming_call";
     private static final String HANGOUTS_SOUND_MESSAGE = "hangouts_message";
 
@@ -51,13 +49,11 @@ public final class Sound extends Module {
     private static final int RES_ID_UNSET = 0;
 
     // Resources.getIdentifier is expensive so we're caching results
-    private int soundAlert = RES_ID_UNSET;
     private int soundAudioCallIn = RES_ID_UNSET;
     private int soundAudioCallOut = RES_ID_UNSET;
     private int soundJoin = RES_ID_UNSET;
     private int soundLeave = RES_ID_UNSET;
     private int soundOutgoing = RES_ID_UNSET;
-    private int soundRingtone = RES_ID_UNSET;
     private int soundInCall = RES_ID_UNSET;
     private int soundMessage = RES_ID_UNSET;
 
@@ -85,16 +81,14 @@ public final class Sound extends Module {
             }
 
             // Are IDs cached?
-            if(soundAlert == RES_ID_UNSET) {
+            if(soundAudioCallIn == RES_ID_UNSET) {
                 // Find and cache IDs
                 Resources res = ctx.getResources();
-                soundAlert = res.getIdentifier(HANGOUTS_SOUND_ALERT, "raw", HANGOUTS_RES_PKG_NAME);
                 soundAudioCallIn = res.getIdentifier(HANGOUTS_SOUND_AUDIO_CALL_IN, "raw", HANGOUTS_RES_PKG_NAME);
                 soundAudioCallOut = res.getIdentifier(HANGOUTS_SOUND_AUDIO_CALL_OUT, "raw", HANGOUTS_RES_PKG_NAME);
                 soundJoin = res.getIdentifier(HANGOUTS_SOUND_JOIN, "raw", HANGOUTS_RES_PKG_NAME);
                 soundLeave = res.getIdentifier(HANGOUTS_SOUND_LEAVE, "raw", HANGOUTS_RES_PKG_NAME);
                 soundOutgoing = res.getIdentifier(HANGOUTS_SOUND_OUTGOING, "raw", HANGOUTS_RES_PKG_NAME);
-                soundRingtone = res.getIdentifier(HANGOUTS_SOUND_RINGTONE, "raw", HANGOUTS_RES_PKG_NAME);
                 soundInCall = res.getIdentifier(HANGOUTS_SOUND_IN_CALL, "raw", HANGOUTS_RES_PKG_NAME);
                 soundMessage = res.getIdentifier(HANGOUTS_SOUND_MESSAGE, "raw", HANGOUTS_RES_PKG_NAME);
                 debug("Resources loaded.");
@@ -104,9 +98,7 @@ public final class Sound extends Module {
             // I'm all ears for better ways to do this
             int soundId = (int)param.args[0];
             String path = "";
-            if(soundAlert == soundId) {
-                path = config.soundAlert;
-            } else if(soundAudioCallIn == soundId) {
+            if(soundAudioCallIn == soundId) {
                 path = config.soundAudioCallIn;
             } else if(soundAudioCallOut == soundId) {
                 path = config.soundAudioCallOut;
@@ -116,8 +108,6 @@ public final class Sound extends Module {
                 path = config.soundLeave;
             } else if(soundOutgoing == soundId) {
                 path = config.soundOutgoing;
-            } else if(soundRingtone == soundId) {
-                path = config.soundRingtone;
             } else if(soundInCall == soundId) {
                 path = config.soundInCall;
             } else if(soundMessage == soundId) {

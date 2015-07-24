@@ -61,13 +61,11 @@ public final class Config {
     public boolean disableProximity = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean soundEnabled = false;
-    public String soundAlert = "";
     public String soundAudioCallIn = "";
     public String soundAudioCallOut = "";
     public String soundJoin = "";
     public String soundLeave = "";
     public String soundOutgoing = "";
-    public String soundRingtone = "";
     public String soundInCall = "";
     public String soundMessage = "";
     public boolean debug = false;
@@ -160,9 +158,6 @@ public final class Config {
                 case SOUND_ENABLED:
                     soundEnabled = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
-                case SOUND_ALERT:
-                    soundAlert = prefs.getString(QUERY_ALL_VALUE);
-                    continue;
                 case SOUND_AUDIOCALLIN:
                     soundAudioCallIn = prefs.getString(QUERY_ALL_VALUE);
                     continue;
@@ -177,9 +172,6 @@ public final class Config {
                     continue;
                 case SOUND_OUTGOING:
                     soundOutgoing = prefs.getString(QUERY_ALL_VALUE);
-                    continue;
-                case SOUND_RINGTONE:
-                    soundRingtone = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_INCALL:
                     soundInCall = prefs.getString(QUERY_ALL_VALUE);
