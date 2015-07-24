@@ -67,7 +67,6 @@ public final class Config {
     public String soundLeave = "";
     public String soundOutgoing = "";
     public String soundInCall = "";
-    public String soundMessage = "";
     public boolean debug = false;
 
     public void reload(Context ctx) {
@@ -175,9 +174,6 @@ public final class Config {
                     continue;
                 case SOUND_INCALL:
                     soundInCall = prefs.getString(QUERY_ALL_VALUE);
-                    continue;
-                case SOUND_MESSAGE:
-                    soundMessage = prefs.getString(QUERY_ALL_VALUE);
                     continue;
                 case DEBUG:
                     debug = prefs.getInt(QUERY_ALL_VALUE) == TRUE;

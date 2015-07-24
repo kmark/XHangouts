@@ -19,8 +19,11 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
+import android.media.MediaPlayer;
+import android.net.Uri;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
@@ -28,14 +31,14 @@ import com.versobit.kmark.xhangouts.Module;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
 
+import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_PKG_NAME;
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class Sound extends Module {
 
-    private static final String HANGOUTS_UTIL_CLASS = "f";
-    private static final String HANGOUTS_UTIL_CLASS_GET_RES_URI = "k";
+    private static final String ANDROID_MEDIAPLAYER_CREATE = "create";
+    private static final String ANDROID_MEDIAPLAYER_SETDATASOURCE = "setDataSource";
 
     private static final String HANGOUTS_SOUND_AUDIO_CALL_IN = "hangout_audio_call_incoming_ringtone";
     private static final String HANGOUTS_SOUND_AUDIO_CALL_OUT = "hangout_audio_call_outgoing_ringtone";
@@ -43,7 +46,6 @@ public final class Sound extends Module {
     private static final String HANGOUTS_SOUND_LEAVE = "hangout_leave";
     private static final String HANGOUTS_SOUND_OUTGOING = "hangout_outgoing_ringtone";
     private static final String HANGOUTS_SOUND_IN_CALL = "hangouts_incoming_call";
-    private static final String HANGOUTS_SOUND_MESSAGE = "hangouts_message";
 
     // Impossible default ID since resource IDs start with 0x7f
     private static final int RES_ID_UNSET = 0;
@@ -55,7 +57,6 @@ public final class Sound extends Module {
     private int soundLeave = RES_ID_UNSET;
     private int soundOutgoing = RES_ID_UNSET;
     private int soundInCall = RES_ID_UNSET;
-    private int soundMessage = RES_ID_UNSET;
 
     public Sound(Config config) {
         super(Sound.class.getSimpleName(), config);
@@ -63,59 +64,139 @@ public final class Sound extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        super.hook(loader);
-        Class UtilClass = findClass(HANGOUTS_UTIL_CLASS, loader);
-
         return new IXUnhook[] {
-                findAndHookMethod(UtilClass, HANGOUTS_UTIL_CLASS_GET_RES_URI, int.class, getResourceUri)
+                findAndHookMethod(MediaPlayer.class, ANDROID_MEDIAPLAYER_CREATE,
+                        Context.class, int.class, createMediaPlayerFromResId),
+                findAndHookMethod(MediaPlayer.class, ANDROID_MEDIAPLAYER_SETDATASOURCE,
+                        Context.class, Uri.class, setDataSource)
         };
     }
 
-    private final XC_MethodHook getResourceUri = new XC_MethodHook() {
+    // Handles the join and leave sounds
+    private final XC_MethodHook createMediaPlayerFromResId = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            Context ctx = getApplication();
+            Context ctx = (Context)param.args[0];
             config.reload(ctx);
-            if(!config.modEnabled || !config.soundEnabled) {
+            if(!config.modEnabled) {
+                return;
+            }
+
+            debug(String.format("createMediaPlayerFromResId: %b", config.soundEnabled));
+
+            if(!config.soundEnabled) {
                 return;
             }
 
             // Are IDs cached?
-            if(soundAudioCallIn == RES_ID_UNSET) {
+            if(soundJoin == RES_ID_UNSET) {
+                // Find and cache IDs
+                Resources res = ctx.getResources();
+                soundJoin = res.getIdentifier(HANGOUTS_SOUND_JOIN, "raw", HANGOUTS_RES_PKG_NAME);
+                soundLeave = res.getIdentifier(HANGOUTS_SOUND_LEAVE, "raw", HANGOUTS_RES_PKG_NAME);
+                if(config.debug) {
+                    log(String.format("join: 0x%x, leave: 0x%x", soundJoin, soundLeave));
+                }
+            }
+            
+            int soundId = (int)param.args[1];
+            String newSound;
+            if(soundJoin == soundId) {
+                newSound = config.soundJoin;
+            } else if(soundLeave == soundId) {
+                newSound = config.soundLeave;
+            } else {
+                return;
+            }
+
+            if(newSound.isEmpty()) {
+                // No custom sound is configured for this particular ID
+                return;
+            }
+
+            // Do it
+            param.setResult(MediaPlayer.create(ctx, Uri.parse(newSound)));
+            if(config.debug) {
+                log(String.format("0x%x redirected to %s", soundId, newSound));
+            }
+        }
+    };
+
+    // Handles all the other sounds
+    private final XC_MethodHook setDataSource = new XC_MethodHook() {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            Context ctx = (Context) param.args[0];
+            config.reload(ctx);
+            if (!config.modEnabled) {
+                return;
+            }
+
+            debug(String.format("setDataSource: %b", config.soundEnabled));
+
+            if (!config.soundEnabled) {
+                return;
+            }
+
+            // Should hopefully be in the format: android.resource://HANGOUTS_PKG_NAME/raw/soundId
+            Uri soundUri = (Uri) param.args[1];
+            if (!ContentResolver.SCHEME_ANDROID_RESOURCE.equals(soundUri.getScheme())
+                    || !HANGOUTS_PKG_NAME.equals(soundUri.getHost())) {
+                return;
+            }
+
+            // Attempt to retrieve the last segment, assuming one exists
+            String lastSegment = soundUri.getLastPathSegment();
+            if (lastSegment == null) {
+                return;
+            }
+
+            // Parse out the sound resource ID from the trailing segment
+            int soundId;
+            try {
+                soundId = Integer.valueOf(lastSegment);
+            } catch (NumberFormatException ex) {
+                log(ex);
+                return;
+            }
+
+            // Are IDs cached?
+            if (soundAudioCallIn == RES_ID_UNSET) {
                 // Find and cache IDs
                 Resources res = ctx.getResources();
                 soundAudioCallIn = res.getIdentifier(HANGOUTS_SOUND_AUDIO_CALL_IN, "raw", HANGOUTS_RES_PKG_NAME);
                 soundAudioCallOut = res.getIdentifier(HANGOUTS_SOUND_AUDIO_CALL_OUT, "raw", HANGOUTS_RES_PKG_NAME);
-                soundJoin = res.getIdentifier(HANGOUTS_SOUND_JOIN, "raw", HANGOUTS_RES_PKG_NAME);
-                soundLeave = res.getIdentifier(HANGOUTS_SOUND_LEAVE, "raw", HANGOUTS_RES_PKG_NAME);
                 soundOutgoing = res.getIdentifier(HANGOUTS_SOUND_OUTGOING, "raw", HANGOUTS_RES_PKG_NAME);
                 soundInCall = res.getIdentifier(HANGOUTS_SOUND_IN_CALL, "raw", HANGOUTS_RES_PKG_NAME);
-                soundMessage = res.getIdentifier(HANGOUTS_SOUND_MESSAGE, "raw", HANGOUTS_RES_PKG_NAME);
-                debug("Resources loaded.");
+                if (config.debug) {
+                    log(String.format("audioCallIn: 0x%x, audioCallOut: 0x%x, outgoing: 0x%x, inCall: 0x%x",
+                            soundAudioCallIn, soundAudioCallOut, soundOutgoing, soundInCall));
+                }
             }
 
             // If only we could use a switch here...
             // I'm all ears for better ways to do this
-            int soundId = (int)param.args[0];
-            String path = "";
-            if(soundAudioCallIn == soundId) {
-                path = config.soundAudioCallIn;
-            } else if(soundAudioCallOut == soundId) {
-                path = config.soundAudioCallOut;
-            } else if(soundJoin == soundId) {
-                path = config.soundJoin;
-            } else if(soundLeave == soundId) {
-                path = config.soundLeave;
-            } else if(soundOutgoing == soundId) {
-                path = config.soundOutgoing;
-            } else if(soundInCall == soundId) {
-                path = config.soundInCall;
-            } else if(soundMessage == soundId) {
-                path = config.soundMessage;
+            String newSound = "";
+            if (soundAudioCallIn == soundId) {
+                newSound = config.soundAudioCallIn;
+            } else if (soundAudioCallOut == soundId) {
+                newSound = config.soundAudioCallOut;
+            } else if (soundOutgoing == soundId) {
+                newSound = config.soundOutgoing;
+            } else if (soundInCall == soundId) {
+                newSound = config.soundInCall;
             }
 
-            if(!path.isEmpty()) {
-                param.setResult(path);
+            if(newSound.isEmpty()) {
+                // No custom sound is configured for this particular ID
+                return;
+            }
+
+            // Do it
+            ((MediaPlayer)param.thisObject).setDataSource(newSound);
+            param.setResult(null);
+            if (config.debug) {
+                log(String.format("0x%x redirected to %s", soundId, newSound));
             }
         }
     };

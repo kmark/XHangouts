@@ -70,11 +70,4 @@
         android:title="@string/pref_title_sound_incall"
         android:summary="@string/pref_desc_sound_default" />
 
-    <com.versobit.kmark.xhangouts.ui.FilePickerPreference
-        xh:requestCode="108"
-        android:key="sound_message"
-        android:dependency="sound_enabled"
-        android:title="@string/pref_title_sound_message"
-        android:summary="@string/pref_desc_sound_default" />
-
 </PreferenceScreen>

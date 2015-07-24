@@ -53,7 +53,6 @@ public enum Setting {
     SOUND_LEAVE,
     SOUND_OUTGOING,
     SOUND_INCALL,
-    SOUND_MESSAGE,
     ABOUT_VERSION,
     DEBUG;
 
