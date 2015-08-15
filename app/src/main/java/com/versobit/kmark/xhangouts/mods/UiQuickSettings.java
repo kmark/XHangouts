@@ -50,8 +50,8 @@ public final class UiQuickSettings extends Module {
 
     private static final int HANGOUTS_RES_MENU_TITLE = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":string/hangouts_menu_title");
     private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
-    private static final String ACTUAL_TITLE = "XHangouts v" + BuildConfig.VERSION_NAME.split("-", 2)[0];
-
+    private static final String ACTUAL_TITLE = "XHangouts v" +
+            BuildConfig.VERSION_NAME.substring(0, BuildConfig.VERSION_NAME.lastIndexOf('-'));
     private String modulePath = null;
 
     private Class cMenuItemBase = null;
