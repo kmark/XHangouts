@@ -22,7 +22,7 @@ package com.versobit.kmark.xhangouts.mods;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
@@ -32,14 +32,13 @@ import de.robv.android.xposed.callbacks.IXUnhook;
 import eu.chainfire.libsuperuser.Shell;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiSendLock extends Module {
 
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.impl.ComposeMessageView";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_SENDBUTTON = "c";
+    private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER = "com.google.android.apps.hangouts.conversation.v2.FloatingButtonWithCounter";
+    private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON = "c";
 
     private Shell.Builder shell = null;
     private volatile Shell.Interactive activeShell = null;
@@ -55,16 +54,16 @@ public final class UiSendLock extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class cComposeMessageView = findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loader);
+        Class cFloatBtnCounter = findClass(HANGOUTS_CONVERSATION_FLOATBTNCOUNTER, loader);
 
         return new IXUnhook[] {
-                findAndHookConstructor(cComposeMessageView,
-                        Context.class, AttributeSet.class, onNewComposeMessageView),
-                findAndHookMethod(cComposeMessageView, "k", preventOverwrite)
+                findAndHookConstructor(cFloatBtnCounter,
+                        Context.class, AttributeSet.class, onNewFloatingButtonWithCounter),
+                //findAndHookMethod(cFloatBtnCounter, "", preventOverwrite)
         };
     }
 
-    private final XC_MethodHook onNewComposeMessageView = new XC_MethodHook() {
+    private final XC_MethodHook onNewFloatingButtonWithCounter = new XC_MethodHook() {
         @Override
         protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
             config.reload((Context)param.args[0]);
@@ -79,7 +78,7 @@ public final class UiSendLock extends Module {
                 return;
             }
 
-            ((ImageButton)getObjectField(param.thisObject, HANGOUTS_VIEWS_COMPOSEMSGVIEW_SENDBUTTON))
+            ((ImageView)getObjectField(param.thisObject, HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON))
                     .setOnLongClickListener(onSendLongClick);
         }
     };

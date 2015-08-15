@@ -37,33 +37,32 @@ import de.robv.android.xposed.callbacks.IXUnhook;
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
-import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiEnterKey extends Module {
 
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW = "com.google.android.apps.hangouts.conversation.impl.ComposeMessageView";
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT = "h";
+    private static final String HANGOUTS_CONVERSATION_MSGEDITTEXT = "com.google.android.apps.hangouts.conversation.v2.MessageEditText";
+
+    private static final String HANGOUTS_CONVERSATOIN_TEXTFRAME = "ate";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
-    private static final String HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION = "onEditorAction";
+    private static final String HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION = "onEditorAction";
 
     public UiEnterKey(Config config) {
         super(UiEnterKey.class.getSimpleName(), config);
     }
 
-
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class cComposeMessageView = findClass(HANGOUTS_VIEWS_COMPOSEMSGVIEW, loader);
+        Class cMessageEditText = findClass(HANGOUTS_CONVERSATION_MSGEDITTEXT, loader);
+        Class cTextFrame = findClass(HANGOUTS_CONVERSATOIN_TEXTFRAME, loader);
 
         return new IXUnhook[] {
-                findAndHookConstructor(cComposeMessageView,
-                        Context.class, AttributeSet.class, onNewComposeMessageView),
-                findAndHookMethod(cComposeMessageView, HANGOUTS_VIEWS_COMPOSEMSGVIEW_ONEDITORACTION,
+                findAndHookConstructor(cMessageEditText, Context.class, AttributeSet.class, onNewMessageEditText),
+                findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION,
                         TextView.class, int.class, KeyEvent.class, onEditorAction)
         };
     }
 
-    private final XC_MethodHook onNewComposeMessageView = new XC_MethodHook() {
+    private final XC_MethodHook onNewMessageEditText = new XC_MethodHook() {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
             config.reload((Context) param.args[0]);
@@ -78,8 +77,7 @@ public final class UiEnterKey extends Module {
                 return;
             }
 
-            EditText et = (EditText)getObjectField(param.thisObject,
-                    HANGOUTS_VIEWS_COMPOSEMSGVIEW_EDITTEXT);
+            EditText et = (EditText)param.thisObject;
             // Remove Emoji selector (works for new line)
             int inputType = et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
             if(config.enterKey == Setting.UiEnterKey.SEND) {

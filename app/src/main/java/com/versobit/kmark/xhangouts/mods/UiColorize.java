@@ -50,7 +50,6 @@ public final class UiColorize extends Module {
 
     private static final String ANDROID_SUPPORT_ABCVIEW = "android.support.v7.internal.widget.ActionBarContextView";
 
-    private static final String HANGOUTS_COLOR_BUTTER_BAR_BG = "butter_bar_background";
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
     private static final String HANGOUTS_COLOR_PRIMARY = "primary";
@@ -177,7 +176,6 @@ public final class UiColorize extends Module {
                 return new ColorDrawable(appColors[5]);
             }
         });
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUTTER_BAR_BG, appColors[5]);
 
         // Fixes status bar on 5.x
         res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY, appColors[5]);
