@@ -32,7 +32,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public abstract class Module {
 
     private static final String HANGOUTS_ES_APPLICATION = "com.google.android.apps.hangouts.phone.EsApplication";
-    private static final String HANGOUTS_ES_APPLICATION_GETAPP = "d";
+    private static final String HANGOUTS_ES_APPLICATION_GETAPP = "b";
 
     private final String tag;
     protected final Config config;
