@@ -19,8 +19,6 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
-import android.app.AndroidAppHelper;
-import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.XResources;
 import android.graphics.ColorFilter;
@@ -28,27 +26,17 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.AttributeSet;
-import android.view.View;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
 
-import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
-
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
-import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiColorize extends Module {
 
     private static final String[] HANGOUTS_QUANTUM_COLOR_SUFFIXES = {"50", "100", "200", "300",
             "400", "500", "600", "700", "800", "900", "A100", "A200", "A400", "A700"};
-
-    private static final String ANDROID_SUPPORT_ABCVIEW = "android.support.v7.internal.widget.ActionBarContextView";
 
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
@@ -66,37 +54,6 @@ public final class UiColorize extends Module {
     public UiColorize(Config config) {
         super(UiColorize.class.getSimpleName(), config);
     }
-
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
-        Class cActionBarContextView = findClass(ANDROID_SUPPORT_ABCVIEW, loader);
-
-        // On Lollipop the ActionBarContextView still uses the GOOGLE_GREEN theme unless we explicitly
-        // set its background drawable. I'm not sure why it doesn't follow the updated resources.
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return new IXUnhook[] { };
-        }
-        return new IXUnhook[] {
-                findAndHookConstructor(cActionBarContextView,
-                        Context.class, AttributeSet.class, int.class, onNewActionBarContextView)
-        };
-    }
-
-    private final XC_MethodHook onNewActionBarContextView = new XC_MethodHook() {
-        // Had to hook into View.setBackgroundDrawable to find this one...
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            if(!config.modEnabled || config.appColor == Setting.AppColor.GOOGLE_GREEN) {
-                return;
-            }
-            // We could check to make sure we're operating on the correct view but Hangouts
-            // doesn't use these very often (once?) so we should be safe
-            ((View)param.thisObject).setBackgroundColor(getColorFromResources(
-                    AndroidAppHelper.currentApplication().getResources(),
-                    config.appColor.getPrefix() + HANGOUTS_QUANTUM_COLOR_SUFFIXES[5]
-            ));
-        }
-    };
 
     private static int getColorFromResources(Resources res, String name) {
         return res.getColor(res.getIdentifier(name, "color", HANGOUTS_RES_PKG_NAME));
