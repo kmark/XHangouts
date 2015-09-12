@@ -21,9 +21,14 @@ package com.versobit.kmark.xhangouts.mods;
 
 import android.content.res.Resources;
 import android.content.res.XResources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -31,12 +36,18 @@ import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
 
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.callbacks.IXUnhook;
+
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public final class UiColorize extends Module {
 
     private static final String[] HANGOUTS_QUANTUM_COLOR_SUFFIXES = {"50", "100", "200", "300",
             "400", "500", "600", "700", "800", "900", "A100", "A200", "A400", "A700"};
+
+    private static final String ANDROID_GRAPHICS_BITMAPFACTORY_DECODERESOURCE = "decodeResource";
 
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
@@ -50,10 +61,40 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_DRAWABLE_ONGOING_BGP = "hangout_ongoing_bg_pressed";
     private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
     private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
+    private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR = "default_avatar";
+    private static final float HANGOUTS_DRAWABLE_DEFAULT_AVATAR_HUE = ColorUtils.hueFromRgb(0xff0b8043);
+
+    private static final int RES_ID_UNSET = 0;
+    private static int resDefaultAvatar = RES_ID_UNSET;
 
     public UiColorize(Config config) {
         super(UiColorize.class.getSimpleName(), config);
     }
+
+    @Override
+    public IXUnhook[] hook(ClassLoader loader) {
+        return new IXUnhook[] {
+                findAndHookMethod(BitmapFactory.class,
+                        ANDROID_GRAPHICS_BITMAPFACTORY_DECODERESOURCE,
+                        Resources.class, int.class, decodeResource)
+        };
+    }
+
+    // Overrides BitmapFactory.decodeResource to replace the default avatar bitmap
+    private final XC_MethodHook decodeResource = new XC_MethodHook() {
+        @Override
+        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            Resources res = (Resources)param.args[0];
+            int id = (int)param.args[1];
+            if(resDefaultAvatar == RES_ID_UNSET) {
+                resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
+            }
+            if(id == resDefaultAvatar) {
+                //noinspection ConstantConditions
+                param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
+            }
+        }
+    };
 
     private static int getColorFromResources(Resources res, String name) {
         return res.getColor(res.getIdentifier(name, "color", HANGOUTS_RES_PKG_NAME));
@@ -131,6 +172,28 @@ public final class UiColorize extends Module {
             @Override
             public Drawable newDrawable(XResources res, int id) throws Throwable {
                 return new ColorDrawable(appColors[5]);
+            }
+        });
+
+        // This is all to colorize the default green contact avatar.
+        resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
+        final Bitmap coloredDefaultAvatar;
+        {
+            // This is safe to use since decodeResources hasn't been hooked yet
+            Bitmap original = BitmapFactory.decodeResource(res, resDefaultAvatar);
+            coloredDefaultAvatar = Bitmap.createBitmap(original.getWidth(),
+                    original.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(coloredDefaultAvatar);
+            Paint paint = new Paint();
+            paint.setColorFilter(ColorUtils.adjustHue(
+                    ColorUtils.hueFromRgb(appColors[5]) - HANGOUTS_DRAWABLE_DEFAULT_AVATAR_HUE));
+            canvas.drawBitmap(original, 0, 0, paint);
+            original.recycle();
+        }
+        res.setReplacement(resDefaultAvatar, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources xResources, int i) throws Throwable {
+                return new BitmapDrawable(xResources, coloredDefaultAvatar);
             }
         });
 
