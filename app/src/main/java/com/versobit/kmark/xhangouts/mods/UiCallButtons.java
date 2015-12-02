@@ -66,13 +66,7 @@ public final class UiCallButtons extends Module {
     private final XC_MethodHook onPrepareOptionsMenu = new XC_MethodHook() {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            if(!config.modEnabled) {
-                return;
-            }
-
-            debug(String.valueOf(config.hideCallButtons));
-
-            if(!config.hideCallButtons) {
+            if(!config.modEnabled || !config.hideCallButtons) {
                 return;
             }
 
