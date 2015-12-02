@@ -21,6 +21,7 @@ package com.versobit.kmark.xhangouts.mods;
 
 import android.app.AndroidAppHelper;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -45,13 +46,13 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class MmsResizing extends Module {
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "cnh";
-    // private static a(IIIILandroid/net/Uri;)[B
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "due";
+    // private static a(IIIILandroid/net/Uri;Landroid/content/Context;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
     private static final String HANGOUTS_ESPROVIDER_CLASS = "com.google.android.apps.hangouts.content.EsProvider";
-    // private static e(Ljava/lang/String;)Ljava/lang/String
-    private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "e";
+    // private static a(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
+    private static final String HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE = "a";
 
     private Class cEsProvider;
 
@@ -66,7 +67,7 @@ public final class MmsResizing extends Module {
 
         return new IXUnhook[]{
                 findAndHookMethod(cProcessMmsImg, HANGOUTS_PROCESS_MMS_IMG_METHOD,
-                        int.class, int.class, int.class, int.class, Uri.class, processMmsImage)
+                        int.class, int.class, int.class, int.class, Uri.class, Context.class, processMmsImage)
         };
     }
 
@@ -79,6 +80,7 @@ public final class MmsResizing extends Module {
         // int3 = max scaled height, appears to be 640 if portrait, 480 if landscape or square
         // int4 ?, seems to be width * height - 1024 = 306176
         // Uri1 content:// path that references the input image
+        // Context
 
         // At least one instance has been reported of int2, int3, and int4 being populated with
         // much larger values resulting in an image much too large to be sent via MMS
@@ -99,6 +101,7 @@ public final class MmsResizing extends Module {
             final int paramWidth = (Integer)param.args[1];
             final int paramHeight = (Integer)param.args[2];
             final Uri imgUri = (Uri)param.args[4];
+            final Context paramContext = (Context)param.args[5];
 
             // Prevents leak of Hangouts account email to the debug log
             final String safeUri = imgUri.toString().substring(0, imgUri.toString().indexOf("?"));
@@ -128,7 +131,7 @@ public final class MmsResizing extends Module {
                     // Find the rotated "real" dimensions to determine proper final scaling
                     // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
                     String scratchId = imgUri.getPathSegments().get(1);
-                    String filePath = (String)callStaticMethod(cEsProvider, HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, scratchId);
+                    String filePath = (String)callStaticMethod(cEsProvider, HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, paramContext, scratchId);
                     if(new File(filePath).exists()) {
                         debug(String.format("Cache file located: %s", filePath));
                         ExifInterface exif = new ExifInterface(filePath);
