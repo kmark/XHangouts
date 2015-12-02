@@ -27,6 +27,16 @@
         android:summaryOff="@string/pref_desc_mms_resize_enabled_off"
         android:defaultValue="true" />
 
+    <Preference
+        android:dependency="mms_resize_enabled"
+        android:key="mms_scale"
+        android:title="@string/pref_title_mms_scale" />
+
+    <Preference
+        android:dependency="mms_resize_enabled"
+        android:key="mms_image"
+        android:title="@string/pref_title_mms_image_type" />
+
     <CheckBoxPreference
         android:dependency="mms_resize_enabled"
         android:key="mms_rotate_enabled"
@@ -42,16 +52,6 @@
         android:entryValues="@array/pref_mms_orientation_mode_values"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
-
-    <Preference
-        android:dependency="mms_resize_enabled"
-        android:key="mms_scale"
-        android:title="@string/pref_title_mms_scale" />
-
-    <Preference
-        android:dependency="mms_resize_enabled"
-        android:key="mms_image"
-        android:title="@string/pref_title_mms_image_type" />
 
     <CheckBoxPreference
         android:dependency="mod_enabled"
