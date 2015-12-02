@@ -38,7 +38,7 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 public final class UiSendLock extends Module {
 
     private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER = "com.google.android.apps.hangouts.conversation.v2.FloatingButtonWithCounter";
-    private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON = "c";
+    private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON = "a";
 
     private Shell.Builder shell = null;
     private volatile Shell.Interactive activeShell = null;
