@@ -26,6 +26,7 @@ import android.content.pm.PackageInfo;
 import com.versobit.kmark.xhangouts.mods.MmsApnSplicing;
 import com.versobit.kmark.xhangouts.mods.MmsResizing;
 import com.versobit.kmark.xhangouts.mods.ImageCompression;
+import com.versobit.kmark.xhangouts.mods.ImageResizing;
 import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
@@ -70,6 +71,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
     private final Config config = new Config();
 
     private final Module[] modules = new Module[] {
+            new ImageResizing(config),
             new ImageCompression(config),
             new MmsResizing(config),
             new MmsApnSplicing(config),
