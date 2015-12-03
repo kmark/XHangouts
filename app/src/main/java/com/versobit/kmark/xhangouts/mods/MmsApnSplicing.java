@@ -55,31 +55,31 @@ public final class MmsApnSplicing extends Module {
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ1 = "a";
     private static final String HANGOUTS_MMSTRANSACTIONS_SENDSENDREQ2 = "a";
 
-    private static final String HANGOUTS_TRANSACTIONSETTINGS = "doy";
+    private static final String HANGOUTS_TRANSACTIONSETTINGS = "dvc";
     private static final String HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD = "b";
 
     private static final String HANGOUTS_MMS_MESSAGECLASS1 = "vo";
     private static final String HANGOUTS_MMS_MESSAGECLASS2 = "wi";
 
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "dns";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER = "dtv";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST1 = "a";
     private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2 = "a";
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "b";
-    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD = "b";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK = "a";
+    private static final String HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD = "c";
 
-    private static final String HANGOUTS_MMSSENDER = "aca";
+    private static final String HANGOUTS_MMSSENDER = "adh";
     private static final String HANGOUTS_MMSSENDER_DOSEND = "a";
 
-    private static final String HANGOUTS_MMS_APN = "doz";
+    private static final String HANGOUTS_MMS_APN = "dvd";
     private static final String HANGOUTS_MMS_APN_RAWMMSCFIELD = "c";
     private static final String HANGOUTS_MMS_APN_MMSCFIELD = "b";
     private static final String HANGOUTS_MMS_APN_PROXYFIELD = "d";
     private static final String HANGOUTS_MMS_APN_PORTFIELD = "f";
     private static final String HANGOUTS_MMS_APN_ISPROXYSET = "b";
 
-    private static final String HANGOUTS_MMS_EXCEPTION = "dny";
+    private static final String HANGOUTS_MMS_EXCEPTION = "dub";
 
-    private static final String HANGOUTS_MMSC_RESPONSE = "abj";
+    private static final String HANGOUTS_MMSC_RESPONSE = "acq";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
 
     private Class cMmsSendReceiveManager;

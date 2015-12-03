@@ -20,6 +20,7 @@
 package com.versobit.kmark.xhangouts.mods;
 
 import android.content.res.Resources;
+import android.content.res.XModuleResources;
 import android.content.res.XResources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,8 +35,10 @@ import android.graphics.drawable.Drawable;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
+import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.Setting;
 
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
 
@@ -49,6 +52,7 @@ public final class UiColorize extends Module {
 
     private static final String ANDROID_GRAPHICS_BITMAPFACTORY_DECODERESOURCE = "decodeResource";
 
+    private static final String HANGOUTS_COLOR_FAB = "fab_hangouts_primary_color";
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
     private static final String HANGOUTS_COLOR_PRIMARY = "primary";
@@ -62,18 +66,23 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
     private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
     private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR = "default_avatar";
-    private static final float HANGOUTS_DRAWABLE_DEFAULT_AVATAR_HUE = ColorUtils.hueFromRgb(0xff0b8043);
 
     private static final int RES_ID_UNSET = 0;
     private static int resDefaultAvatar = RES_ID_UNSET;
+    private String modulePath = null;
 
     public UiColorize(Config config) {
         super(UiColorize.class.getSimpleName(), config);
     }
 
     @Override
+    public void init(IXposedHookZygoteInit.StartupParam startup) {
+        modulePath = startup.modulePath;
+    }
+
+    @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        return new IXUnhook[] {
+        return new IXUnhook[]{
                 findAndHookMethod(BitmapFactory.class,
                         ANDROID_GRAPHICS_BITMAPFACTORY_DECODERESOURCE,
                         Resources.class, int.class, decodeResource)
@@ -84,12 +93,12 @@ public final class UiColorize extends Module {
     private final XC_MethodHook decodeResource = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            Resources res = (Resources)param.args[0];
-            int id = (int)param.args[1];
-            if(resDefaultAvatar == RES_ID_UNSET) {
+            Resources res = (Resources) param.args[0];
+            int id = (int) param.args[1];
+            if (resDefaultAvatar == RES_ID_UNSET) {
                 resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
             }
-            if(id == resDefaultAvatar) {
+            if (id == resDefaultAvatar) {
                 //noinspection ConstantConditions
                 param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
             }
@@ -104,8 +113,22 @@ public final class UiColorize extends Module {
     public void resources(XResources res) {
         debug(config.appColor.name());
 
-        if(config.appColor == Setting.AppColor.GOOGLE_GREEN) {
+        if (config.appColor == Setting.AppColor.GOOGLE_GREEN) {
             return;
+        }
+
+        // Handle any custom DPI that Hangouts might be set to
+        XModuleResources xModRes = XModuleResources.createInstance(modulePath, null);
+        final int HANGOUTS_DRAWABLE_CUSTOM_AVATAR;
+        final int hangoutsDPI = res.getDisplayMetrics().densityDpi;
+        if (hangoutsDPI <= 160) {
+            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_mdpi);
+        } else if (hangoutsDPI <= 240) {
+            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_hdpi);
+        } else if (hangoutsDPI <= 320) {
+            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_xhdpi);
+        } else {
+            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_xxhdpi);
         }
 
         // The resource name prefix representing the desired color (source)
@@ -115,14 +138,14 @@ public final class UiColorize extends Module {
 
         int totalColors = HANGOUTS_QUANTUM_COLOR_SUFFIXES.length;
         // Some colors are without accents, so we subtract them out
-        if(config.appColor == Setting.AppColor.BROWN || config.appColor == Setting.AppColor.GREY ||
+        if (config.appColor == Setting.AppColor.BROWN || config.appColor == Setting.AppColor.GREY ||
                 config.appColor == Setting.AppColor.BLUE_GREY) {
             totalColors -= 4;
         }
         // Hold onto the found colors so we can use them afterwards
         final int[] appColors = new int[totalColors];
         // Loop over every available quantum color, replacing them
-        for(int i = 0; i < totalColors; i++) {
+        for (int i = 0; i < totalColors; i++) {
             appColors[i] = getColorFromResources(res, fromPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i]);
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "color",
                     toPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i], appColors[i]);
@@ -155,6 +178,10 @@ public final class UiColorize extends Module {
             }
         });
 
+        // Fixes the send button color
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FAB,
+                appColors[5]);
+
         // Fixes "Sending as <number>" / Ongoing call bar on 4.x
         res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_ONGOING_BG,
                 appColors[5]);
@@ -179,16 +206,19 @@ public final class UiColorize extends Module {
         resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
         final Bitmap coloredDefaultAvatar;
         {
-            // This is safe to use since decodeResources hasn't been hooked yet
-            Bitmap original = BitmapFactory.decodeResource(res, resDefaultAvatar);
-            coloredDefaultAvatar = Bitmap.createBitmap(original.getWidth(),
-                    original.getHeight(), Bitmap.Config.ARGB_8888);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inMutable = true;
+            coloredDefaultAvatar = BitmapFactory.decodeResource(res, resDefaultAvatar, options);
+
             Canvas canvas = new Canvas(coloredDefaultAvatar);
-            Paint paint = new Paint();
-            paint.setColorFilter(ColorUtils.adjustHue(
-                    ColorUtils.hueFromRgb(appColors[5]) - HANGOUTS_DRAWABLE_DEFAULT_AVATAR_HUE));
-            canvas.drawBitmap(original, 0, 0, paint);
-            original.recycle();
+            canvas.setDensity(hangoutsDPI);
+            canvas.drawColor(appColors[7]);
+
+            // BitmapFactory.decodeResource doesn't work here
+            Bitmap avatar = ((BitmapDrawable) res.getDrawable(HANGOUTS_DRAWABLE_CUSTOM_AVATAR)).getBitmap();
+            canvas.drawBitmap(avatar, 0, 0, null);
+            avatar.recycle();
         }
         res.setReplacement(resDefaultAvatar, new XResources.DrawableLoader() {
             @Override
@@ -217,15 +247,15 @@ public final class UiColorize extends Module {
         private static void adjustHue(ColorMatrix cm, float value) {
             value = cleanValue(value, 180f) / 180f * (float) Math.PI;
 
-            if(value == 0) {
+            if (value == 0) {
                 return;
             }
-            float cosVal = (float)Math.cos(value);
-            float sinVal = (float)Math.sin(value);
+            float cosVal = (float) Math.cos(value);
+            float sinVal = (float) Math.sin(value);
             float lumR = 0.213f;
             float lumG = 0.715f;
             float lumB = 0.072f;
-            float[] mat = new float[] {
+            float[] mat = new float[]{
                     lumR + cosVal * (1 - lumR) + sinVal * (-lumR),
                     lumG + cosVal * (-lumG) + sinVal * (-lumG),
                     lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0,
@@ -258,17 +288,17 @@ public final class UiColorize extends Module {
             float max = Math.max(Math.max(r, g), b);
             float delta = max - min;
 
-            if(max == 0x00 || min == 0xFF) {
+            if (max == 0x00 || min == 0xFF) {
                 // Black or white
                 return 0;
             }
 
             float h;
 
-            if(r == max) {
+            if (r == max) {
                 // Between yellow and magenta
                 h = (g - b) / delta;
-            } else if(g == max) {
+            } else if (g == max) {
                 // Between cyan and yellow
                 h = 2 + (b - r) / delta;
             } else {
@@ -278,7 +308,7 @@ public final class UiColorize extends Module {
 
             // Degrees
             h *= 60;
-            if(h < 0) {
+            if (h < 0) {
                 h += 360;
             }
 

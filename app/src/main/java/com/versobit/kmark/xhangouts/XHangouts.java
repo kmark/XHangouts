@@ -24,6 +24,9 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 
 import com.versobit.kmark.xhangouts.mods.MmsApnSplicing;
+import com.versobit.kmark.xhangouts.mods.MmsResizing;
+import com.versobit.kmark.xhangouts.mods.ImageCompression;
+import com.versobit.kmark.xhangouts.mods.ImageResizing;
 import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
@@ -61,13 +64,16 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
-    private static final String TESTED_VERSION_STR = "4.0.100406486";
-    private static final int TESTED_VERSION_INT = 22542590;
-    private static final int VERSION_TOLERANCE = 20;
+    private static final String TESTED_VERSION_STR = "6.0.107278502";
+    private static final int TESTED_VERSION_INT = 22691338;
+    private static final int VERSION_TOLERANCE = 30;
 
     private final Config config = new Config();
 
     private final Module[] modules = new Module[] {
+            new ImageResizing(config),
+            new ImageCompression(config),
+            new MmsResizing(config),
             new MmsApnSplicing(config),
             new UiEnterKey(config),
             new UiCallButtons(config),

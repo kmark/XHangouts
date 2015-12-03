@@ -36,7 +36,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiCallButtons extends Module {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "bka";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "bkm";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
     private static final String HANGOUTS_MENU_CONVO_CALL = "realtimechat_conversation_call_menu_item";
@@ -66,13 +66,7 @@ public final class UiCallButtons extends Module {
     private final XC_MethodHook onPrepareOptionsMenu = new XC_MethodHook() {
         @Override
         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            if(!config.modEnabled) {
-                return;
-            }
-
-            debug(String.valueOf(config.hideCallButtons));
-
-            if(!config.hideCallButtons) {
+            if(!config.modEnabled || !config.hideCallButtons) {
                 return;
             }
 
