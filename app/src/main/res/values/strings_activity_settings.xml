@@ -34,15 +34,15 @@
     <string name="pref_desc_launcher_icon">Make XHangouts appear in your launcher</string>
 
     <!-- MMS -->
-    <string name="pref_header_mms">MMS</string>
+    <string name="pref_header_mms">Pictures</string>
 
     <string name="pref_title_mms_resize_enabled">High quality resizing</string>
     <string name="pref_desc_mms_resize_enabled_on">Using the XHangouts resizing algorithm</string>
     <string name="pref_desc_mms_resize_enabled_off">Using the built-in resizing algorithm</string>
 
-    <string name="pref_title_orientation_enabled">Orientation correction</string>
+    <string name="pref_title_orientation_enabled">MMS orientation correction</string>
 
-    <string name="pref_title_orientation_mode">Correction mode</string>
+    <string name="pref_title_orientation_mode">MMS orientation mode</string>
     <string-array name="pref_mms_orientation_mode_titles">
         <item>Auto (recommended)</item>
         <item>90 degrees</item>
