@@ -24,13 +24,13 @@ apply plugin: 'com.android.application'
 apply from: 'signing.gradle'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode getVersionDef()[0].toInteger()
         versionName getVersionName()
     }
