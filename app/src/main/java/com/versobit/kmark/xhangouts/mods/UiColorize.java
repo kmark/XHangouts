@@ -99,7 +99,7 @@ public final class UiColorize extends Module {
                 resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
             }
             if (id == resDefaultAvatar) {
-                //noinspection ConstantConditions
+                //noinspection ConstantConditions,deprecation
                 param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
             }
         }
@@ -119,16 +119,16 @@ public final class UiColorize extends Module {
 
         // Handle any custom DPI that Hangouts might be set to
         XModuleResources xModRes = XModuleResources.createInstance(modulePath, null);
-        final int HANGOUTS_DRAWABLE_CUSTOM_AVATAR;
+        final int hangoutsDrawableCustomAvatar;
         final int hangoutsDPI = res.getDisplayMetrics().densityDpi;
         if (hangoutsDPI <= 160) {
-            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_mdpi);
+            hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_mdpi);
         } else if (hangoutsDPI <= 240) {
-            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_hdpi);
+            hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_hdpi);
         } else if (hangoutsDPI <= 320) {
-            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_xhdpi);
+            hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_xhdpi);
         } else {
-            HANGOUTS_DRAWABLE_CUSTOM_AVATAR = res.addResource(xModRes, R.drawable.avatar_xxhdpi);
+            hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_xxhdpi);
         }
 
         // The resource name prefix representing the desired color (source)
@@ -172,6 +172,7 @@ public final class UiColorize extends Module {
         res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_AB_TAB, new XResources.DrawableLoader() {
             @Override
             public Drawable newDrawable(XResources res, int id) throws Throwable {
+                //noinspection ConstantConditions
                 Drawable coloredTab = actBarTab.mutate().getConstantState().newDrawable();
                 coloredTab.setColorFilter(ColorUtils.adjustHue(hueDiff));
                 return coloredTab;
@@ -216,7 +217,8 @@ public final class UiColorize extends Module {
             canvas.drawColor(appColors[7]);
 
             // BitmapFactory.decodeResource doesn't work here
-            Bitmap avatar = ((BitmapDrawable) res.getDrawable(HANGOUTS_DRAWABLE_CUSTOM_AVATAR)).getBitmap();
+            // noinspection ConstantConditions
+            Bitmap avatar = ((BitmapDrawable) res.getDrawable(hangoutsDrawableCustomAvatar)).getBitmap();
             canvas.drawBitmap(avatar, 0, 0, null);
             avatar.recycle();
         }
