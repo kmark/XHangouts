@@ -60,29 +60,29 @@ public final class ImageCompression extends Module {
                 return;
             }
 
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
             try {
                 Bitmap paramBitmap = (Bitmap) param.args[0];
-                final int paramInt = (Integer) param.args[1]; // Original compression level
+                final int paramInt = (int) param.args[1]; // Original compression level
 
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-                Bitmap.CompressFormat compressFormat = null;
-                final int compressQ = config.imageFormat == Setting.ImageFormat.PNG ? 0 : config.imageQuality;
-                switch (config.imageFormat) {
-                    case PNG:
-                        debug(String.format("Old compression level: %s / New: Lossless", paramInt));
-                        compressFormat = Bitmap.CompressFormat.PNG;
-                        break;
-                    case JPEG:
-                        debug(String.format("Old compression level: %s / New: %s", paramInt, config.imageQuality));
-                        compressFormat = Bitmap.CompressFormat.JPEG;
-                        break;
+                final int compressQ;
+                final String compressLog;
+                if(config.imageFormat == Setting.ImageFormat.PNG) {
+                    compressQ = 0;
+                    compressLog = "Lossless";
+                } else {
+                    compressQ = config.imageQuality;
+                    compressLog = String.valueOf(config.imageQuality);
                 }
+                debug(String.format("Old compression level: %d / New: %s", paramInt, compressLog));
 
-                paramBitmap.compress(compressFormat, compressQ, output);
+                paramBitmap.compress(config.imageFormat.toCompressFormat(), compressQ, output);
                 param.setResult(output.toByteArray());
             } catch (Throwable t) {
-                log(t.getMessage());
+                // Potential OutOfMemoryError
+                log(t);
+            } finally {
+                output.close();
             }
 
         }
