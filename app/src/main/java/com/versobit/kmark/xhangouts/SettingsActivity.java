@@ -157,6 +157,7 @@ final public class SettingsActivity extends PreferenceActivity {
 
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
 
+            /* MMS APN Splicing is currently unsupported
             Preference apnConfig = findPreference(Setting.MMS_APN_SPLICING_APN_CONFIG_PREFKEY.toString());
             Setting.ApnPreset apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(Setting.MMS_APN_SPLICING_APN_CONFIG_PRESET.toString(), Setting.ApnPreset.CUSTOM.toInt()));
             updateMmsApnConfigSummary(apnConfig, apnPreset);
@@ -170,6 +171,7 @@ final public class SettingsActivity extends PreferenceActivity {
                 }
             });
             updatePrefDialog(MmsApnConfigDialog.FRAGMENT_TAG, apnConfig);
+            */
 
             // Add UI Tweaks preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());

@@ -44,6 +44,7 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.getStaticObjectField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
 
+/* MMS APN Splicing is currently unsupported. */
 public final class MmsApnSplicing extends Module {
 
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bfr";
