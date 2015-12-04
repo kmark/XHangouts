@@ -31,12 +31,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public abstract class Module {
 
-    private static final String HANGOUTS_ES_APPLICATION = "com.google.android.apps.hangouts.phone.EsApplication";
-    private static final String HANGOUTS_ES_APPLICATION_GETAPP = "b";
+    // This class is huge and I'm having a hard time figuring out what it doesn't do...
+    // The entire thing is marked deprecated.
+    private static final String HANGOUTS_UTILITY_THING = "g";
+    private static final String HANGOUTS_UTILITY_THING_GETAPP = "j";
 
     private final String tag;
     protected final Config config;
-    private Class EsApplication = null;
+    private Class UtilityThing = null;
 
     public Module(String tag, Config config) {
         this.tag = tag;
@@ -46,14 +48,15 @@ public abstract class Module {
     public void init(IXposedHookZygoteInit.StartupParam startup) { }
 
     public IXUnhook[] hook(ClassLoader loader) {
-        EsApplication = findClass(HANGOUTS_ES_APPLICATION, loader);
+        UtilityThing = findClass(HANGOUTS_UTILITY_THING, loader);
         return new IXUnhook[] { };
     }
 
     public void resources(XResources res) { }
 
     protected Application getApplication() {
-        return (Application)callStaticMethod(EsApplication, HANGOUTS_ES_APPLICATION_GETAPP);
+        // The actual result is a Hangouts_Application instance
+        return (Application)callStaticMethod(UtilityThing, HANGOUTS_UTILITY_THING_GETAPP);
     }
 
     protected void debug(String msg) {
