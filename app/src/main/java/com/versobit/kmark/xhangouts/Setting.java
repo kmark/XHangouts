@@ -19,6 +19,8 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.graphics.Bitmap;
+
 import java.util.Locale;
 
 public enum Setting {
@@ -132,6 +134,16 @@ public enum Setting {
 
         public int toInt() {
             return value;
+        }
+
+        public Bitmap.CompressFormat toCompressFormat() {
+            switch (this) {
+                case JPEG:
+                    return Bitmap.CompressFormat.JPEG;
+                case PNG:
+                    return Bitmap.CompressFormat.PNG;
+            }
+            return null;
         }
     }
 
