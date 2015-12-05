@@ -25,7 +25,6 @@ import android.graphics.Matrix;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
-import com.versobit.kmark.xhangouts.Setting;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
