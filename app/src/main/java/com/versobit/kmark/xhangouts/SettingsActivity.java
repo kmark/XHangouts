@@ -43,7 +43,6 @@ import android.widget.Toast;
 
 import com.versobit.kmark.xhangouts.dialogs.AboutDialog;
 import com.versobit.kmark.xhangouts.dialogs.ISettingsPrefDialog;
-import com.versobit.kmark.xhangouts.dialogs.MmsApnConfigDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsScaleDialog;
 import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
 import com.versobit.kmark.xhangouts.dialogs.UiAppColorDialog;

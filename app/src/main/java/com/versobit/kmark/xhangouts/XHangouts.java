@@ -23,10 +23,9 @@ import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
-import com.versobit.kmark.xhangouts.mods.MmsApnSplicing;
-import com.versobit.kmark.xhangouts.mods.MmsResizing;
 import com.versobit.kmark.xhangouts.mods.ImageCompression;
 import com.versobit.kmark.xhangouts.mods.ImageResizing;
+import com.versobit.kmark.xhangouts.mods.MmsResizing;
 import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
