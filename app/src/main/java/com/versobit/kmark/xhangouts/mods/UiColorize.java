@@ -28,7 +28,6 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -57,6 +56,7 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
     private static final String HANGOUTS_COLOR_PRIMARY = "primary";
     private static final String HANGOUTS_COLOR_PRIMARY_DARK = "primary_dark";
+    private static final String HANGOUTS_COLOR_PRIMARY_HANGOUTS = "hangouts_primary_color";
     private static final String HANGOUTS_COLOR_QUANTUM_GOOGGREEN = "quantum_googgreen";
 
     private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
@@ -181,6 +181,10 @@ public final class UiColorize extends Module {
 
         // Fixes the send button color
         res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FAB,
+                appColors[5]);
+
+        // Fixes the attachments icon color
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY_HANGOUTS,
                 appColors[5]);
 
         // Fixes "Sending as <number>" / Ongoing call bar on 4.x
