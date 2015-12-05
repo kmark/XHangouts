@@ -143,12 +143,14 @@ public class LocalStorageProvider extends DocumentsProvider {
         // projection if "projection" is null.
         final MatrixCursor result = new MatrixCursor(projection != null ? projection
                 : DEFAULT_DOCUMENT_PROJECTION);
-        final File parent = new File(parentDocumentId);
-        for (File file : parent.listFiles()) {
-            // Don't show hidden files/folders
-            if (!file.getName().startsWith(".")) {
-                // Adds the file's display name, MIME type, size, and so on.
-                includeFile(result, file);
+        final File[] parentFiles = new File(parentDocumentId).listFiles();
+        if (parentFiles != null) {
+            for (File file : parentFiles) {
+                // Don't show hidden files/folders
+                if (!file.getName().startsWith(".")) {
+                    // Adds the file's display name, MIME type, size, and so on.
+                    includeFile(result, file);
+                }
             }
         }
         return result;
