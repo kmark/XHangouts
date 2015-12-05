@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2015 Kevin Mark
  *
  * This file is part of XHangouts.
  *
