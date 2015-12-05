@@ -14,12 +14,11 @@ Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hang
 ## Features
 * Easily enable or disable features without rebooting
 * Automatically rotate photos taken by your camera
-* High quality MMS image resizing algorithm.
-* Tweak MMS image dimensions
-* Choose between JPEG and PNG MMS images at varying quality levels with an easy-to-use dialog.
+* High quality image resizing algorithm.
+* Tweak MMS, Google Voice, and Hangouts image dimensions
+* Choose between JPEG and PNG images at varying quality levels with an easy-to-use interface.
 * Change the enter key on your keyboard to add a new line or send your message (as opposed to opening the emoji keyboard).
-* Attach media even after you've begun typing by long pressing the emoji button
-* MMS APN Splicing. Send and receive MMS very quickly (and waste less battery) while on your mobile connection.
+* (Currently deactivated) MMS APN Splicing. Send and receive MMS very quickly (and waste less battery) while on your mobile connection.
 * Personalize Hangouts! Choose from 23 different material design colors.
 * Hide the video and audio call toolbar buttons.
 * Toggle the app's launcher presence
@@ -27,8 +26,7 @@ Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hang
 * Send a message and lock your device with one tap
 * Customize ringtones and sounds
 * Disable the proximity sensor
-* Give yourself more room to type by hiding the emoji button
-* Works on Xposed for Lollipop!
+* Works on Xposed for Lollipop and Marshmallow!
 * Free and open-source software. No nags. No data collection. No secrets.
 
 ## Screenshots
