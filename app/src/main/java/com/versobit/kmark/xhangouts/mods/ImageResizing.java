@@ -56,9 +56,10 @@ public final class ImageResizing extends Module {
         };
     }
 
+    // TODO: This is awfully similar to MmsResizing. Move common functionality to util class?
     private final XC_MethodHook processImage = new XC_MethodHook() {
         /*
-         * byte[] = The image
+         * byte[] = The compressed (PNG/JPEG/etc) image
          * int1 = Height
          * int2 = Width
          * int3 = Rotation
@@ -75,16 +76,16 @@ public final class ImageResizing extends Module {
             try {
                 // Get our params
                 byte[] paramArrayOfByte = (byte[]) param.args[0];
-                int paramHeight = (Integer) param.args[1];
-                int paramWidth = (Integer) param.args[2];
-                final int paramRotation = (Integer) param.args[3];
+                int paramHeight = (int) param.args[1];
+                int paramWidth = (int) param.args[2];
+                final int paramRotation = (int) param.args[3];
 
                 // Stickers and other junk
                 if (paramHeight <= 400 && paramWidth <= 400) {
                     return;
                 }
 
-                debug(String.format("Original limit is w=%d h=%d", paramWidth, paramHeight));
+                debug(String.format("Param Limits: %d×%d", paramWidth, paramHeight));
 
                 // Setup some options to decode the bitmap
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -93,13 +94,14 @@ public final class ImageResizing extends Module {
                 options.inTargetDensity = 0;
                 options.inSampleSize = 1;
                 options.inMutable = true;
+                // We just want the bitmap info, do not allocate memory for the pixels (yet)
                 options.inJustDecodeBounds = true;
 
                 // Get the real image size
                 BitmapFactory.decodeByteArray(paramArrayOfByte, 0, paramArrayOfByte.length, options);
-                options.inJustDecodeBounds = false;
                 int srcW = options.outWidth;
                 int srcH = options.outHeight;
+                debug(String.format("Original: %d×%d", srcW, srcH));
 
                 // Find the highest possible sample size divisor that is still larger than our maxes
                 int inSS = 1;
@@ -108,11 +110,13 @@ public final class ImageResizing extends Module {
                     srcH /= 2;
                     inSS *= 2;
                 }
-                debug(String.format("Unscaled bitmap is w=%d h=%d", srcW, srcH));
+                debug(String.format("Estimated: %d×%d, Sample Size: 1/%d", srcW, srcH, inSS));
 
-                // Subsample the image so that we don't crop it instead
+                // Load the sampled image into memory
+                options.inJustDecodeBounds = false;
                 options.inSampleSize = inSS;
-                Bitmap unscaledBitmap = BitmapFactory.decodeByteArray(paramArrayOfByte, 0, paramArrayOfByte.length, options);
+                Bitmap sampled = BitmapFactory.decodeByteArray(paramArrayOfByte, 0, paramArrayOfByte.length, options);
+                debug(String.format("Sampled: %d×%d", sampled.getWidth(), sampled.getHeight()));
 
                 // A little performance tweak that helps to prevent some memory issues
                 if ((paramWidth > config.imageWidth) || (paramHeight > config.imageHeight)) {
@@ -121,53 +125,50 @@ public final class ImageResizing extends Module {
                 }
 
                 // If the image is already smaller than what Hangouts needs then don't scale the image
-                Bitmap moddedBitmap;
-                if ((srcW <= paramWidth && srcH <= paramHeight) || (config.imageFormat == Setting.ImageFormat.PNG)) {
-                    moddedBitmap = RotateBitmap(unscaledBitmap, paramRotation, srcW, srcH, inSS, false);
-                    debug("Returned unscaled bitmap");
-                    /*if (unscaledBitmap != moddedBitmap) {
-                        findMethodExact(cProcessImg, HANGOUTS_PROCESS_IMG_METHOD_CLEANUP, Bitmap.class)
-                                .invoke(param.thisObject, unscaledBitmap);
-                        if (unscaledBitmap.isRecycled()) {
-                            debug("Recycled unscaled bitmap");
-                        }
-                    }*/
-                } else {
-                    moddedBitmap = RotateBitmap(unscaledBitmap, paramRotation, srcW, srcH, inSS, true);
-                    debug(String.format("Returned scaled bitmap w=%d h=%d", moddedBitmap.getWidth(), moddedBitmap.getHeight()));
-                    /*if (unscaledBitmap != moddedBitmap) {
-                        findMethodExact(cProcessImg, HANGOUTS_PROCESS_IMG_METHOD_CLEANUP, Bitmap.class)
-                                .invoke(param.thisObject, unscaledBitmap);
-                        if (unscaledBitmap.isRecycled()) {
-                            debug("Recycled unscaled bitmap");
-                        }
-                    }*/
-                }
+                Bitmap moddedBitmap = processBitmap(sampled, paramRotation,
+                        sampled.getWidth() > paramWidth || sampled.getHeight() > paramHeight);
+                debug(String.format("Final: %d×%d", moddedBitmap.getWidth(), moddedBitmap.getHeight()));
+                /*if (sampled != moddedBitmap) {
+                    findMethodExact(cProcessImg, HANGOUTS_PROCESS_IMG_METHOD_CLEANUP, Bitmap.class)
+                            .invoke(param.thisObject, sampled);
+                    if (sampled.isRecycled()) {
+                        debug("Recycled unscaled bitmap");
+                    }
+                }*/
 
                 // This is much faster than calling the method above, but what about the cache?
-                if (unscaledBitmap != moddedBitmap) {
-                    unscaledBitmap.recycle();
+                if (sampled != moddedBitmap) {
+                    sampled.recycle();
                 }
 
                 // Return the result
                 param.setResult(moddedBitmap);
             } catch (Throwable t) {
-                log(t.getMessage());
+                log(t);
             }
 
         }
 
-        private Bitmap RotateBitmap(Bitmap bitmap, int rotate, int srcWidth, int srcHeight, int sSize, Boolean scaleBitmap) {
+        // Uses a matrix to rotate and scale a Bitmap
+        private Bitmap processBitmap(Bitmap bmp, float rotate, boolean doScale) {
             Matrix m = new Matrix();
-            if (scaleBitmap) {
+            int w = bmp.getWidth(), h = bmp.getHeight();
+
+            if(doScale) {
                 // Use the longest side to determine scale
-                float scale = ((float) (srcWidth > srcHeight ? config.imageWidth : config.imageHeight)) / (srcWidth > srcHeight ? srcWidth : srcHeight);
-                debug(String.format("Sample Size: %d, Scale: %f", sSize, scale));
+                float scale = ((float) (w > h ? config.imageWidth : config.imageHeight)) / (w > h ? w : h);
                 m.postScale(scale, scale);
+                debug(String.format("Scale factor: %s", scale));
             }
-            // TODO: Double check this as the decompiler had issues with this whole method
-            m.postRotate(rotate, srcWidth / 2, srcHeight / 2); // This is how Hangouts 4+ seems to rotate all images
-            return Bitmap.createBitmap(bitmap, 0, 0, srcWidth, srcHeight, m, true);
+
+            if(rotate != 0f) {
+                // TODO: Double check this as the decompiler had issues with this whole method
+                // FIXME: Rotation should be performed before subsampling and scaling?
+                m.postRotate(rotate, w / 2f, h / 2f);
+                debug(String.format("Rotation: %s°", rotate));
+            }
+
+            return Bitmap.createBitmap(bmp, 0, 0, w, h, m, true);
         }
 
     };
