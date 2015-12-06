@@ -31,6 +31,7 @@ import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
 import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
+import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
 
@@ -74,6 +75,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
             new ImageCompression(config),
             new MmsResizing(config),
             new UiEnterKey(config),
+            new UiMsgTypeSpinner(config),
             new UiCallButtons(config),
             new UiColorize(config),
             new UiQuickSettings(config),
