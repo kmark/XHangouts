@@ -52,6 +52,7 @@ public final class UiColorize extends Module {
     private static final String ANDROID_GRAPHICS_BITMAPFACTORY_DECODERESOURCE = "decodeResource";
 
     private static final String HANGOUTS_COLOR_FAB = "fab_hangouts_primary_color";
+    private static final String HANGOUTS_COLOR_INDICATOR = "indicator_color";
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
     private static final String HANGOUTS_COLOR_PRIMARY = "primary";
@@ -185,6 +186,10 @@ public final class UiColorize extends Module {
 
         // Fixes the attachments icon color
         res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY_HANGOUTS,
+                appColors[5]);
+
+        // Fixes the indicator color that's seen when selecting a sticker
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_INDICATOR,
                 appColors[5]);
 
         // Fixes "Sending as <number>" / Ongoing call bar on 4.x
