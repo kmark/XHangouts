@@ -73,6 +73,10 @@ public final class UiQuickSettings extends Module {
         Class cMenuItemHelp = findClass(HANGOUTS_NAV_MENUITEM_HELP, loader);
         Class cMenuPop = findClass(HANGOUTS_MENU_POPULATOR, loader);
 
+        if (!config.modEnabled) {
+            return new IXUnhook[0];
+        }
+
         return new IXUnhook[] {
                 // Field corrections
                 findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE)),

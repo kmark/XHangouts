@@ -94,6 +94,10 @@ public final class UiColorize extends Module {
     private final XC_MethodHook decodeResource = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            if (!config.modEnabled) {
+                return;
+            }
+
             Resources res = (Resources) param.args[0];
             int id = (int) param.args[1];
             if (resDefaultAvatar == RES_ID_UNSET) {
