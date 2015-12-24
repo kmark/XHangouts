@@ -38,7 +38,7 @@
             android:value="@string/xposed_desc" />
         <meta-data
             android:name="xposedminversion"
-            android:value="54" />
+            android:value="42+" />
 
         <activity
             android:name=".SettingsActivity"
