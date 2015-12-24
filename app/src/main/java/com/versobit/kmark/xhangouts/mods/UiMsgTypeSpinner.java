@@ -34,13 +34,13 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiMsgTypeSpinner extends Module {
-    private static final String HANGOUTS_CONVERSATOIN_RTL_HELP = "eep";
-    private static final String HANGOUTS_CONVERSATOIN_TEXTFRAME = "avk";
+    private static final String HANGOUTS_CONVERSATION_RTL_HELP = "eep";
+    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "avk";
 
-    private static final String HANGOUTS_CONVERSATOIN_IS_RTL = "d";
-    private static final String HANGOUTS_CONVERSATOIN_LAYOUT = "j";
-    private static final String HANGOUTS_CONVERSATOIN_METHOD = "a";
-    private static final String HANGOUTS_CONVERSATOIN_SPINNER = "g";
+    private static final String HANGOUTS_CONVERSATION_IS_RTL = "d";
+    private static final String HANGOUTS_CONVERSATION_LAYOUT = "j";
+    private static final String HANGOUTS_CONVERSATION_METHOD = "a";
+    private static final String HANGOUTS_CONVERSATION_SPINNER = "g";
 
     private Class cRTL;
 
@@ -50,11 +50,11 @@ public final class UiMsgTypeSpinner extends Module {
 
     @Override
     public IXUnhook[] hook(ClassLoader loader) {
-        Class cTextFrame = findClass(HANGOUTS_CONVERSATOIN_TEXTFRAME, loader);
-        cRTL = findClass(HANGOUTS_CONVERSATOIN_RTL_HELP, loader);
+        Class cTextFrame = findClass(HANGOUTS_CONVERSATION_TEXTFRAME, loader);
+        cRTL = findClass(HANGOUTS_CONVERSATION_RTL_HELP, loader);
 
         return new IXUnhook[]{
-                findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATOIN_METHOD, paddingMethod)
+                findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_METHOD, paddingMethod)
         };
     }
 
@@ -66,10 +66,10 @@ public final class UiMsgTypeSpinner extends Module {
                 return;
             }
 
-            View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATOIN_LAYOUT);
-            Spinner TransportSpinner = (Spinner) getObjectField(param.thisObject, HANGOUTS_CONVERSATOIN_SPINNER);
+            View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_LAYOUT);
+            Spinner TransportSpinner = (Spinner) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_SPINNER);
             if (TransportSpinner.getVisibility() != View.GONE) {
-                boolean RTL = (boolean) callStaticMethod(cRTL, HANGOUTS_CONVERSATOIN_IS_RTL);
+                boolean RTL = (boolean) callStaticMethod(cRTL, HANGOUTS_CONVERSATION_IS_RTL);
                 if (!RTL) {
                     msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
                 } else {
