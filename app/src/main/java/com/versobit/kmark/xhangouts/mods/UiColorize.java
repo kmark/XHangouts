@@ -60,6 +60,20 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_COLOR_PRIMARY_HANGOUTS = "hangouts_primary_color";
     private static final String HANGOUTS_COLOR_QUANTUM_GOOGGREEN = "quantum_googgreen";
 
+    private static final String HANGOUTS_COLOR_BUBBLE_IN = "incoming_conversation_bubble_background";
+    private static final String HANGOUTS_COLOR_BUBBLE_IN_OTR = "incoming_conversation_bubble_background_otr";
+    private static final String HANGOUTS_COLOR_FONT_IN = "realtimechat_message_text_incoming";
+    private static final String HANGOUTS_COLOR_FONT_IN_OTR = "realtimechat_message_text_incoming_otr";
+    private static final String HANGOUTS_COLOR_LINK_IN = "realtimechat_message_link_incoming";
+    private static final String HANGOUTS_COLOR_LINK_IN_OTR = "realtimechat_message_link_incoming_otr";
+
+    private static final String HANGOUTS_COLOR_BUBBLE_OUT = "outgoing_conversation_bubble_background";
+    private static final String HANGOUTS_COLOR_BUBBLE_OUT_OTR = "outgoing_conversation_bubble_background_otr";
+    private static final String HANGOUTS_COLOR_FONT_OUT = "realtimechat_message_text_outgoing";
+    private static final String HANGOUTS_COLOR_FONT_OUT_OTR = "realtimechat_message_text_outgoing_otr";
+    private static final String HANGOUTS_COLOR_LINK_OUT = "realtimechat_message_link_outgoing";
+    private static final String HANGOUTS_COLOR_LINK_OUT_OTR = "realtimechat_message_link_outgoing_otr";
+
     private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
     private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
     private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
@@ -117,10 +131,6 @@ public final class UiColorize extends Module {
     @Override
     public void resources(XResources res) {
         debug(config.appColor.name());
-
-        if (config.appColor == Setting.AppColor.GOOGLE_GREEN) {
-            return;
-        }
 
         // Handle any custom DPI that Hangouts might be set to
         XModuleResources xModRes = XModuleResources.createInstance(modulePath, null);
@@ -183,6 +193,32 @@ public final class UiColorize extends Module {
                 return coloredTab;
             }
         });
+
+        // Replace bubble, font and hyperlink colors
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_IN,
+                config.incomingColor);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_IN_OTR,
+                config.incomingColorOTR);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_IN,
+                config.incomingFontColor);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_IN_OTR,
+                config.incomingFontColorOTR);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_IN,
+                config.incomingLinkColor);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_IN_OTR,
+                config.incomingLinkColorOTR);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_OUT,
+                config.outgoingColor);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_OUT_OTR,
+                config.outgoingColorOTR);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_OUT,
+                config.outgoingFontColor);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_OUT_OTR,
+                config.outgoingFontColorOTR);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_OUT,
+                config.outgoingLinkColor);
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_OUT_OTR,
+                config.outgoingLinkColorOTR);
 
         // Fixes the send button color
         res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FAB,
