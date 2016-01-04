@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2014-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -21,9 +21,9 @@ package com.versobit.kmark.xhangouts.mods;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 
 import com.versobit.kmark.xhangouts.Config;
+import com.versobit.kmark.xhangouts.ImageUtils;
 import com.versobit.kmark.xhangouts.Module;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -74,17 +74,17 @@ public final class ImageResizing extends Module {
 
             try {
                 // Get our params
-                byte[] paramArrayOfByte = (byte[]) param.args[0];
-                int paramHeight = (int) param.args[1];
-                int paramWidth = (int) param.args[2];
-                final int paramRotation = (int) param.args[3];
+                byte[] paramImageBytes = (byte[]) param.args[0];
+                int targetHeight = (int) param.args[1];
+                int targetWidth = (int) param.args[2];
+                final int targetRotation = (int) param.args[3];
 
                 // Stickers and other junk
-                if (paramHeight <= 400 && paramWidth <= 400) {
+                if (targetHeight <= 400 && targetWidth <= 400) {
                     return;
                 }
 
-                debug(String.format("Param Limits: %d×%d", paramWidth, paramHeight));
+                debug(String.format("Param Limits: %d×%d", targetWidth, targetHeight));
 
                 // Setup some options to decode the bitmap
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -97,36 +97,41 @@ public final class ImageResizing extends Module {
                 options.inJustDecodeBounds = true;
 
                 // Get the real image size
-                BitmapFactory.decodeByteArray(paramArrayOfByte, 0, paramArrayOfByte.length, options);
+                BitmapFactory.decodeByteArray(paramImageBytes, 0, paramImageBytes.length, options);
                 int srcW = options.outWidth;
                 int srcH = options.outHeight;
                 debug(String.format("Original: %d×%d", srcW, srcH));
 
+                // Determine the rotation's effect on srcW / srcH
+                int[] rotatedDimens = ImageUtils.getRotatedDimens(targetRotation, srcW, srcH);
+                srcW = rotatedDimens[0];
+                srcH = rotatedDimens[1];
+
                 // Find the highest possible sample size divisor that is still larger than our maxes
-                int inSS = 1;
-                while ((srcW / 2 > config.imageWidth) || (srcH / 2 > config.imageHeight)) {
-                    srcW /= 2;
-                    srcH /= 2;
-                    inSS *= 2;
-                }
-                debug(String.format("Estimated: %d×%d, Sample Size: 1/%d", srcW, srcH, inSS));
+                int sampleSize = ImageUtils.getSampleSize(srcW, srcH, config.imageWidth, config.imageHeight);
+                debug(String.format("Estimated: %d×%d, Sample Size: 1/%d", srcW, srcH, sampleSize));
 
                 // Load the sampled image into memory
                 options.inJustDecodeBounds = false;
-                options.inSampleSize = inSS;
-                Bitmap sampled = BitmapFactory.decodeByteArray(paramArrayOfByte, 0, paramArrayOfByte.length, options);
+                options.inSampleSize = sampleSize;
+                Bitmap sampled = BitmapFactory.decodeByteArray(paramImageBytes, 0, paramImageBytes.length, options);
                 debug(String.format("Sampled: %d×%d", sampled.getWidth(), sampled.getHeight()));
 
                 // A little performance tweak that helps to prevent some memory issues
-                if ((paramWidth > config.imageWidth) || (paramHeight > config.imageHeight)) {
-                    paramWidth = config.imageWidth;
-                    paramHeight = config.imageHeight;
+                if ((targetWidth > config.imageWidth) || (targetHeight > config.imageHeight)) {
+                    targetWidth = config.imageWidth;
+                    targetHeight = config.imageHeight;
                 }
 
                 // If the image is already smaller than what Hangouts needs then don't scale the image
-                Bitmap moddedBitmap = processBitmap(sampled, paramRotation,
-                        sampled.getWidth() > paramWidth || sampled.getHeight() > paramHeight);
+                Bitmap moddedBitmap;
+                if (sampled.getWidth() > targetWidth || sampled.getHeight() > targetHeight) {
+                    moddedBitmap = ImageUtils.doMatrix(sampled, targetRotation, targetWidth, targetHeight);
+                } else {
+                    moddedBitmap = ImageUtils.doMatrix(sampled, targetRotation);
+                }
                 debug(String.format("Final: %d×%d", moddedBitmap.getWidth(), moddedBitmap.getHeight()));
+
                 /*if (sampled != moddedBitmap) {
                     findMethodExact(cProcessImg, HANGOUTS_PROCESS_IMG_METHOD_CLEANUP, Bitmap.class)
                             .invoke(param.thisObject, sampled);
@@ -146,28 +151,6 @@ public final class ImageResizing extends Module {
                 log(t);
             }
 
-        }
-
-        // Uses a matrix to rotate and scale a Bitmap
-        private Bitmap processBitmap(Bitmap bmp, float rotate, boolean doScale) {
-            Matrix m = new Matrix();
-            int w = bmp.getWidth(), h = bmp.getHeight();
-
-            if(doScale) {
-                // Use the longest side to determine scale
-                float scale = ((float) (w > h ? config.imageWidth : config.imageHeight)) / (w > h ? w : h);
-                m.postScale(scale, scale);
-                debug(String.format("Scale factor: %s", scale));
-            }
-
-            if(rotate != 0f) {
-                // TODO: Double check this as the decompiler had issues with this whole method
-                // FIXME: Rotation should be performed before subsampling and scaling?
-                m.postRotate(rotate, w / 2f, h / 2f);
-                debug(String.format("Rotation: %s°", rotate));
-            }
-
-            return Bitmap.createBitmap(bmp, 0, 0, w, h, m, true);
         }
 
     };
