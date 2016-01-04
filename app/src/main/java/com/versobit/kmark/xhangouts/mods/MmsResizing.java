@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2014-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -24,17 +24,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.media.ExifInterface;
 import android.net.Uri;
 
 import com.versobit.kmark.xhangouts.Config;
+import com.versobit.kmark.xhangouts.ImageUtils;
 import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -124,72 +120,37 @@ public final class MmsResizing extends Module {
 
             debug(String.format("Original: %d×%d", srcW, srcH));
 
+            // We have to calculate the rotation now so that we may calculate the sample size
+            // with the rotation applied to srcW / srcH
             int rotation = 0;
-            if(config.rotation) {
+            if (config.rotation) {
                 rotation = config.rotateMode;
-                if(rotation == -1) {
+                if (rotation == -1) {
+
                     // Find the rotated "real" dimensions to determine proper final scaling
                     // ExifInterface requires a real file path so we ask Hangouts to tell us where the cached file is located
                     String scratchId = imgUri.getPathSegments().get(1);
                     String filePath = (String)callStaticMethod(cEsProvider, HANGOUTS_ESPROVIDER_GET_SCRATCH_FILE, paramContext, scratchId);
-                    if(new File(filePath).exists()) {
-                        debug(String.format("Cache file located: %s", filePath));
-                        ExifInterface exif = new ExifInterface(filePath);
-                        // Let's pretend other orientation modes don't exist
-                        switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                            case ExifInterface.ORIENTATION_ROTATE_90:
-                                rotation = 90;
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_180:
-                                rotation = 180;
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_270:
-                                rotation = 270;
-                                break;
-                            default:
-                                rotation = 0;
-                        }
-                    } else {
-                        rotation = 0;
-                        log("Cache file does not exist! Skipping orientation correction.");
-                        debug(String.format("Bad cache path: %s", filePath));
-                        // We could work around this and write the image byte stream out and then
-                        // read it back in but that would take a relatively long time. I've
-                        // only seen the scratch pad method fail once (when I called the wrong
-                        // function from EsProvider).
-                    }
+                    rotation = ImageUtils.getExifRotation(filePath);
                 }
-                if (rotation != 0) {
-                    // Technically we could just swap width and height if rotation = 90 or 270 but
-                    // this is a much more fun reference implementation.
-                    // TODO: apply rotation to max values as well? Rotated images are scaled more than non
-                    Matrix imgMatrix = new Matrix();
-                    imgMatrix.postRotate(rotation);
-                    RectF imgRect = new RectF();
-                    imgMatrix.mapRect(imgRect, new RectF(0, 0, srcW, srcH));
-                    srcW = Math.round(imgRect.width());
-                    srcH = Math.round(imgRect.height());
+                if (rotation == 90 || rotation == 270) {
+                    // If we need to support other rotation amounts we need to use getRotatedDimens
+                    int tmp = srcW;
+                    srcW = srcH;
+                    srcH = tmp;
                     debug(String.format("Rotated: %d×%d, Rotation: %d°", srcW, srcH, rotation));
                 }
             }
 
             // Find the highest possible sample size divisor that is still larger than our maxes
-            int inSS = 1;
-            while((srcW / 2 > config.imageWidth) || (srcH / 2 > config.imageHeight)) {
-                srcW /= 2;
-                srcH /= 2;
-                inSS *= 2;
-            }
+            int sampleSize = ImageUtils.getSampleSize(srcW, srcH, config.imageWidth, config.imageHeight);
 
-            // Use the longest side to determine scale, this should always be <= 1
-            float scale = ((float)(srcW > srcH ? config.imageWidth : config.imageHeight)) / (srcW > srcH ? srcW : srcH);
-
-            debug(String.format("Estimated: %d×%d, Sample Size: 1/%d, Scale: %f", srcW, srcH, inSS, scale));
+            debug(String.format("Estimated: %d×%d, Sample Size: 1/%d", srcW, srcH, sampleSize));
 
             // Load the sampled image into memory
             options.inJustDecodeBounds = false;
             options.inDither = false;
-            options.inSampleSize = inSS;
+            options.inSampleSize = sampleSize;
             options.inScaled = false;
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             imgStream = esAppResolver.openInputStream(imgUri);
@@ -198,31 +159,12 @@ public final class MmsResizing extends Module {
             debug(String.format("Sampled: %d×%d", sampled.getWidth(), sampled.getHeight()));
 
             // Load our scale and rotation changes into a matrix and use it to create the final bitmap
-            Matrix m = new Matrix();
-            m.postScale(scale, scale);
-            m.postRotate(rotation);
-            Bitmap scaled = Bitmap.createBitmap(sampled, 0, 0, sampled.getWidth(), sampled.getHeight(), m, true);
+            Bitmap scaled = ImageUtils.doMatrix(sampled, rotation, config.imageWidth, config.imageHeight);
             sampled.recycle();
             debug(String.format("Scaled: %d×%d", scaled.getWidth(), scaled.getHeight()));
 
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            Bitmap.CompressFormat compressFormat = null;
-            final int compressQ = config.imageFormat == Setting.ImageFormat.PNG ? 0 : config.imageQuality;
-            switch (config.imageFormat) {
-                case PNG:
-                    compressFormat = Bitmap.CompressFormat.PNG;
-                    break;
-                case JPEG:
-                    compressFormat = Bitmap.CompressFormat.JPEG;
-                    break;
-            }
-            scaled.compress(compressFormat, compressQ, output);
-            final int bytes = output.size();
-            scaled.recycle();
-
-            param.setResult(output.toByteArray());
-            output.close();
-            debug(String.format("MMS image processing complete. %d bytes", bytes));
+            param.setResult(ImageUtils.compress(scaled, config.imageFormat, config.imageQuality, true));
+            debug(String.format("MMS image processing complete."));
         }
     };
 
