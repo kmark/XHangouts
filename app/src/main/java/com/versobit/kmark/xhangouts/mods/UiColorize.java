@@ -125,7 +125,21 @@ public final class UiColorize extends Module {
     };
 
     private static int getColorFromResources(Resources res, String name) {
+        //noinspection deprecation
         return res.getColor(res.getIdentifier(name, "color", HANGOUTS_RES_PKG_NAME));
+    }
+
+    private void replaceColor(XResources res, String name, int color) {
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", name, color);
+    }
+
+    private void replaceDrawableColor(XResources res, String name, final int color) {
+        res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", name, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources res, int id) throws Throwable {
+                return new ColorDrawable(color);
+            }
+        });
     }
 
     @Override
@@ -167,18 +181,8 @@ public final class UiColorize extends Module {
         }
 
         // The above replacements do not style everything. Some manual fixes.
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_JHPS, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[3]);
-            }
-        });
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_JHAS, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[4]);
-            }
-        });
+        replaceDrawableColor(res, HANGOUTS_DRAWABLE_JHPS, appColors[3]);
+        replaceDrawableColor(res, HANGOUTS_DRAWABLE_JHAS, appColors[4]);
 
         final Drawable actBarTab = res.getDrawable(
                 res.getIdentifier(HANGOUTS_DRAWABLE_AB_TAB, "drawable", HANGOUTS_RES_PKG_NAME)
@@ -195,62 +199,35 @@ public final class UiColorize extends Module {
         });
 
         // Replace bubble, font and hyperlink colors
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_IN,
-                config.incomingColor);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_IN_OTR,
-                config.incomingColorOTR);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_IN,
-                config.incomingFontColor);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_IN_OTR,
-                config.incomingFontColorOTR);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_IN,
-                config.incomingLinkColor);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_IN_OTR,
-                config.incomingLinkColorOTR);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_OUT,
-                config.outgoingColor);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_BUBBLE_OUT_OTR,
-                config.outgoingColorOTR);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_OUT,
-                config.outgoingFontColor);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FONT_OUT_OTR,
-                config.outgoingFontColorOTR);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_OUT,
-                config.outgoingLinkColor);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_LINK_OUT_OTR,
-                config.outgoingLinkColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN, config.incomingColor);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN_OTR, config.incomingColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_FONT_IN, config.incomingFontColor);
+        replaceColor(res, HANGOUTS_COLOR_FONT_IN_OTR, config.incomingFontColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_LINK_IN, config.incomingLinkColor);
+        replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, config.incomingLinkColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.outgoingColor);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.outgoingColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_FONT_OUT, config.outgoingFontColor);
+        replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, config.outgoingFontColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_LINK_OUT, config.outgoingLinkColor);
+        replaceColor(res, HANGOUTS_COLOR_LINK_OUT_OTR, config.outgoingLinkColorOTR);
 
         // Fixes the send button color
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_FAB,
-                appColors[5]);
+        replaceColor(res, HANGOUTS_COLOR_FAB, appColors[5]);
 
         // Fixes the attachments icon color
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY_HANGOUTS,
-                appColors[5]);
+        replaceColor(res, HANGOUTS_COLOR_PRIMARY_HANGOUTS, appColors[5]);
 
         // Fixes the indicator color that's seen when selecting a sticker
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_INDICATOR,
-                appColors[5]);
+        replaceColor(res, HANGOUTS_COLOR_INDICATOR, appColors[5]);
 
         // Fixes "Sending as <number>" / Ongoing call bar on 4.x
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_ONGOING_BG,
-                appColors[5]);
+        replaceColor(res, HANGOUTS_COLOR_ONGOING_BG, appColors[5]);
 
         // Fixes "Sending as <number>" / Ongoing call bar on 5.x
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PROMO_ELIG,
-                appColors[5]);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_ONGOING_BG, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[5]);
-            }
-        });
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", HANGOUTS_DRAWABLE_ONGOING_BGP, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources res, int id) throws Throwable {
-                return new ColorDrawable(appColors[5]);
-            }
-        });
+        replaceColor(res, HANGOUTS_COLOR_PROMO_ELIG, appColors[5]);
+        replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BG, appColors[5]);
+        replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BGP, appColors[5]);
 
         // This is all to colorize the default green contact avatar.
         resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
@@ -279,9 +256,9 @@ public final class UiColorize extends Module {
         });
 
         // Fixes status bar on 5.x
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY, appColors[5]);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_PRIMARY_DARK, appColors[7]);
-        res.setReplacement(HANGOUTS_RES_PKG_NAME, "color", HANGOUTS_COLOR_QUANTUM_GOOGGREEN, appColors[5]);
+        replaceColor(res, HANGOUTS_COLOR_PRIMARY, appColors[5]);
+        replaceColor(res, HANGOUTS_COLOR_PRIMARY_DARK, appColors[7]);
+        replaceColor(res, HANGOUTS_COLOR_QUANTUM_GOOGGREEN, appColors[5]);
     }
 
     private static final class ColorUtils {
