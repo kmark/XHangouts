@@ -160,7 +160,10 @@ public final class MmsResizing extends Module {
 
             // Load our scale and rotation changes into a matrix and use it to create the final bitmap
             Bitmap scaled = ImageUtils.doMatrix(sampled, rotation, config.imageWidth, config.imageHeight);
-            sampled.recycle();
+            // There's a possibility that doMatrix may return its own input due to createBitmap
+            if(sampled != scaled) {
+                sampled.recycle();
+            }
             debug(String.format("Scaled: %d×%d", scaled.getWidth(), scaled.getHeight()));
 
             param.setResult(ImageUtils.compress(scaled, config.imageFormat, config.imageQuality, true));
