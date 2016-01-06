@@ -36,72 +36,72 @@
 
         <PreferenceCategory android:title="@string/pref_header_bubbles">
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="incomingColor"
+                android:key="ui_color_incoming"
                 android:title="@string/pref_title_incoming"
                 app:colorpicker_defaultColor="@color/white"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="outgoingColor"
+                android:key="ui_color_outgoing"
                 android:title="@string/pref_title_outgoing"
                 app:colorpicker_defaultColor="@color/quantum_bluegrey100"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/pref_header_bubbles_otr">
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="incomingColorOTR"
+                android:key="ui_color_incoming_otr"
                 android:title="@string/pref_title_incoming"
                 app:colorpicker_defaultColor="@color/quantum_bluegrey100"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="outgoingColorOTR"
+                android:key="ui_color_outgoing_otr"
                 android:title="@string/pref_title_outgoing"
                 app:colorpicker_defaultColor="@color/quantum_bluegrey700"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/pref_header_fonts">
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="incomingFontColor"
+                android:key="ui_color_incoming_font"
                 android:title="@string/pref_title_incoming"
                 app:colorpicker_defaultColor="@color/quantum_bluegrey900"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="outgoingFontColor"
+                android:key="ui_color_outgoing_font"
                 android:title="@string/pref_title_outgoing"
                 app:colorpicker_defaultColor="@color/quantum_bluegrey900"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/pref_header_fonts_otr">
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="incomingFontColorOTR"
+                android:key="ui_color_incoming_font_otr"
                 android:title="@string/pref_title_incoming"
                 app:colorpicker_defaultColor="@color/quantum_bluegrey900"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="outgoingFontColorOTR"
+                android:key="ui_color_outgoing_font_otr"
                 android:title="@string/pref_title_outgoing"
                 app:colorpicker_defaultColor="@color/white"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/pref_header_links">
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="incomingLinkColor"
+                android:key="ui_color_incoming_link"
                 android:title="@string/pref_title_incoming"
                 app:colorpicker_defaultColor="@color/quantum_googblue600"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="outgoingLinkColor"
+                android:key="ui_color_outgoing_link"
                 android:title="@string/pref_title_outgoing"
                 app:colorpicker_defaultColor="@color/quantum_googblue600"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
         </PreferenceCategory>
         <PreferenceCategory android:title="@string/pref_header_links_otr">
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="incomingLinkColorOTR"
+                android:key="ui_color_incoming_link_otr"
                 android:title="@string/pref_title_incoming"
                 app:colorpicker_defaultColor="@color/quantum_googblue600"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             <com.rarepebble.colorpicker.ColorPreference
-                android:key="outgoingLinkColorOTR"
+                android:key="ui_color_outgoing_link_otr"
                 android:title="@string/pref_title_outgoing"
                 app:colorpicker_defaultColor="@color/white"
                 app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />

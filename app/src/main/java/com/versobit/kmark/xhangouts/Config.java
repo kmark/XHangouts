@@ -158,40 +158,40 @@ public final class Config {
                 case UI_APP_COLOR:
                     appColor = Setting.AppColor.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
-                case UI_INCOMING:
+                case UI_COLOR_INCOMING:
                     incomingColor = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_INCOMING_OTR:
+                case UI_COLOR_INCOMING_OTR:
                     incomingColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_INCOMING_FONT:
+                case UI_COLOR_INCOMING_FONT:
                     incomingFontColor = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_INCOMING_FONT_OTR:
+                case UI_COLOR_INCOMING_FONT_OTR:
                     incomingFontColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_INCOMING_LINK:
+                case UI_COLOR_INCOMING_LINK:
                     incomingLinkColor = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_INCOMING_LINK_OTR:
+                case UI_COLOR_INCOMING_LINK_OTR:
                     incomingLinkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_OUTGOING:
+                case UI_COLOR_OUTGOING:
                     outgoingColor = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_OUTGOING_OTR:
+                case UI_COLOR_OUTGOING_OTR:
                     outgoingColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_OUTGOING_FONT:
+                case UI_COLOR_OUTGOING_FONT:
                     outgoingFontColor = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_OUTGOING_FONT_OTR:
+                case UI_COLOR_OUTGOING_FONT_OTR:
                     outgoingFontColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_OUTGOING_LINK:
+                case UI_COLOR_OUTGOING_LINK:
                     outgoingLinkColor = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
-                case UI_OUTGOING_LINK_OTR:
+                case UI_COLOR_OUTGOING_LINK_OTR:
                     outgoingLinkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_ENABLED:
