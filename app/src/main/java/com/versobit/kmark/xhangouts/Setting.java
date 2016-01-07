@@ -46,6 +46,18 @@ public enum Setting {
     UI_SEND_LOCK,
     UI_DISABLE_PROXIMITY,
     UI_APP_COLOR,
+    UI_COLOR_INCOMING,
+    UI_COLOR_INCOMING_OTR,
+    UI_COLOR_INCOMING_FONT,
+    UI_COLOR_INCOMING_FONT_OTR,
+    UI_COLOR_INCOMING_LINK,
+    UI_COLOR_INCOMING_LINK_OTR,
+    UI_COLOR_OUTGOING,
+    UI_COLOR_OUTGOING_OTR,
+    UI_COLOR_OUTGOING_FONT,
+    UI_COLOR_OUTGOING_FONT_OTR,
+    UI_COLOR_OUTGOING_LINK,
+    UI_COLOR_OUTGOING_LINK_OTR,
     SOUND_ENABLED,
     SOUND_AUDIOCALLIN,
     SOUND_AUDIOCALLOUT,
@@ -161,7 +173,7 @@ public enum Setting {
         private final String proxyHost;
         private final int proxyPort;
 
-        private ApnPreset(int value, String name, String mmsc, String proxyHost, int proxyPort) {
+        ApnPreset(int value, String name, String mmsc, String proxyHost, int proxyPort) {
             this.value = value;
             this.name = name;
             this.mmsc = mmsc;
@@ -229,7 +241,7 @@ public enum Setting {
         private final String prefix;
         private final int color;
 
-        private AppColor(int value, String prefix, int color) {
+        AppColor(int value, String prefix, int color) {
             this.value = value;
             this.prefix = prefix;
             this.color = color;
