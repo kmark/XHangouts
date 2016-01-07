@@ -66,13 +66,14 @@ final public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getFragmentManager().findFragmentById(android.R.id.content) == null) {
+        Fragment existingFragment = getFragmentManager().findFragmentById(android.R.id.content);
+        if (existingFragment == null || !existingFragment.getClass().equals(SettingsFragment.class)) {
             //noinspection ConstantConditions
-            if(!XApp.isActive()) {
+            if (!XApp.isActive()) {
                 Toast.makeText(this, R.string.warning_not_loaded, Toast.LENGTH_LONG).show();
             }
+            getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
         }
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
     public static final class SettingsFragment extends PreferenceFragment implements AdapterView.OnItemLongClickListener {
@@ -83,7 +84,7 @@ final public class SettingsActivity extends PreferenceActivity {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View v = super.onCreateView(inflater, container, savedInstanceState);
-            ((ListView)v.findViewById(android.R.id.list)).setOnItemLongClickListener(this);
+            ((ListView) v.findViewById(android.R.id.list)).setOnItemLongClickListener(this);
             return v;
         }
 
@@ -108,7 +109,7 @@ final public class SettingsActivity extends PreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     getActivity().getPackageManager().setComponentEnabledSetting(
                             new ComponentName(getActivity(), ALIAS),
-                            (boolean)newValue ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                            (boolean) newValue ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP
                     );
@@ -208,8 +209,8 @@ final public class SettingsActivity extends PreferenceActivity {
 
         private void updatePrefDialog(String tag, Preference pref) {
             Fragment frag = getFragmentManager().findFragmentByTag(tag);
-            if(frag != null && frag instanceof ISettingsPrefDialog) {
-                ((ISettingsPrefDialog)frag).setSettingPref(pref);
+            if (frag != null && frag instanceof ISettingsPrefDialog) {
+                ((ISettingsPrefDialog) frag).setSettingPref(pref);
             }
         }
 
@@ -317,7 +318,7 @@ final public class SettingsActivity extends PreferenceActivity {
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             FilePickerPreference pref = filePickerRequests.remove(requestCode);
-            if(pref != null) {
+            if (pref != null) {
                 pref.onActivityResult(requestCode, resultCode, data);
             }
         }
