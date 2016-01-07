@@ -31,12 +31,17 @@ public class ColorPreference extends DialogPreference {
 	private final String selectNoneButtonText;
 	private final Integer defaultColor;
 	private final String noneSelectedSummaryText;
+	private final CharSequence summaryText;
 	private final boolean showAlpha;
 	private final boolean showHex;
 	private View thumbnail;
 
+	public ColorPreference(Context context) {
+		this(context, null);
+	}
 	public ColorPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		summaryText = super.getSummary();
 
 		if (attrs != null) {
 			TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ColorPicker, 0, 0);
@@ -71,8 +76,8 @@ public class ColorPreference extends DialogPreference {
 		widgetFrameView.removeAllViews();
 		LayoutInflater.from(getContext()).inflate(
 				isEnabled()
-					? R.layout.color_preference_thumbnail
-					: R.layout.color_preference_thumbnail_disabled,
+						? R.layout.color_preference_thumbnail
+						: R.layout.color_preference_thumbnail_disabled,
 				widgetFrameView);
 		return widgetFrameView.findViewById(R.id.thumbnail);
 	}
@@ -89,7 +94,7 @@ public class ColorPreference extends DialogPreference {
 			thumbnail.findViewById(R.id.colorPreview).setBackgroundColor(color == null ? 0 : color);
 		}
 		if (noneSelectedSummaryText != null) {
-			setSummary(color == null ? noneSelectedSummaryText : null);
+			setSummary(color == null ? noneSelectedSummaryText : summaryText);
 		}
 	}
 
@@ -109,8 +114,7 @@ public class ColorPreference extends DialogPreference {
 					public void onClick(DialogInterface dialog, int which) {
 						final int color = picker.getColor();
 						if (callChangeListener(color)) {
-							persistInt(color);
-							showColor(color);
+							setColor(color);
 						}
 					}
 				});
@@ -119,11 +123,33 @@ public class ColorPreference extends DialogPreference {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					if (callChangeListener(defaultColor)) {
-						persistInt(defaultColor);
-						showColor(defaultColor);
+						setColor(defaultColor);
 					}
 				}
 			});
 		}
+	}
+
+	private void removeSetting() {
+		if (shouldPersist()) {
+			getSharedPreferences()
+					.edit()
+					.remove(getKey())
+					.commit();
+		}
+	}
+
+	public void setColor(Integer color) {
+		if (color == null) {
+			removeSetting();
+		}
+		else {
+			persistInt(color);
+		}
+		showColor(color);
+	}
+
+	public Integer getColor() {
+		return getPersistedIntDefaultOrNull();
 	}
 }
