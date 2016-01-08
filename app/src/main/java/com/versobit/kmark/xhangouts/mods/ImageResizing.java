@@ -126,7 +126,7 @@ public final class ImageResizing extends Module {
                 // If the image is already smaller than what Hangouts needs then don't scale the image
                 Bitmap moddedBitmap;
                 if (sampled.getWidth() > targetWidth || sampled.getHeight() > targetHeight) {
-                    moddedBitmap = ImageUtils.doMatrix(sampled, targetRotation, targetWidth, targetHeight);
+                    moddedBitmap = ImageUtils.doMatrix(sampled, targetRotation, config.imageWidth, config.imageHeight);
                 } else {
                     moddedBitmap = ImageUtils.doMatrix(sampled, targetRotation);
                 }
