@@ -31,6 +31,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
@@ -40,6 +41,7 @@ import com.versobit.kmark.xhangouts.Setting;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
+import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -74,6 +76,7 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_COLOR_LINK_OUT = "realtimechat_message_link_outgoing";
     private static final String HANGOUTS_COLOR_LINK_OUT_OTR = "realtimechat_message_link_outgoing_otr";
 
+    private static final String HANGOUTS_DRAWABLE_GOOGLE = "googlelogo_dark20_color_184x60";
     private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
     private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
     private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
@@ -82,6 +85,8 @@ public final class UiColorize extends Module {
     private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
     private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR = "default_avatar";
     private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR_LARGE = "default_avatar_large";
+
+    private static final String HANGOUTS_LAYOUT_DIALER = "call_contact_picker_fragment";
 
     private static final int RES_ID_UNSET = 0;
     private static int resDefaultAvatar = RES_ID_UNSET;
@@ -235,6 +240,17 @@ public final class UiColorize extends Module {
                 Drawable coloredTab = actBarTab.mutate().getConstantState().newDrawable();
                 coloredTab.setColorFilter(ColorUtils.adjustHue(hueDiff));
                 return coloredTab;
+            }
+        });
+
+        // We can't use ic_dialpad_header.png because it contains green and adjusting the hue doesn't work
+        final int googleLogo = res.getIdentifier(HANGOUTS_DRAWABLE_GOOGLE, "drawable", HANGOUTS_RES_PKG_NAME);
+        res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", HANGOUTS_LAYOUT_DIALER, new XC_LayoutInflated() {
+            public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                ImageView dialpadHeader = (ImageView) liparam.view.findViewById(
+                        liparam.res.getIdentifier("dialpad_results_placeholder", "id", HANGOUTS_RES_PKG_NAME));
+                dialpadHeader.setBackgroundColor(0xffffffff);
+                dialpadHeader.setImageResource(googleLogo);
             }
         });
 
