@@ -150,21 +150,6 @@ public final class XHangouts implements IXposedHookZygoteInit,
             return;
         }
 
-        // Hit or miss depending on a number of factors I have yet to enumerate
-        Context ctx = AndroidAppHelper.currentApplication();
-        if(ctx == null) {
-            Object activityThread = callStaticMethod(ACTIVITY_THREAD, ACTIVITY_THREAD_CURRENTACTHREAD);
-            if(activityThread != null) {
-                ctx = (Context)callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
-            }
-        }
-        if(ctx != null) {
-            // The XHangouts SettingsProvider will accept configuration requests from any app or context.
-            // Not being able to reload the config isn't the end of the world since if we're in the
-            // Hangouts app, settings have already been loaded in handleLoadPackage
-            config.reload(ctx);
-        }
-
         if(!config.modEnabled) {
             return;
         }
