@@ -31,6 +31,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.Module;
@@ -40,6 +41,7 @@ import com.versobit.kmark.xhangouts.Setting;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.IXUnhook;
+import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -74,6 +76,7 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_COLOR_LINK_OUT = "realtimechat_message_link_outgoing";
     private static final String HANGOUTS_COLOR_LINK_OUT_OTR = "realtimechat_message_link_outgoing_otr";
 
+    private static final String HANGOUTS_DRAWABLE_GOOGLE = "googlelogo_dark20_color_184x60";
     private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
     private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
     private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
@@ -81,9 +84,13 @@ public final class UiColorize extends Module {
     private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
     private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
     private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR = "default_avatar";
+    private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR_LARGE = "default_avatar_large";
+
+    private static final String HANGOUTS_LAYOUT_DIALER = "call_contact_picker_fragment";
 
     private static final int RES_ID_UNSET = 0;
     private static int resDefaultAvatar = RES_ID_UNSET;
+    private static int resDefaultAvatarLarge = RES_ID_UNSET;
     private String modulePath = null;
 
     public UiColorize(Config config) {
@@ -117,7 +124,13 @@ public final class UiColorize extends Module {
             if (resDefaultAvatar == RES_ID_UNSET) {
                 resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
             }
+            if (resDefaultAvatarLarge == RES_ID_UNSET) {
+                resDefaultAvatarLarge = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR_LARGE, "drawable", HANGOUTS_RES_PKG_NAME);
+            }
             if (id == resDefaultAvatar) {
+                //noinspection ConstantConditions,deprecation
+                param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
+            } else if (id == resDefaultAvatarLarge) {
                 //noinspection ConstantConditions,deprecation
                 param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
             }
@@ -142,6 +155,33 @@ public final class UiColorize extends Module {
         });
     }
 
+    private void replaceAvatarColor(XResources res, String name, int customResID, int dpi, int color) {
+        int existingResID = res.getIdentifier(name, "drawable", HANGOUTS_RES_PKG_NAME);
+        final Bitmap customBitmap;
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inMutable = true;
+            customBitmap = BitmapFactory.decodeResource(res, existingResID, options);
+
+            Canvas canvas = new Canvas(customBitmap);
+            canvas.setDensity(dpi);
+            canvas.drawColor(color);
+
+            // BitmapFactory.decodeResource doesn't work here
+            // noinspection ConstantConditions
+            Bitmap avatar = ((BitmapDrawable) res.getDrawable(customResID)).getBitmap();
+            canvas.drawBitmap(avatar, 0, 0, null);
+            avatar.recycle();
+        }
+        res.setReplacement(existingResID, new XResources.DrawableLoader() {
+            @Override
+            public Drawable newDrawable(XResources xResources, int i) throws Throwable {
+                return new BitmapDrawable(xResources, customBitmap);
+            }
+        });
+    }
+
     @Override
     public void resources(XResources res) {
         debug(config.appColor.name());
@@ -149,15 +189,20 @@ public final class UiColorize extends Module {
         // Handle any custom DPI that Hangouts might be set to
         XModuleResources xModRes = XModuleResources.createInstance(modulePath, null);
         final int hangoutsDrawableCustomAvatar;
+        final int hangoutsDrawableCustomAvatarLarge;
         final int hangoutsDPI = res.getDisplayMetrics().densityDpi;
         if (hangoutsDPI <= 160) {
             hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_mdpi);
+            hangoutsDrawableCustomAvatarLarge = res.addResource(xModRes, R.drawable.avatar_large_mdpi);
         } else if (hangoutsDPI <= 240) {
             hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_hdpi);
+            hangoutsDrawableCustomAvatarLarge = res.addResource(xModRes, R.drawable.avatar_large_hdpi);
         } else if (hangoutsDPI <= 320) {
             hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_xhdpi);
+            hangoutsDrawableCustomAvatarLarge = res.addResource(xModRes, R.drawable.avatar_large_xhdpi);
         } else {
             hangoutsDrawableCustomAvatar = res.addResource(xModRes, R.drawable.avatar_xxhdpi);
+            hangoutsDrawableCustomAvatarLarge = res.addResource(xModRes, R.drawable.avatar_large_xxhdpi);
         }
 
         // The resource name prefix representing the desired color (source)
@@ -198,6 +243,17 @@ public final class UiColorize extends Module {
             }
         });
 
+        // We can't use ic_dialpad_header.png because it contains green and adjusting the hue doesn't work
+        final int googleLogo = res.getIdentifier(HANGOUTS_DRAWABLE_GOOGLE, "drawable", HANGOUTS_RES_PKG_NAME);
+        res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", HANGOUTS_LAYOUT_DIALER, new XC_LayoutInflated() {
+            public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                ImageView dialpadHeader = (ImageView) liparam.view.findViewById(
+                        liparam.res.getIdentifier("dialpad_results_placeholder", "id", HANGOUTS_RES_PKG_NAME));
+                dialpadHeader.setBackgroundColor(0xffffffff);
+                dialpadHeader.setImageResource(googleLogo);
+            }
+        });
+
         // Replace bubble, font and hyperlink colors
         replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN, config.incomingColor);
         replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN_OTR, config.incomingColorOTR);
@@ -229,31 +285,11 @@ public final class UiColorize extends Module {
         replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BG, appColors[5]);
         replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BGP, appColors[5]);
 
-        // This is all to colorize the default green contact avatar.
-        resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR, "drawable", HANGOUTS_RES_PKG_NAME);
-        final Bitmap coloredDefaultAvatar;
-        {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            options.inMutable = true;
-            coloredDefaultAvatar = BitmapFactory.decodeResource(res, resDefaultAvatar, options);
+        // This will colorize the small green contact avatar
+        replaceAvatarColor(res, HANGOUTS_DRAWABLE_DEFAULT_AVATAR, hangoutsDrawableCustomAvatar, hangoutsDPI, appColors[7]);
 
-            Canvas canvas = new Canvas(coloredDefaultAvatar);
-            canvas.setDensity(hangoutsDPI);
-            canvas.drawColor(appColors[7]);
-
-            // BitmapFactory.decodeResource doesn't work here
-            // noinspection ConstantConditions
-            Bitmap avatar = ((BitmapDrawable) res.getDrawable(hangoutsDrawableCustomAvatar)).getBitmap();
-            canvas.drawBitmap(avatar, 0, 0, null);
-            avatar.recycle();
-        }
-        res.setReplacement(resDefaultAvatar, new XResources.DrawableLoader() {
-            @Override
-            public Drawable newDrawable(XResources xResources, int i) throws Throwable {
-                return new BitmapDrawable(xResources, coloredDefaultAvatar);
-            }
-        });
+        // This will colorize the large green contact avatar
+        replaceAvatarColor(res, HANGOUTS_DRAWABLE_DEFAULT_AVATAR_LARGE, hangoutsDrawableCustomAvatarLarge, hangoutsDPI, appColors[7]);
 
         // Fixes status bar on 5.x
         replaceColor(res, HANGOUTS_COLOR_PRIMARY, appColors[5]);
