@@ -19,7 +19,6 @@
 
 package com.versobit.kmark.xhangouts;
 
-import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
