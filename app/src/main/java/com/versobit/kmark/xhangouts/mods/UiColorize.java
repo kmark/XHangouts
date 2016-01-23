@@ -177,7 +177,8 @@ public final class UiColorize extends Module {
         res.setReplacement(existingResID, new XResources.DrawableLoader() {
             @Override
             public Drawable newDrawable(XResources xResources, int i) throws Throwable {
-                return new BitmapDrawable(xResources, customBitmap);
+                // If copies aren't made then Hangouts sometimes force closes
+                return new BitmapDrawable(xResources, customBitmap.copy(Bitmap.Config.ARGB_8888, false));
             }
         });
     }
