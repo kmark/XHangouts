@@ -53,6 +53,7 @@ public final class Config {
     public String mmsc = "";
     public String proxyHost = "";
     public int proxyPort = -1;
+    public Setting.UiEmoji emoji = Setting.UiEmoji.DEFAULT;
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
@@ -86,17 +87,17 @@ public final class Config {
     public void reload(Context ctx, long interval) {
         // Prevent wasteful reloads
         // Reloads can take anywhere from just 0.03ms to as much as 150ms or more
-        if(lastReload + interval > SystemClock.elapsedRealtime()) {
+        if (lastReload + interval > SystemClock.elapsedRealtime()) {
             return;
         }
 
         Cursor prefs = ctx.getContentResolver().query(ALL_PREFS_URI, null, null, null, null);
-        if(prefs == null) {
+        if (prefs == null) {
             XposedBridge.log("XHangouts: Failed to retrieve settings!");
             return;
         }
         Setting setting;
-        while(prefs.moveToNext()) {
+        while (prefs.moveToNext()) {
             try {
                 setting = Setting.fromString(prefs.getString(QUERY_ALL_KEY));
             } catch (IllegalArgumentException ex) {
@@ -142,6 +143,9 @@ public final class Config {
                     continue;
                 case MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT:
                     proxyPort = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_EMOJI:
+                    emoji = Setting.UiEmoji.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
                 case UI_ENTER_KEY:
                     enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(QUERY_ALL_VALUE));

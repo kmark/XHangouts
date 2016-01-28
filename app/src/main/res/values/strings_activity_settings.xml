@@ -82,6 +82,18 @@
         <item>2</item>
     </string-array>
 
+    <string name="pref_title_ui_emoji">Emoji button visibility</string>
+    <string-array name="pref_ui_emoji_titles">
+        <item>Hangouts decides (default)</item>
+        <item>Always show</item>
+        <item>Always hide</item>
+    </string-array>
+    <string-array name="pref_ui_emoji_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <string name="pref_title_ui_hide_call_buttons">Hide call buttons</string>
     <string name="pref_desc_ui_hide_call_buttons">Stuff the call icons back into the dropdown menu</string>
 
