@@ -41,6 +41,7 @@ public enum Setting {
     MMS_APN_SPLICING_APN_CONFIG_MMSC,
     MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME,
     MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT,
+    UI_EMOJI,
     UI_ENTER_KEY,
     UI_HIDE_CALL_BUTTONS,
     UI_SEND_LOCK,
@@ -71,26 +72,26 @@ public enum Setting {
     private String name = null;
 
     // This allows us to have enum names that don't directly map to values
-    private Setting(String name) {
+    Setting(String name) {
         this.name = name;
     }
 
-    private Setting() {
+    Setting() {
         //
     }
 
     static Setting fromString(String name) {
-        for(Setting p : values()) {
-            if(p.name == null) {
+        for (Setting p : values()) {
+            if (p.name == null) {
                 try {
-                    if(p == Setting.valueOf(name.toUpperCase(Locale.US))) {
+                    if (p == Setting.valueOf(name.toUpperCase(Locale.US))) {
                         return p;
                     }
                 } catch (IllegalArgumentException ex) {
                     continue;
                 }
             }
-            if(name.equalsIgnoreCase(p.name)) {
+            if (name.equalsIgnoreCase(p.name)) {
                 return p;
             }
         }
@@ -108,21 +109,39 @@ public enum Setting {
         SEND(2);
 
         private final int value;
-        private UiEnterKey(final int value) {
+
+        UiEnterKey(final int value) {
             this.value = value;
         }
 
         static UiEnterKey fromInt(int value) {
-            for(UiEnterKey u : values()) {
-                if(value == u.value) {
+            for (UiEnterKey u : values()) {
+                if (value == u.value) {
                     return u;
                 }
             }
             throw new IllegalArgumentException("No constant with value " + value + " found");
         }
+    }
 
-        int toInt() {
-            return value;
+    public enum UiEmoji {
+        DEFAULT(0),
+        SHOW(1),
+        HIDE(2);
+
+        private final int value;
+
+        UiEmoji(final int value) {
+            this.value = value;
+        }
+
+        static UiEmoji fromInt(int value) {
+            for (UiEmoji u : values()) {
+                if (value == u.value) {
+                    return u;
+                }
+            }
+            throw new IllegalArgumentException("No constant with value " + value + " found");
         }
     }
 
@@ -131,13 +150,14 @@ public enum Setting {
         PNG(1);
 
         private final int value;
-        private ImageFormat(final int value) {
+
+        ImageFormat(final int value) {
             this.value = value;
         }
 
         public static ImageFormat fromInt(int value) {
-            for(ImageFormat u : values()) {
-                if(value == u.value) {
+            for (ImageFormat u : values()) {
+                if (value == u.value) {
                     return u;
                 }
             }
@@ -182,8 +202,8 @@ public enum Setting {
         }
 
         public static ApnPreset fromInt(int value) {
-            for(ApnPreset u : values()) {
-                if(value == u.value) {
+            for (ApnPreset u : values()) {
+                if (value == u.value) {
                     return u;
                 }
             }
@@ -248,8 +268,8 @@ public enum Setting {
         }
 
         static AppColor fromInt(int value) {
-            for(AppColor u : values()) {
-                if(value == u.value) {
+            for (AppColor u : values()) {
+                if (value == u.value) {
                     return u;
                 }
             }

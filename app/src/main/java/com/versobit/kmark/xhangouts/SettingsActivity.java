@@ -84,7 +84,9 @@ final public class SettingsActivity extends PreferenceActivity {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View v = super.onCreateView(inflater, container, savedInstanceState);
-            ((ListView) v.findViewById(android.R.id.list)).setOnItemLongClickListener(this);
+            if (v != null) {
+                ((ListView) v.findViewById(android.R.id.list)).setOnItemLongClickListener(this);
+            }
             return v;
         }
 
@@ -179,6 +181,7 @@ final public class SettingsActivity extends PreferenceActivity {
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_ui);
             bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_EMOJI.toString()));
             Preference colorConfig = findPreference(Setting.UI_APP_COLOR.toString());
             updateUiAppColorSummary(colorConfig,
                     Setting.AppColor.fromInt(prefs.getInt(Setting.UI_APP_COLOR.toString(), 7)));

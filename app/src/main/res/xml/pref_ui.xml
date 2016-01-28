@@ -119,6 +119,16 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_ui_enter_key" />
 
+    <ListPreference
+        android:defaultValue="0"
+        android:dependency="mod_enabled"
+        android:entries="@array/pref_ui_emoji_titles"
+        android:entryValues="@array/pref_ui_emoji_values"
+        android:key="ui_emoji"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_ui_emoji" />
+
     <CheckBoxPreference
         android:defaultValue="false"
         android:dependency="mod_enabled"

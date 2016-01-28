@@ -29,6 +29,7 @@ import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
 import com.versobit.kmark.xhangouts.mods.UiColorize;
 import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
+import com.versobit.kmark.xhangouts.mods.UiEmoji;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
 import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
@@ -115,6 +116,7 @@ public class XHangouts implements IXposedHookZygoteInit,
         UiCallButtons.handleLoadPackage(config, loadPackageParam.classLoader);
         UiColorize.handleLoadPackage(config);
         UiDisableProximity.handleLoadPackage(config);
+        UiEmoji.handleLoadPackage(config, loadPackageParam.classLoader);
         UiEnterKey.handleLoadPackage(config, loadPackageParam.classLoader);
         UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
         UiQuickSettings.handleLoadPackage(config, loadPackageParam.classLoader);
