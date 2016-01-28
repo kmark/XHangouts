@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kevin Mark
+ * Copyright (C) 2015-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -23,46 +23,29 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
-public final class UiDisableProximity extends Module {
+public final class UiDisableProximity {
 
     private static final String ANDROID_HARDWARE_SENSORMANAGER_DEFAULT = "getDefaultSensor";
 
-    public UiDisableProximity(Config config) {
-        super(UiDisableProximity.class.getSimpleName(), config);
-    }
-
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
-        return new IXUnhook[] {
-                findAndHookMethod(SensorManager.class, ANDROID_HARDWARE_SENSORMANAGER_DEFAULT,
-                        int.class, getDefaultSensor)
-        };
-    }
-
-    private final XC_MethodHook getDefaultSensor = new XC_MethodHook() {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            if(!config.modEnabled) {
-                return;
-            }
-
-            debug(String.valueOf(config.disableProximity));
-
-            if(!config.disableProximity) {
-                return;
-            }
-
-            if((int)param.args[0] == Sensor.TYPE_PROXIMITY) {
-                param.setResult(null);
-            }
+    public static void handleLoadPackage(final Config config) {
+        if(!config.modEnabled || !config.disableProximity) {
+            return;
         }
-    };
 
+        findAndHookMethod(SensorManager.class, ANDROID_HARDWARE_SENSORMANAGER_DEFAULT, int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if((int)param.args[0] == Sensor.TYPE_PROXIMITY) {
+                    param.setResult(null);
+                }
+            }
+        });
+
+    }
 }

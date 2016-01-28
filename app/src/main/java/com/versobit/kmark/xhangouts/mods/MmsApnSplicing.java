@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2014-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -25,15 +25,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers.InvocationTargetError;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
@@ -45,7 +44,7 @@ import static de.robv.android.xposed.XposedHelpers.getStaticObjectField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
 
 /* MMS APN Splicing is currently unsupported. */
-public final class MmsApnSplicing extends Module {
+public final class MmsApnSplicing {
 
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS1 = "bfr";
     private static final String HANGOUTS_BABEL_REQUESTWRITER_INNERCLASS2 = "buu";
@@ -83,19 +82,14 @@ public final class MmsApnSplicing extends Module {
     private static final String HANGOUTS_MMSC_RESPONSE = "acq";
     private static final String HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1 = "a";
 
-    private Class cMmsSendReceiveManager;
-    private Class cTransactionSettings;
-    private Class cMmsSender;
-    private Class cMmsApn;
-    private Class cMmscResponse;
-    private Class cMmsException;
+    private static Class cMmsSendReceiveManager;
+    private static Class cTransactionSettings;
+    private static Class cMmsSender;
+    private static Class cMmsApn;
+    private static Class cMmscResponse;
+    private static Class cMmsException;
 
-    public MmsApnSplicing(Config config) {
-        super(MmsApnSplicing.class.getSimpleName(), config);
-    }
-
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
+    public static void handleLoadPackage(final Config config, ClassLoader loader) {
         cMmsSendReceiveManager = findClass(HANGOUTS_MMSSENDRECEIVEMANAGER, loader);
         cTransactionSettings = findClass(HANGOUTS_TRANSACTIONSETTINGS, loader);
         cMmsSender = findClass(HANGOUTS_MMSSENDER, loader);
@@ -103,188 +97,185 @@ public final class MmsApnSplicing extends Module {
         cMmscResponse = findClass(HANGOUTS_MMSC_RESPONSE, loader);
         cMmsException = findClass(HANGOUTS_MMS_EXCEPTION, loader);
 
-        return new IXUnhook[] {
-                findAndHookMethod(cMmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK,
-                        Context.class, aquireMmsNetwork),
-                findAndHookMethod(cMmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2,
-                        Context.class, cTransactionSettings, String.class, int.class, byte[].class, executeMmsRequest)
-        };
-    }
-
-    private final XC_MethodHook aquireMmsNetwork = new XC_MethodHook() {
-        // This prevents the initial request for MMS APN connectivity. It populates a new
-        // TransactionSettings instance with APN data. This is normally done by the broadcast
-        // receiver as it listens for connectivity state changes. Instead of waiting this method
-        // returns with a valid result almost instantly forcing the MMS process to continue.
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            config.reload((Context)param.args[0]);
-            if(!config.modEnabled || !config.apnSplicing) {
-                return;
-            }
-            if(config.apnPreset == Setting.ApnPreset.CUSTOM && config.mmsc.isEmpty()) {
-                log("APN splicing enabled but no MMSC has been specified.");
-                return;
-            }
-
-            debug(String.format("MMS APN splicing configuration: %s, %s, %s, %d",
-                    config.apnPreset.toString(), config.mmsc, config.proxyHost, config.proxyPort));
-
-            String localMmsc = config.mmsc;
-            String localProxyHost = config.proxyHost;
-            int localProxyPort = config.proxyPort;
-            if(config.apnPreset != Setting.ApnPreset.CUSTOM) {
-                localMmsc = config.apnPreset.getMmsc();
-                localProxyHost = config.apnPreset.getProxyHost();
-                localProxyPort = config.apnPreset.getProxyPort();
-            }
-            if(localProxyHost.isEmpty()) {
-                localProxyHost = null;
-                localProxyPort = -1;
-            } else {
-                localProxyPort = localProxyPort == -1 ? 80 : localProxyPort;
-            }
-
-            Object timerField = getStaticObjectField(cMmsSendReceiveManager,
-                    HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD);
-            // This /should/ synchronize with the actual static field not our local representation of it
-            synchronized (timerField) {
-
-                // Do not splice if not connected to mobile
-                if(!isMobileConnected()) {
-                    debug("Not on a mobile connection. Not splicing.");
+        findAndHookMethod(cMmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_AQUIREMMSNETWORK,
+                Context.class, new XC_MethodHook() {
+            // This prevents the initial request for MMS APN connectivity. It populates a new
+            // TransactionSettings instance with APN data. This is normally done by the broadcast
+            // receiver as it listens for connectivity state changes. Instead of waiting this method
+            // returns with a valid result almost instantly forcing the MMS process to continue.
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                config.reload((Context) param.args[0]);
+                if (!config.modEnabled || !config.apnSplicing) {
+                    return;
+                }
+                if (config.apnPreset == Setting.ApnPreset.CUSTOM && config.mmsc.isEmpty()) {
+                    XHangouts.log("APN splicing enabled but no MMSC has been specified.");
                     return;
                 }
 
-                debug("GOING FOR IT!");
+                XHangouts.debug(String.format("MMS APN splicing configuration: %s, %s, %s, %d",
+                        config.apnPreset.toString(), config.mmsc, config.proxyHost, config.proxyPort));
 
-                // Create APN
-                Constructor newMmsApn = findConstructorExact(cMmsApn, String.class, String.class, int.class);
-                // MMSC, Proxy, Port
-                Object instanceMmsApn = newMmsApn.newInstance(localMmsc, localProxyHost, localProxyPort);
-                setObjectField(instanceMmsApn, HANGOUTS_MMS_APN_RAWMMSCFIELD, localMmsc);
-
-                // Creates a TransactionSettings object (this is normally done by the broadcast receiver)
-                Constructor newTransactionSettings = findConstructorExact(cTransactionSettings);
-                newTransactionSettings.setAccessible(true);
-                Object instanceTransactionSettings = newTransactionSettings.newInstance();
-
-                // Add APN to the list
-                List apnList = (List)getObjectField(instanceTransactionSettings,
-                        HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
-                apnList.clear();
-                // You bet your ass this is an unchecked call, Android Studio
-                apnList.add(instanceMmsApn);
-
-                // Return the needed TransactionSettings object
-                param.setResult(instanceTransactionSettings);
-            }
-        }
-    };
-
-    private final XC_MethodHook executeMmsRequest = new XC_MethodHook() {
-        // This hook replaces a call to the executeMmsRequest method of the MmsSendReceiveManager.
-        // It calls the method that actually sends the MMS HTTP request. For some reason our little
-        // connectivity shortcut causes this to fail. Instead of spending even more time trying to
-        // figure out why that is, I've just replaced the entire method with something that's far
-        // less picky about what you feed it. Returning null is sometimes a valid result. Admittedly
-        // this replacement may not be nearly as robust as the original implementation.
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            config.reload((Context)param.args[0]);
-            if(!config.modEnabled || !config.apnSplicing) {
-                return;
-            }
-
-            debug(String.format("%s -> %s2 called", HANGOUTS_MMSSENDRECEIVEMANAGER, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2));
-
-            if(!isMobileConnected()) {
-                return;
-            }
-
-            for(Object o : param.args) {
-                debug(String.format("%s -> %s2 args: %s", HANGOUTS_MMSSENDRECEIVEMANAGER, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, o));
-            }
-
-            Object mmsc = param.args[2];
-            Object isProxy = false;
-            Object proxy = null;
-            Object port = -1;
-            for(Object o : param.args) {
-                debug(String.format("args1: %s", o));
-            }
-
-            // When sending String will be null, int will be 1
-            // When receiving String will be the message URL, int will be 2, byte[] will be null
-            // When sending the delivery report String will be null, int will be 1
-
-            if(param.args[2] == null) {
-                // We do not have a custom URL so we need to pull one from the APN list
-
-                // Get the first MMS APN in the list
-                List apnList = (List)getObjectField(param.args[1], HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
-                for(Object o : apnList) {
-                    debug("APN: " + o.toString());
+                String localMmsc = config.mmsc;
+                String localProxyHost = config.proxyHost;
+                int localProxyPort = config.proxyPort;
+                if (config.apnPreset != Setting.ApnPreset.CUSTOM) {
+                    localMmsc = config.apnPreset.getMmsc();
+                    localProxyHost = config.apnPreset.getProxyHost();
+                    localProxyPort = config.apnPreset.getProxyPort();
                 }
-                Object apn = apnList.get(0);
-                mmsc = getObjectField(apn, HANGOUTS_MMS_APN_MMSCFIELD);
-                isProxy = callMethod(apn, HANGOUTS_MMS_APN_ISPROXYSET);
-                proxy = getObjectField(apn, HANGOUTS_MMS_APN_PROXYFIELD);
-                port = getObjectField(apn, HANGOUTS_MMS_APN_PORTFIELD);
-            }
-            debug(String.format("Executing MMS HTTP request. %s, %s, %s, %s, %s, %s, %s, %s",
-                    param.args[0], mmsc, param.args[4], param.args[3],
-                    isProxy, proxy, port, false));
+                if (localProxyHost.isEmpty()) {
+                    localProxyHost = null;
+                    localProxyPort = -1;
+                } else {
+                    localProxyPort = localProxyPort == -1 ? 80 : localProxyPort;
+                }
 
-            byte[] result;
-            try {
-                result = (byte[])callStaticMethod(cMmsSender, HANGOUTS_MMSSENDER_DOSEND,
-                        param.args[0],
-                        mmsc,
-                        param.args[4],
-                        param.args[3],
-                        isProxy,
-                        proxy,
-                        port,
-                        false);
-            } catch (InvocationTargetError ex) {
-                log("MMS HTTP request failed!");
-                debug(ex.getCause());
-                Constructor mmsException = findConstructorExact(cMmsException, String.class);
-                param.setThrowable((Throwable)mmsException.newInstance("MMS HTTP request failed: " + ex.getCause()));
-                return;
-            }
-            // XposedHelpers.callMethod(methodHookParam.args[1], "a", apn);
+                Object timerField = getStaticObjectField(cMmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_TIMERFIELD);
+                // This /should/ synchronize with the actual static field not our local representation of it
+                synchronized (timerField) {
 
+                    // Do not splice if not connected to mobile
+                    if (!isMobileConnected()) {
+                        XHangouts.debug("Not on a mobile connection. Not splicing.");
+                        return;
+                    }
 
-            if(result == null) {
-                debug("RESULT NULL, RETURNING NULL");
-                param.setResult(null);
-                return;
+                    XHangouts.debug("GOING FOR IT!");
+
+                    // Create APN
+                    Constructor newMmsApn = findConstructorExact(cMmsApn, String.class, String.class, int.class);
+                    // MMSC, Proxy, Port
+                    Object instanceMmsApn = newMmsApn.newInstance(localMmsc, localProxyHost, localProxyPort);
+                    setObjectField(instanceMmsApn, HANGOUTS_MMS_APN_RAWMMSCFIELD, localMmsc);
+
+                    // Creates a TransactionSettings object (this is normally done by the broadcast receiver)
+                    Constructor newTransactionSettings = findConstructorExact(cTransactionSettings);
+                    newTransactionSettings.setAccessible(true);
+                    Object instanceTransactionSettings = newTransactionSettings.newInstance();
+
+                    // Add APN to the list
+                    List apnList = (List) getObjectField(instanceTransactionSettings,
+                            HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
+                    apnList.clear();
+                    // You bet your ass this is an unchecked call, Android Studio
+                    apnList.add(instanceMmsApn);
+
+                    // Return the needed TransactionSettings object
+                    param.setResult(instanceTransactionSettings);
+                }
             }
-            debug("RESULT");
-            // debug(new String(result, "UTF-8"));
-            if(result.length > 0) {
+        });
+
+        findAndHookMethod(cMmsSendReceiveManager, HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, Context.class,
+                cTransactionSettings, String.class, int.class, byte[].class, new XC_MethodHook() {
+            // This hook replaces a call to the executeMmsRequest method of the MmsSendReceiveManager.
+            // It calls the method that actually sends the MMS HTTP request. For some reason our little
+            // connectivity shortcut causes this to fail. Instead of spending even more time trying to
+            // figure out why that is, I've just replaced the entire method with something that's far
+            // less picky about what you feed it. Returning null is sometimes a valid result. Admittedly
+            // this replacement may not be nearly as robust as the original implementation.
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                config.reload((Context) param.args[0]);
+                if (!config.modEnabled || !config.apnSplicing) {
+                    return;
+                }
+
+                XHangouts.debug(String.format("%s -> %s2 called", HANGOUTS_MMSSENDRECEIVEMANAGER,
+                        HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2));
+
+                if (!isMobileConnected()) {
+                    return;
+                }
+
+                for (Object o : param.args) {
+                    XHangouts.debug(String.format("%s -> %s2 args: %s", HANGOUTS_MMSSENDRECEIVEMANAGER,
+                            HANGOUTS_MMSSENDRECEIVEMANAGER_EXECUTEMMSREQUEST2, o));
+                }
+
+                Object mmsc = param.args[2];
+                Object isProxy = false;
+                Object proxy = null;
+                Object port = -1;
+                for (Object o : param.args) {
+                    XHangouts.debug(String.format("args1: %s", o));
+                }
+
+                // When sending String will be null, int will be 1
+                // When receiving String will be the message URL, int will be 2, byte[] will be null
+                // When sending the delivery report String will be null, int will be 1
+
+                if (param.args[2] == null) {
+                    // We do not have a custom URL so we need to pull one from the APN list
+
+                    // Get the first MMS APN in the list
+                    List apnList = (List) getObjectField(param.args[1], HANGOUTS_TRANSACTIONSETTINGS_APNLISTFIELD);
+                    for (Object o : apnList) {
+                        XHangouts.debug("APN: " + o.toString());
+                    }
+                    Object apn = apnList.get(0);
+                    mmsc = getObjectField(apn, HANGOUTS_MMS_APN_MMSCFIELD);
+                    isProxy = callMethod(apn, HANGOUTS_MMS_APN_ISPROXYSET);
+                    proxy = getObjectField(apn, HANGOUTS_MMS_APN_PROXYFIELD);
+                    port = getObjectField(apn, HANGOUTS_MMS_APN_PORTFIELD);
+                }
+                XHangouts.debug(String.format("Executing MMS HTTP request. %s, %s, %s, %s, %s, %s, %s, %s",
+                        param.args[0], mmsc, param.args[4], param.args[3],
+                        isProxy, proxy, port, false));
+
+                byte[] result;
                 try {
-                    Object instanceMmscResponse = findConstructorExact(cMmscResponse, byte[].class).newInstance(result);
-                    debug("LOCAL RT IS GOOD");
-                    param.setResult(callMethod(instanceMmscResponse, HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1));
+                    result = (byte[]) callStaticMethod(cMmsSender, HANGOUTS_MMSSENDER_DOSEND,
+                            param.args[0],
+                            mmsc,
+                            param.args[4],
+                            param.args[3],
+                            isProxy,
+                            proxy,
+                            port,
+                            false);
+                } catch (InvocationTargetError ex) {
+                    XHangouts.log("MMS HTTP request failed!");
+                    //XHangouts.debug(ex.getCause());
+                    Constructor mmsException = findConstructorExact(cMmsException, String.class);
+                    param.setThrowable((Throwable) mmsException.newInstance("MMS HTTP request failed: " + ex.getCause()));
                     return;
-                } catch (RuntimeException ex) {
-                    debug("LOCALRT? RUNTIME EXCEPTION");
+                }
+                // XposedHelpers.callMethod(methodHookParam.args[1], "a", apn);
+
+
+                if (result == null) {
+                    XHangouts.debug("RESULT NULL, RETURNING NULL");
                     param.setResult(null);
                     return;
                 }
+                XHangouts.debug("RESULT");
+                // debug(new String(result, "UTF-8"));
+                if (result.length > 0) {
+                    try {
+                        Object instanceMmscResponse = findConstructorExact(cMmscResponse, byte[].class).newInstance(result);
+                        XHangouts.debug("LOCAL RT IS GOOD");
+                        param.setResult(callMethod(instanceMmscResponse, HANGOUTS_MMSC_RESPONSE_GET_MESSAGECLASS1));
+                        return;
+                    } catch (RuntimeException ex) {
+                        XHangouts.debug("LOCALRT? RUNTIME EXCEPTION");
+                        param.setResult(null);
+                        return;
+                    }
+                }
+                XHangouts.debug("ZERO LENGTH, RETURNING NULL");
+                param.setResult(null);
             }
-            debug("ZERO LENGTH, RETURNING NULL");
-            param.setResult(null);
-        }
-    };
+        });
+
+    }
 
     private static boolean isMobileConnected() {
-        ConnectivityManager cm = (ConnectivityManager)AndroidAppHelper.currentApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) AndroidAppHelper.currentApplication()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         return ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE && ni.isConnected();
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2014-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -39,8 +39,6 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers.ClassNotFoundError;
-import de.robv.android.xposed.XposedHelpers.InvocationTargetError;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -49,8 +47,8 @@ import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class XHangouts implements IXposedHookZygoteInit,
-        IXposedHookLoadPackage,  IXposedHookInitPackageResources {
+public class XHangouts implements IXposedHookZygoteInit,
+        IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     private static final String TAG = XHangouts.class.getSimpleName();
 
@@ -67,44 +65,32 @@ public final class XHangouts implements IXposedHookZygoteInit,
     private static final int TESTED_VERSION_INT = 22758934;
     private static final int VERSION_TOLERANCE = 30;
 
-    private final Config config = new Config();
+    private static final Config config = new Config();
 
-    private final Module[] modules = new Module[] {
-            new ImageResizing(config),
-            new ImageCompression(config),
-            new MmsResizing(config),
-            new UiEnterKey(config),
-            new UiMsgTypeSpinner(config),
-            new UiCallButtons(config),
-            new UiColorize(config),
-            new UiQuickSettings(config),
-            new UiSendLock(config),
-            new UiDisableProximity(config),
-            new Sound(config),
-    };
+    public static String MODULE_PATH = null;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
-        for(Module mod : modules) {
-            mod.init(startupParam);
-        }
+        MODULE_PATH = startupParam.modulePath;
+
+        UiColorize.initZygote();
     }
 
     @Override
-    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpp) throws Throwable {
-        if(BuildConfig.APPLICATION_ID.equals(lpp.packageName)) {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+        if (BuildConfig.APPLICATION_ID.equals(loadPackageParam.packageName)) {
             // Passing in just XApp.class does not work :(
-            findAndHookMethod(XApp.class.getName(), lpp.classLoader, "isActive",
+            findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "isActive",
                     XC_MethodReplacement.returnConstant(true));
             return;
         }
 
-        if(!HANGOUTS_PKG_NAME.equals(lpp.packageName)) {
+        if (!loadPackageParam.packageName.equals(HANGOUTS_PKG_NAME)) {
             return;
         }
 
         Object activityThread = callStaticMethod(ACTIVITY_THREAD, ACTIVITY_THREAD_CURRENTACTHREAD);
-        Context systemCtx = (Context)callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
+        Context systemCtx = (Context) callMethod(activityThread, ACTIVITY_THREAD_GETSYSCTX);
 
         config.reload(systemCtx);
 
@@ -115,85 +101,53 @@ public final class XHangouts implements IXposedHookZygoteInit,
         debug(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
 
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
-        if(pi.versionCode > TESTED_VERSION_INT + VERSION_TOLERANCE ||
+        if (pi.versionCode > TESTED_VERSION_INT + VERSION_TOLERANCE ||
                 pi.versionCode < TESTED_VERSION_INT - VERSION_TOLERANCE) {
             log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
                     TESTED_VERSION_STR, TESTED_VERSION_INT), false);
         }
 
-        // Avoid running modulesList unless required
-        if(config.debug) {
-            log(String.format("Modules: %s", modulesList()), false);
-        }
-
-        // Call hook method on all modules
-        for(Module mod : modules) {
-            // Attempt to hook other modules even if one of them fails with an Xposed error
-            try {
-                mod.hook(lpp.classLoader);
-            } catch (ClassNotFoundError | InvocationTargetError | NoSuchMethodError ex) {
-                log(String.format("Error: %s in %s...", ex.getClass().getSimpleName(),
-                        mod.getClass().getSimpleName()));
-                debug(ex);
-            }
-        }
+        ImageCompression.handleLoadPackage(config, loadPackageParam.classLoader);
+        ImageResizing.handleLoadPackage(config, loadPackageParam.classLoader);
+        //MmsApnSplicing.handleLoadPackage(config, loadPackageParam.classLoader);
+        MmsResizing.handleLoadPackage(config, loadPackageParam.classLoader);
+        Sound.handleLoadPackage(config);
+        UiCallButtons.handleLoadPackage(config, loadPackageParam.classLoader);
+        UiColorize.handleLoadPackage(config);
+        UiDisableProximity.handleLoadPackage(config);
+        UiEnterKey.handleLoadPackage(config, loadPackageParam.classLoader);
+        UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
+        UiQuickSettings.handleLoadPackage(config, loadPackageParam.classLoader);
+        UiSendLock.handleLoadPackage(config, loadPackageParam.classLoader);
 
         debug("--- XHANGOUTS LOAD COMPLETE ---", false);
     }
 
-
     @Override
-    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam pkgRes)
-            throws Throwable {
-        if(!HANGOUTS_PKG_NAME.equals(pkgRes.packageName)) {
+    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam initPackageResourcesParam) throws Throwable {
+        if (!config.modEnabled) {
             return;
         }
 
-        if(!config.modEnabled) {
+        if (!initPackageResourcesParam.packageName.equals(HANGOUTS_PKG_NAME)) {
             return;
         }
 
-        // Call resources method on all modules
-        for(Module mod : modules) {
-            mod.resources(pkgRes.res);
-        }
-
+        UiColorize.handleInitPackageResources(config, initPackageResourcesParam.res);
+        UiQuickSettings.handleInitPackageResources(initPackageResourcesParam.res);
     }
 
-    // Based on Arrays.toString(Object[])
-    private String modulesList() {
-        if(modules.length == 0) {
-            return "[]";
-        }
-        // 12 = avg num of chars in class name of modules
-        StringBuilder sb = new StringBuilder(modules.length * 12);
-        sb.append('[');
-        sb.append(modules[0].getClass().getSimpleName());
-        for(int i = 1; i < modules.length; i++) {
-            sb.append(", ");
-            sb.append(modules[i].getClass().getSimpleName());
-        }
-        sb.append(']');
-        return sb.toString();
-    }
-
-    private void debug(String msg) {
+    public static void debug(String msg) {
         debug(msg, true);
     }
 
-    private void debug(String msg, boolean useTag) {
-        if(config.debug) {
+    private static void debug(String msg, boolean useTag) {
+        if (config.debug) {
             log(msg, useTag);
         }
     }
 
-    private void debug(Throwable throwable) {
-        if(config.debug) {
-            log(throwable);
-        }
-    }
-
-    private static void log(String msg) {
+    public static void log(String msg) {
         log(msg, true);
     }
 
@@ -201,7 +155,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         XposedBridge.log((useTag ? TAG + ": " : "") + msg);
     }
 
-    private static void log(Throwable throwable) {
+    public static void log(Throwable throwable) {
         XposedBridge.log(throwable);
     }
 }

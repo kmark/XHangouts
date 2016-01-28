@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2014-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -25,16 +25,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class UiCallButtons extends Module {
+public final class UiCallButtons {
 
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "bkm";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
@@ -46,45 +45,35 @@ public final class UiCallButtons extends Module {
     private static final int RES_ID_UNSET = 0;
 
     // Resources.getIdentifier is expensive so we're caching results
-    private int menuItemCallResId = RES_ID_UNSET;
-    private int menuItemVideoCallResId = RES_ID_UNSET;
+    private static int menuItemCallResId = RES_ID_UNSET;
+    private static int menuItemVideoCallResId = RES_ID_UNSET;
 
-    public UiCallButtons(Config config) {
-        super(UiCallButtons.class.getSimpleName(), config);
-    }
+    public static void handleLoadPackage(final Config config, ClassLoader loader) {
+        if (!config.modEnabled || !config.hideCallButtons) {
+            return;
+        }
 
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
         Class cConversationActSuper = findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loader);
 
-        return new IXUnhook[] {
-                findAndHookMethod(cConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM,
-                        Menu.class, onPrepareOptionsMenu)
-        };
-    }
-
-    private final XC_MethodHook onPrepareOptionsMenu = new XC_MethodHook() {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            if(!config.modEnabled || !config.hideCallButtons) {
-                return;
-            }
-
-            if(menuItemCallResId == RES_ID_UNSET || menuItemVideoCallResId == RES_ID_UNSET) {
-                Resources res = AndroidAppHelper.currentApplication().getResources();
-                menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
-                menuItemVideoCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_VIDEOCALL, "id", HANGOUTS_RES_PKG_NAME);
-                debug(String.format("Found convo menu item resource IDs: 0x%x, 0x%x",
-                        menuItemCallResId, menuItemVideoCallResId));
-            }
-            Menu menu = (Menu) param.args[0];
-            for (int i = 0; i < menu.size(); i++) {
-                MenuItem item = menu.getItem(i);
-                if(item.getItemId() == menuItemCallResId || item.getItemId() == menuItemVideoCallResId) {
-                    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        findAndHookMethod(cConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM, Menu.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (menuItemCallResId == RES_ID_UNSET || menuItemVideoCallResId == RES_ID_UNSET) {
+                    Resources res = AndroidAppHelper.currentApplication().getResources();
+                    menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
+                    menuItemVideoCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_VIDEOCALL, "id", HANGOUTS_RES_PKG_NAME);
+                    XHangouts.debug(String.format("Found convo menu item resource IDs: 0x%x, 0x%x",
+                            menuItemCallResId, menuItemVideoCallResId));
+                }
+                Menu menu = (Menu) param.args[0];
+                for (int i = 0; i < menu.size(); i++) {
+                    MenuItem item = menu.getItem(i);
+                    if (item.getItemId() == menuItemCallResId || item.getItemId() == menuItemVideoCallResId) {
+                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                    }
                 }
             }
-        }
-    };
+        });
 
+    }
 }

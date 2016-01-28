@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Kevin Mark
+ * Copyright (C) 2014-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -28,17 +28,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class UiEnterKey extends Module {
+public final class UiEnterKey {
 
     private static final String HANGOUTS_CONVERSATION_MSGEDITTEXT = "com.google.android.apps.hangouts.conversation.v2.MessageEditText";
 
@@ -46,58 +45,48 @@ public final class UiEnterKey extends Module {
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION = "onEditorAction";
 
-    public UiEnterKey(Config config) {
-        super(UiEnterKey.class.getSimpleName(), config);
-    }
-
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
+    public static void handleLoadPackage(final Config config, ClassLoader loader) {
         Class cMessageEditText = findClass(HANGOUTS_CONVERSATION_MSGEDITTEXT, loader);
         Class cTextFrame = findClass(HANGOUTS_CONVERSATOIN_TEXTFRAME, loader);
 
-        return new IXUnhook[] {
-                findAndHookConstructor(cMessageEditText, Context.class, AttributeSet.class, onNewMessageEditText),
-                findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION,
-                        TextView.class, int.class, KeyEvent.class, onEditorAction)
-        };
+        findAndHookConstructor(cMessageEditText, Context.class, AttributeSet.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                config.reload((Context) param.args[0]);
+
+                if (!config.modEnabled) {
+                    return;
+                }
+
+                XHangouts.debug("enterKey: " + config.enterKey.name());
+
+                if (config.enterKey == Setting.UiEnterKey.EMOJI_SELECTOR) {
+                    return;
+                }
+
+                EditText et = (EditText) param.thisObject;
+                // Remove Emoji selector (works for new line)
+                int inputType = et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
+                if (config.enterKey == Setting.UiEnterKey.SEND) {
+                    // Disable multi-line input which shows the send button
+                    inputType ^= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
+                }
+                et.setInputType(inputType);
+            }
+        });
+
+        findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION,
+                TextView.class, int.class, KeyEvent.class, new XC_MethodHook() {
+            // Called by at least SwiftKey and Fleksy on new line, but not the AOSP or Google keyboard
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                int actionId = (Integer) param.args[1];
+                if (config.modEnabled && actionId == EditorInfo.IME_NULL
+                        && config.enterKey == Setting.UiEnterKey.NEWLINE) {
+                    param.setResult(false); // We do not handle the enter action, and it adds a newline for us
+                }
+            }
+        });
+
     }
-
-    private final XC_MethodHook onNewMessageEditText = new XC_MethodHook() {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            config.reload((Context) param.args[0]);
-
-            if(!config.modEnabled) {
-                return;
-            }
-
-            debug(config.enterKey.name());
-
-            if(config.enterKey == Setting.UiEnterKey.EMOJI_SELECTOR) {
-                return;
-            }
-
-            EditText et = (EditText)param.thisObject;
-            // Remove Emoji selector (works for new line)
-            int inputType = et.getInputType() ^ InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
-            if(config.enterKey == Setting.UiEnterKey.SEND) {
-                // Disable multi-line input which shows the send button
-                inputType ^= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
-            }
-            et.setInputType(inputType);
-        }
-    };
-
-    private final XC_MethodHook onEditorAction = new XC_MethodHook() {
-        // Called by at least SwiftKey and Fleksy on new line, but not the AOSP or Google keyboard
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            int actionId = (Integer)param.args[1];
-            if(config.modEnabled && actionId == EditorInfo.IME_NULL
-                    && config.enterKey == Setting.UiEnterKey.NEWLINE) {
-                param.setResult(false); // We do not handle the enter action, and it adds a newline for us
-            }
-        }
-    };
-
 }
