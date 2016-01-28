@@ -54,7 +54,6 @@ public class UiColorize {
     private static final String HANGOUTS_COLOR_FAB = "fab_hangouts_primary_color";
     private static final String HANGOUTS_COLOR_INDICATOR = "indicator_color";
     private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
-    private static final String HANGOUTS_COLOR_PROMO_ELIG = "hangout_fmf_in_call_promo_eligible";
     private static final String HANGOUTS_COLOR_PRIMARY = "primary";
     private static final String HANGOUTS_COLOR_PRIMARY_DARK = "primary_dark";
     private static final String HANGOUTS_COLOR_PRIMARY_HANGOUTS = "hangouts_primary_color";
@@ -274,7 +273,6 @@ public class UiColorize {
         replaceColor(res, HANGOUTS_COLOR_ONGOING_BG, appColors[5]);
 
         // Fixes "Sending as <number>" / Ongoing call bar on 5.x
-        replaceColor(res, HANGOUTS_COLOR_PROMO_ELIG, appColors[5]);
         replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BG, appColors[5]);
         replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BGP, appColors[5]);
 

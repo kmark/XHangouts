@@ -34,7 +34,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class ImageCompression {
 
-    private static final String HANGOUTS_PROCESS_IMG_CLASS = "edr";
+    private static final String HANGOUTS_PROCESS_IMG_CLASS = "esp";
     // public static byte[] a(Bitmap paramBitmap, int paramInt)
     private static final String HANGOUTS_PROCESS_IMG_METHOD = "a";
 
