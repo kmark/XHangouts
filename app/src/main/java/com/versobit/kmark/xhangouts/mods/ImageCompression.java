@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kevin Mark
+ * Copyright (C) 2015-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -22,69 +22,60 @@ package com.versobit.kmark.xhangouts.mods;
 import android.graphics.Bitmap;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.Setting;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import java.io.ByteArrayOutputStream;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class ImageCompression extends Module {
+public final class ImageCompression {
 
     private static final String HANGOUTS_PROCESS_IMG_CLASS = "edr";
     // public static byte[] a(Bitmap paramBitmap, int paramInt)
     private static final String HANGOUTS_PROCESS_IMG_METHOD = "a";
 
-    public ImageCompression(Config config) {
-        super(ImageCompression.class.getSimpleName(), config);
-    }
 
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
+    public static void handleLoadPackage(final Config config, ClassLoader loader) {
+        if (!config.modEnabled || !config.resizing) {
+            return;
+        }
+
         Class cProcessImg = findClass(HANGOUTS_PROCESS_IMG_CLASS, loader);
 
-        return new IXUnhook[]{
-                findAndHookMethod(cProcessImg, HANGOUTS_PROCESS_IMG_METHOD,
-                        Bitmap.class, int.class, processImage)
-        };
-    }
+        findAndHookMethod(cProcessImg, HANGOUTS_PROCESS_IMG_METHOD, Bitmap.class, int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                try {
+                    Bitmap paramBitmap = (Bitmap) param.args[0];
+                    final int paramInt = (int) param.args[1]; // Original compression level
 
-    private final XC_MethodHook processImage = new XC_MethodHook() {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            if (!config.modEnabled || !config.resizing) {
-                return;
-            }
+                    final int compressQ;
+                    final String compressLog;
+                    if (config.imageFormat == Setting.ImageFormat.PNG) {
+                        compressQ = 0;
+                        compressLog = "Lossless";
+                    } else {
+                        compressQ = config.imageQuality;
+                        compressLog = String.valueOf(config.imageQuality);
+                    }
+                    XHangouts.debug(String.format("Old compression level: %d / New: %s", paramInt, compressLog));
 
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            try {
-                Bitmap paramBitmap = (Bitmap) param.args[0];
-                final int paramInt = (int) param.args[1]; // Original compression level
-
-                final int compressQ;
-                final String compressLog;
-                if(config.imageFormat == Setting.ImageFormat.PNG) {
-                    compressQ = 0;
-                    compressLog = "Lossless";
-                } else {
-                    compressQ = config.imageQuality;
-                    compressLog = String.valueOf(config.imageQuality);
+                    paramBitmap.compress(config.imageFormat.toCompressFormat(), compressQ, output);
+                    param.setResult(output.toByteArray());
+                } catch (Throwable t) {
+                    // Potential OutOfMemoryError
+                    XHangouts.log(t);
+                } finally {
+                    output.close();
                 }
-                debug(String.format("Old compression level: %d / New: %s", paramInt, compressLog));
 
-                paramBitmap.compress(config.imageFormat.toCompressFormat(), compressQ, output);
-                param.setResult(output.toByteArray());
-            } catch (Throwable t) {
-                // Potential OutOfMemoryError
-                log(t);
-            } finally {
-                output.close();
             }
+        });
 
-        }
-    };
+    }
 }

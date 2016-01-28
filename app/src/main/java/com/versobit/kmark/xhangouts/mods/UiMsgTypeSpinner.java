@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kevin Mark
+ * Copyright (C) 2015-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -23,17 +23,15 @@ import android.view.View;
 import android.widget.Spinner;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
-public final class UiMsgTypeSpinner extends Module {
+public final class UiMsgTypeSpinner {
     private static final String HANGOUTS_CONVERSATION_RTL_HELP = "eep";
     private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "avk";
 
@@ -42,40 +40,32 @@ public final class UiMsgTypeSpinner extends Module {
     private static final String HANGOUTS_CONVERSATION_METHOD = "a";
     private static final String HANGOUTS_CONVERSATION_SPINNER = "g";
 
-    private Class cRTL;
+    private static Class cRTL;
 
-    public UiMsgTypeSpinner(Config config) {
-        super(UiMsgTypeSpinner.class.getSimpleName(), config);
-    }
+    public static void handleLoadPackage(Config config, ClassLoader loader) {
+        // This doesn't need a menu setting as it fixes a bug in Hangouts
+        if (!config.modEnabled) {
+            return;
+        }
 
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
         Class cTextFrame = findClass(HANGOUTS_CONVERSATION_TEXTFRAME, loader);
         cRTL = findClass(HANGOUTS_CONVERSATION_RTL_HELP, loader);
 
-        return new IXUnhook[]{
-                findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_METHOD, paddingMethod)
-        };
-    }
-
-    private final XC_MethodHook paddingMethod = new XC_MethodHook() {
-        @Override
-        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-            // This doesn't need a menu setting as it fixes a bug in Hangouts
-            if (!config.modEnabled) {
-                return;
-            }
-
-            View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_LAYOUT);
-            Spinner TransportSpinner = (Spinner) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_SPINNER);
-            if (TransportSpinner.getVisibility() != View.GONE) {
-                boolean RTL = (boolean) callStaticMethod(cRTL, HANGOUTS_CONVERSATION_IS_RTL);
-                if (!RTL) {
-                    msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
-                } else {
-                    msgView.setPadding(msgView.getPaddingLeft(), msgView.getPaddingTop(), 0, msgView.getPaddingBottom());
+        findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_METHOD, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_LAYOUT);
+                Spinner TransportSpinner = (Spinner) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_SPINNER);
+                if (TransportSpinner.getVisibility() != View.GONE) {
+                    boolean RTL = (boolean) callStaticMethod(cRTL, HANGOUTS_CONVERSATION_IS_RTL);
+                    if (!RTL) {
+                        msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
+                    } else {
+                        msgView.setPadding(msgView.getPaddingLeft(), msgView.getPaddingTop(), 0, msgView.getPaddingBottom());
+                    }
                 }
             }
-        }
-    };
+        });
+
+    }
 }

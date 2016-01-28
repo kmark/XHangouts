@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kevin Mark
+ * Copyright (C) 2015-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -27,21 +27,19 @@ import android.content.res.XResources;
 
 import com.versobit.kmark.xhangouts.BuildConfig;
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
 import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.SettingsActivity;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import java.lang.reflect.Array;
 
-import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
-import de.robv.android.xposed.callbacks.IXUnhook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public final class UiQuickSettings extends Module {
+public final class UiQuickSettings {
 
     private static final String HANGOUTS_NAV_MENUITEM_BASE = "ccm";
     private static final String HANGOUTS_NAV_MENUITEM_HELP = "bwo";
@@ -52,47 +50,35 @@ public final class UiQuickSettings extends Module {
     private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
     private static final String ACTUAL_TITLE = "XHangouts v" +
             BuildConfig.VERSION_NAME.substring(0, BuildConfig.VERSION_NAME.lastIndexOf('-'));
-    private String modulePath = null;
 
-    private Class cMenuItemBase = null;
-    private Class cMenuItemBaseArray = null;
+    private static Class cMenuItemBase = null;
+    private static Class cMenuItemBaseArray = null;
 
-    public UiQuickSettings(Config config) {
-        super(UiQuickSettings.class.getSimpleName(), config);
-    }
 
-    @Override
-    public void init(IXposedHookZygoteInit.StartupParam startup) {
-        modulePath = startup.modulePath;
-    }
+    public static void handleLoadPackage(Config config, ClassLoader loader) {
+        if (!config.modEnabled) {
+            return;
+        }
 
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
         cMenuItemBase = findClass(HANGOUTS_NAV_MENUITEM_BASE, loader);
         cMenuItemBaseArray = Array.newInstance(cMenuItemBase, 0).getClass();
         Class cMenuItemHelp = findClass(HANGOUTS_NAV_MENUITEM_HELP, loader);
         Class cMenuPop = findClass(HANGOUTS_MENU_POPULATOR, loader);
 
-        if (!config.modEnabled) {
-            return new IXUnhook[0];
-        }
+        // Field corrections
+        findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE));
+        findAndHookMethod(cMenuItemBase, "a", Activity.class, onMenuItemClick);
+        findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON));
+        findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(8));
+        findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(2));
+        findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(8));
 
-        return new IXUnhook[] {
-                // Field corrections
-                findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE)),
-                findAndHookMethod(cMenuItemBase, "a", Activity.class, onMenuItemClick),
-                findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON)),
-                findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(8)),
-                findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(2)),
-                findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(8)),
+        // Push the Help & feedback entry down
+        findAndHookMethod(cMenuItemHelp, "c", XC_MethodReplacement.returnConstant(9));
+        findAndHookMethod(cMenuItemHelp, "e", XC_MethodReplacement.returnConstant(9));
 
-                // Push the Help & feedback entry down
-                findAndHookMethod(cMenuItemHelp, "c", XC_MethodReplacement.returnConstant(9)),
-                findAndHookMethod(cMenuItemHelp, "e", XC_MethodReplacement.returnConstant(9)),
-
-                // Populate dat menu
-                findAndHookMethod(cMenuPop, "a", Class.class, Object[].class, populateMenu)
-        };
+        // Populate dat menu
+        findAndHookMethod(cMenuPop, "a", Class.class, Object[].class, populateMenu);
     }
 
     private static final XC_MethodReplacement onMenuItemClick = new XC_MethodReplacement() {
@@ -101,22 +87,22 @@ public final class UiQuickSettings extends Module {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setComponent(new ComponentName(BuildConfig.APPLICATION_ID,
                     SettingsActivity.class.getName()));
-            ((Activity)param.args[0]).startActivity(i);
+            ((Activity) param.args[0]).startActivity(i);
             return null;
         }
     };
 
-    private final XC_MethodHook populateMenu = new XC_MethodHook() {
+    private static final XC_MethodHook populateMenu = new XC_MethodHook() {
         // This method is called by the onAttachBinder method of the NavigationDrawerFragment
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             // If it's not an array of that class we're not interested
-            if(!cMenuItemBaseArray.isInstance(param.args[1])) {
+            if (!cMenuItemBaseArray.isInstance(param.args[1])) {
                 return;
             }
 
             // This is a var-arg method
-            Object[] array = (Object[])param.args[1];
+            Object[] array = (Object[]) param.args[1];
 
             // Filter out a call we do not want to process
             if (array.length < 4) {
@@ -133,15 +119,14 @@ public final class UiQuickSettings extends Module {
         }
     };
 
-    @Override
-    public void resources(XResources res) {
+    public static void handleInitPackageResources(XResources res) {
         // Get the resources for this module
-        XModuleResources xModRes = XModuleResources.createInstance(modulePath, res);
+        XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.MODULE_PATH, res);
 
         // Add a new "fake" resource and instantly replace it with the string we actually want
-        res.setReplacement(res.addResource(xModRes, R.string.hangouts_menu_title), ACTUAL_TITLE);
+        res.setReplacement(res.addResource(moduleRes, R.string.hangouts_menu_title), ACTUAL_TITLE);
 
         // Add the desired menu icon to the Google Hangouts resources for use like above
-        res.addResource(xModRes, R.drawable.ic_hangouts_menu);
+        res.addResource(moduleRes, R.drawable.ic_hangouts_menu);
     }
 }

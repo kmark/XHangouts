@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Kevin Mark
+ * Copyright (C) 2015-2016 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -25,68 +25,69 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.versobit.kmark.xhangouts.Config;
-import com.versobit.kmark.xhangouts.Module;
+import com.versobit.kmark.xhangouts.XHangouts;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.callbacks.IXUnhook;
 import eu.chainfire.libsuperuser.Shell;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
-public final class UiSendLock extends Module {
+public final class UiSendLock {
 
     private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER = "com.google.android.apps.hangouts.conversation.v2.FloatingButtonWithCounter";
     private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON = "a";
 
-    private Shell.Builder shell = null;
-    private volatile Shell.Interactive activeShell = null;
+    private static Shell.Builder shell = null;
+    private static volatile Shell.Interactive activeShell = null;
 
-    public UiSendLock(Config config) {
-        super(UiSendLock.class.getSimpleName(), config);
-        newShell();
-    }
-
-    private void newShell() {
+    private static void newShell() {
         shell = new Shell.Builder().useSU().addCommand("input keyevent 26");
     }
 
-    @Override
-    public IXUnhook[] hook(ClassLoader loader) {
+
+    public static void handleLoadPackage(final Config config, ClassLoader loader) {
         Class cFloatBtnCounter = findClass(HANGOUTS_CONVERSATION_FLOATBTNCOUNTER, loader);
 
-        return new IXUnhook[] {
-                findAndHookConstructor(cFloatBtnCounter,
-                        Context.class, AttributeSet.class, onNewFloatingButtonWithCounter),
-                //findAndHookMethod(cFloatBtnCounter, "", preventOverwrite)
-        };
+        findAndHookConstructor(cFloatBtnCounter, Context.class, AttributeSet.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+                config.reload((Context) param.args[0]);
+
+                if (!config.modEnabled) {
+                    return;
+                }
+
+                XHangouts.debug(String.format("sendLock: %b", config.sendLock));
+
+                if (!config.sendLock) {
+                    return;
+                }
+
+                newShell();
+
+                ((ImageView) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON))
+                        .setOnLongClickListener(onSendLongClick);
+            }
+        });
+
+        /*findAndHookMethod(cFloatBtnCounter, "", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (config.modEnabled && config.sendLock) {
+                    // Prevent the setOnLongClick from being overwritten
+                    param.setResult(null);
+                }
+            }
+        });*/
     }
 
-    private final XC_MethodHook onNewFloatingButtonWithCounter = new XC_MethodHook() {
-        @Override
-        protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-            config.reload((Context)param.args[0]);
 
-            if(!config.modEnabled) {
-                return;
-            }
-
-            debug(String.valueOf(config.sendLock));
-
-            if(!config.sendLock) {
-                return;
-            }
-
-            ((ImageView)getObjectField(param.thisObject, HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON))
-                    .setOnLongClickListener(onSendLongClick);
-        }
-    };
-
-    private final View.OnLongClickListener onSendLongClick = new View.OnLongClickListener() {
+    private static final View.OnLongClickListener onSendLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            // Lock
+            //Lock
             activeShell = shell.open();
             // Send
             v.callOnClick();
@@ -98,22 +99,12 @@ public final class UiSendLock extends Module {
         }
     };
 
-    private final Runnable waitAndCloseShell = new Runnable() {
+    private static final Runnable waitAndCloseShell = new Runnable() {
         @Override
         public void run() {
-            if(activeShell != null) {
+            if (activeShell != null) {
                 activeShell.waitForIdle();
                 activeShell.close();
-            }
-        }
-    };
-
-    private final XC_MethodHook preventOverwrite = new XC_MethodHook() {
-        @Override
-        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            if(config.modEnabled && config.sendLock) {
-                // Prevent the setOnLongClick from being overwritten
-                param.setResult(null);
             }
         }
     };
