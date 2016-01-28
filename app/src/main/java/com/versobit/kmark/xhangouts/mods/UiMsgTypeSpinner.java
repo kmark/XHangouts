@@ -32,8 +32,8 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiMsgTypeSpinner {
-    private static final String HANGOUTS_CONVERSATION_RTL_HELP = "eep";
-    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "avk";
+    private static final String HANGOUTS_CONVERSATION_RTL_HELP = "etn";
+    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "bkc";
 
     private static final String HANGOUTS_CONVERSATION_IS_RTL = "d";
     private static final String HANGOUTS_CONVERSATION_LAYOUT = "j";

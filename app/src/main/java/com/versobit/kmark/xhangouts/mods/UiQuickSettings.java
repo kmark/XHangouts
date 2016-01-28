@@ -41,10 +41,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "ccm";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "bwo";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "cqq";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "ckd";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "hlp";
+    private static final String HANGOUTS_MENU_POPULATOR = "ibd";
 
     private static final int HANGOUTS_RES_MENU_TITLE = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":string/hangouts_menu_title");
     private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
@@ -69,13 +69,13 @@ public final class UiQuickSettings {
         findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE));
         findAndHookMethod(cMenuItemBase, "a", Activity.class, onMenuItemClick);
         findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON));
-        findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(8));
-        findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(2));
-        findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(8));
+        findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(10));
+        findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(3));
+        findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(10));
 
         // Push the Help & feedback entry down
-        findAndHookMethod(cMenuItemHelp, "c", XC_MethodReplacement.returnConstant(9));
-        findAndHookMethod(cMenuItemHelp, "e", XC_MethodReplacement.returnConstant(9));
+        findAndHookMethod(cMenuItemHelp, "c", XC_MethodReplacement.returnConstant(11));
+        findAndHookMethod(cMenuItemHelp, "e", XC_MethodReplacement.returnConstant(11));
 
         // Populate dat menu
         findAndHookMethod(cMenuPop, "a", Class.class, Object[].class, populateMenu);
