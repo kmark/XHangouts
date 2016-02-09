@@ -102,8 +102,7 @@ public class XHangouts implements IXposedHookZygoteInit,
         debug(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
 
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
-        if (pi.versionCode > TESTED_VERSION_INT + VERSION_TOLERANCE ||
-                pi.versionCode < TESTED_VERSION_INT - VERSION_TOLERANCE) {
+        if (!versionSupported(pi.versionCode)) {
             log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
                     TESTED_VERSION_STR, TESTED_VERSION_INT), false);
         }
@@ -137,6 +136,10 @@ public class XHangouts implements IXposedHookZygoteInit,
 
         UiColorize.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiQuickSettings.handleInitPackageResources(initPackageResourcesParam.res);
+    }
+
+    public static boolean versionSupported(int vCode) {
+        return vCode >= TESTED_VERSION_INT - VERSION_TOLERANCE && vCode <= TESTED_VERSION_INT + VERSION_TOLERANCE;
     }
 
     public static void debug(String msg) {

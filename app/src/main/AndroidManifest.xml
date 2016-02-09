@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2014-2015 Kevin Mark
+    Copyright (C) 2014-2016 Kevin Mark
 
     This file is part of XHangouts.
 
@@ -39,6 +39,9 @@
         <meta-data
             android:name="xposedminversion"
             android:value="42+" />
+        <meta-data
+            android:name="storeprefs_mainclass"
+            android:value="com.versobit.kmark.xhangouts.StorePrefsHandler" />
 
         <activity
             android:name=".SettingsActivity"
