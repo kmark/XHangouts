@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,7 +30,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -51,7 +51,7 @@ import com.versobit.kmark.xhangouts.ui.FilePickerPreference;
 import java.util.HashMap;
 import java.util.Map;
 
-final public class SettingsActivity extends PreferenceActivity {
+final public class SettingsActivity extends Activity {
 
     private static final String ALIAS = BuildConfig.APPLICATION_ID + ".SettingsActivityLauncher";
 
