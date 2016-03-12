@@ -62,9 +62,9 @@ public class XHangouts implements IXposedHookZygoteInit,
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
-    private static final String TESTED_VERSION_STR = "7.0.113317058";
-    private static final int TESTED_VERSION_INT = 22901110;
-    private static final int VERSION_TOLERANCE = 20;
+    private static final String TESTED_VERSION_STR = "8.0.116581895";
+    private static final int MIN_VERSION_INT = 23000938;
+    private static final int MAX_VERSION_INT = 23000971;
 
     private static final Config config = new Config();
 
@@ -104,7 +104,7 @@ public class XHangouts implements IXposedHookZygoteInit,
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
         if (!versionSupported(pi.versionCode)) {
             log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
-                    TESTED_VERSION_STR, TESTED_VERSION_INT), false);
+                    TESTED_VERSION_STR, MIN_VERSION_INT), false);
         }
 
         ImageCompression.handleLoadPackage(config, loadPackageParam.classLoader);
@@ -139,7 +139,7 @@ public class XHangouts implements IXposedHookZygoteInit,
     }
 
     public static boolean versionSupported(int vCode) {
-        return vCode >= TESTED_VERSION_INT - VERSION_TOLERANCE && vCode <= TESTED_VERSION_INT + VERSION_TOLERANCE;
+        return vCode >= MIN_VERSION_INT && vCode <= MAX_VERSION_INT;
     }
 
     public static void debug(String msg) {

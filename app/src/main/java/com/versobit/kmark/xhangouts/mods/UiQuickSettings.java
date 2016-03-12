@@ -41,10 +41,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "cqq";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "ckd";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "cve";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "coc";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "ibd";
+    private static final String HANGOUTS_MENU_POPULATOR = "ilh";
 
     private static final int HANGOUTS_RES_MENU_TITLE = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":string/hangouts_menu_title");
     private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
