@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
@@ -27,6 +28,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -78,7 +80,9 @@ final public class SettingsActivity extends Activity {
 
     public static final class SettingsFragment extends PreferenceFragment implements AdapterView.OnItemLongClickListener {
 
-        Map<Integer, FilePickerPreference> filePickerRequests = new HashMap<>();
+        private static final int PERMISSION_READ_EXT_STORAGE = 9200;
+
+        Map<Integer, FilePickerPrefHolder> filePickerRequests = new HashMap<>();
 
         // Inject OnItemLongClickListener into the backing ListView
         @Override
@@ -326,15 +330,41 @@ final public class SettingsActivity extends Activity {
         }
 
         public void filePickerStartActForResult(FilePickerPreference pref, Intent intent, int requestCode) {
-            filePickerRequests.put(requestCode, pref);
+            filePickerRequests.put(requestCode, new FilePickerPrefHolder(pref, intent));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                        PERMISSION_READ_EXT_STORAGE + requestCode);
+                return;
+            }
             startActivityForResult(intent, requestCode);
         }
 
         @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+            int originalRequestCode = requestCode - PERMISSION_READ_EXT_STORAGE;
+            FilePickerPrefHolder holder = filePickerRequests.get(originalRequestCode);
+            if (holder != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startActivityForResult(holder.intent, originalRequestCode);
+            }
+        }
+
+        @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            FilePickerPreference pref = filePickerRequests.remove(requestCode);
-            if (pref != null) {
-                pref.onActivityResult(requestCode, resultCode, data);
+            FilePickerPrefHolder holder = filePickerRequests.remove(requestCode);
+            if (holder != null) {
+                holder.pref.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+
+        private static final class FilePickerPrefHolder {
+            private final FilePickerPreference pref;
+            private final Intent intent;
+
+            private FilePickerPrefHolder(FilePickerPreference pref, Intent intent) {
+                this.pref = pref;
+                this.intent = intent;
             }
         }
     }
