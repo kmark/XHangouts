@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2015 Kevin Mark
+    Copyright (C) 2015-2016 Kevin Mark
 
     This file is part of XHangouts.
 
@@ -68,6 +68,14 @@
             android:layout_height="wrap_content"
             android:text="@string/dialog_about_donate"
             android:id="@+id/dialog_about_donate"
+            android:textSize="18sp"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_about_blackbox87"
+            android:id="@+id/dialog_about_blackbox87"
             android:textSize="18sp"
             android:textColor="@android:color/black" />
 

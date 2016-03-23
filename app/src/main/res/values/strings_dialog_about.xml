@@ -23,6 +23,9 @@
     <string name="dialog_about_donate">XHangouts is developed in my spare time and will always
         remain free and open-source software. If you find this application useful please feel free to
     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HUXS9XTC6VMY4">donate</a>.</string>
+    <string name="dialog_about_blackbox87">A very special thank you to <a href="https://github.com/blackbox87">blackbox87</a>
+        (<a href="http://forum.xda-developers.com/member.php?u=6610308">ImADev</a> @ XDA)
+        for his substantial and continuous contributions.</string>
     <string name="dialog_about_github">GitHub</string>
     <string name="dialog_about_github_link" translatable="false">https://github.com/kmark/XHangouts</string>
     <string name="dialog_about_xda">XDA</string>
