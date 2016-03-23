@@ -20,6 +20,7 @@ Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hang
 * Change the enter key on your keyboard to add a new line or send your message (as opposed to opening the emoji keyboard).
 * (Currently deactivated) MMS APN Splicing. Send and receive MMS very quickly (and waste less battery) while on your mobile connection.
 * Personalize Hangouts! Choose from 23 different material design colors.
+* Activate the dark theme to make Hangouts easier on the eyes.
 * Hide the video and audio call toolbar buttons.
 * Toggle the app's launcher presence
 * Access XHangouts easily from an entry in the Hangouts menu
