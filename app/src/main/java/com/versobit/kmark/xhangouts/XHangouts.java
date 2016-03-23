@@ -113,7 +113,7 @@ public class XHangouts implements IXposedHookZygoteInit,
         MmsResizing.handleLoadPackage(config, loadPackageParam.classLoader);
         Sound.handleLoadPackage(config);
         UiCallButtons.handleLoadPackage(config, loadPackageParam.classLoader);
-        UiColorize.handleLoadPackage(config);
+        UiColorize.handleLoadPackage(config, loadPackageParam.classLoader);
         UiDisableProximity.handleLoadPackage(config);
         UiEmoji.handleLoadPackage(config, loadPackageParam.classLoader);
         UiEnterKey.handleLoadPackage(config, loadPackageParam.classLoader);

@@ -107,6 +107,12 @@
     <string name="pref_title_theme">Theme</string>
     <string name="pref_desc_theme">Change the appearance of Hangouts</string>
 
+    <string name="pref_title_chat_screen">Chat screen</string>
+    <string name="pref_desc_chat_screen">Change the color of bubbles, text and hyperlinks</string>
+
+    <string name="pref_title_enable_theming">Enable theming</string>
+    <string name="pref_desc_enable_theming">Enable all of the theme options or completely disable theming</string>
+
     <string name="pref_title_ui_app_color">Main app color</string>
     <string-array name="pref_ui_app_color_titles">
         <item>Amber</item>
@@ -159,16 +165,21 @@
         <item>22</item>
     </string-array>
 
+    <string name="pref_title_ui_dark_theme">Dark theme</string>
+
+    <string name="pref_title_ui_theme_bubbles">Theme outgoing bubbles</string>
+    <string name="pref_desc_ui_theme_bubbles">The outgoing bubble color will match the main app color</string>
+
     <string name="pref_title_outgoing">Outgoing</string>
     <string name="pref_title_incoming">Incoming</string>
     <string name="pref_reset_color">Reset</string>
 
-    <string name="pref_header_bubbles">Bubble colors</string>
-    <string name="pref_header_bubbles_otr">Bubble colors (OTR)</string>
-    <string name="pref_header_fonts">Font colors</string>
-    <string name="pref_header_fonts_otr">Font colors (OTR)</string>
-    <string name="pref_header_links">Hyperlink colors</string>
-    <string name="pref_header_links_otr">Hyperlink colors (OTR)</string>
+    <string name="pref_header_bubbles">Bubble color</string>
+    <string name="pref_header_bubbles_otr">Bubble color (OTR)</string>
+    <string name="pref_header_fonts">Text color</string>
+    <string name="pref_header_fonts_otr">Text color (OTR)</string>
+    <string name="pref_header_links">Hyperlink color</string>
+    <string name="pref_header_links_otr">Hyperlink color (OTR)</string>
 
 
     <!-- Sound -->
