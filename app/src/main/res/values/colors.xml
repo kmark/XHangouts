@@ -36,4 +36,7 @@
     <color name="compose_message_view_bg">#ff303030</color>
 
     <color name="rich_status_content_color">#ffffffff</color>
+
+    <color name="quick_button_pressed_color">#ff424242</color>
+    <color name="quick_button_unpressed_color">#ff303030</color>
 </resources>
