@@ -48,7 +48,7 @@ import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public class XHangouts implements IXposedHookZygoteInit,
+public final class XHangouts implements IXposedHookZygoteInit,
         IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     private static final String TAG = XHangouts.class.getSimpleName();

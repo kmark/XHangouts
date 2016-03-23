@@ -55,7 +55,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
-public class UiColorize {
+public final class UiColorize {
 
     private static final String[] HANGOUTS_QUANTUM_COLOR_SUFFIXES = {"50", "100", "200", "300",
             "400", "500", "600", "700", "800", "900", "A100", "A200", "A400", "A700"};
