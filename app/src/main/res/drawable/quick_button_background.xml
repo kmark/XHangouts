@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2015 Kevin Mark
+    Copyright (C) 2016 Kevin Mark
 
     This file is part of XHangouts.
 
@@ -17,10 +17,18 @@
     You should have received a copy of the GNU General Public License
     along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
-
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="quick_button_size">40.0dip</dimen>
-
-</resources>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <size android:height="@dimen/quick_button_size" android:width="@dimen/quick_button_size" />
+            <solid android:color="@color/quick_button_pressed_color" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <size android:height="@dimen/quick_button_size" android:width="@dimen/quick_button_size" />
+            <solid android:color="@color/quick_button_unpressed_color" />
+        </shape>
+    </item>
+</selector>

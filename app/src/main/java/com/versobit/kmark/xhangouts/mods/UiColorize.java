@@ -107,7 +107,7 @@ public class UiColorize {
     private static final int COLOR_GROUP_3 = 0xff212121; // Main background color
     private static final int COLOR_GROUP_4 = 0xff303030; // Secondary background color
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
-
+    private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
     private static final String HANGOUTS_RECENT_CALLS = "fbe";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
@@ -269,6 +269,16 @@ public class UiColorize {
             }
         });
     }
+
+    private static void setTextColor(XResources res, String layoutName, final String ResId, final int color) {
+        res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", layoutName, new XC_LayoutInflated() {
+            public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                ((TextView) liparam.view.findViewById(liparam.res.getIdentifier(ResId, "id",
+                        HANGOUTS_RES_PKG_NAME))).setTextColor(color);
+            }
+        });
+    }
+
 
     public static void handleInitPackageResources(final Config config, final XResources res) {
         if (!config.modEnabled || !config.theming) {
@@ -520,13 +530,7 @@ public class UiColorize {
             themeListItemView(res, "system_message_list_item_view", false);
 
             // Timestamp color
-            res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "message_status", new XC_LayoutInflated() {
-                @Override
-                public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
-                    ((TextView) liparam.view.findViewById(liparam.res.getIdentifier("time", "id",
-                            HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_2);
-                }
-            });
+            setTextColor(res, "message_status", "time", COLOR_GROUP_2);
 
             // Fab
             replaceColor(res, "fab_hangouts_inactive_color", COLOR_GROUP_3);
@@ -596,18 +600,16 @@ public class UiColorize {
             replaceColor(res, "background_edittext", COLOR_GROUP_3);
             replaceColor(res, "background_edittext_focused", COLOR_GROUP_3);
             replaceColor(res, "background_edittext_pressed", COLOR_GROUP_3);
+            setTextColor(res, "dialpad_digits", "callFromDisplay", COLOR_GROUP_1);
 
-            res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "dialpad_digits", new XC_LayoutInflated() {
-                @Override
-                public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
-                    ((TextView) liparam.view.findViewById(liparam.res.getIdentifier("callFromDisplay",
-                            "id", HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_1);
-                }
-            });
-
-            // Floating action button background
+            // Floating action button background and text color
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "quick_button_container_background",
                     moduleRes.fwd(R.drawable.quick_button_container_background));
+            res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "quick_button_background",
+                    moduleRes.fwd(R.drawable.quick_button_background));
+
+            setTextColor(res, "quick_button_container", "quick_button_text", COLOR_GROUP_6);
+            setTextColor(res, "quick_button", "quick_button_text", COLOR_GROUP_6);
         }
 
 
