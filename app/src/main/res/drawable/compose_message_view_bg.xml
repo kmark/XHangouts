@@ -17,14 +17,18 @@
     You should have received a copy of the GNU General Public License
     along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
-    <string name="pref_desc_chat_screen">Change the colour of bubbles, text and hyperlinks</string>
-    <string name="pref_desc_ui_theme_bubbles">The outgoing bubble colour will match the main app colour</string>
-    <string name="pref_title_ui_app_color">Main app colour</string>
-    <string name="pref_header_bubbles">Bubble colour</string>
-    <string name="pref_header_bubbles_otr">Bubble colour (OTR)</string>
-    <string name="pref_header_fonts">Text colour</string>
-    <string name="pref_header_fonts_otr">Text colour (OTR)</string>
-    <string name="pref_header_links">Hyperlink colour</string>
-    <string name="pref_header_links_otr">Hyperlink colour (OTR)</string>
-</resources>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <size android:height="1.0dip" />
+            <solid android:color="@color/bg_transport_spinner_item_pressed" />
+        </shape>
+    </item>
+    <item android:left="0.0dip" android:top="1.0dip" android:right="0.0dip" android:bottom="0.0dip">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/compose_message_view_bg" />
+            <stroke android:width="0.0dip" />
+        </shape>
+    </item>
+</layer-list>

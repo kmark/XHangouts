@@ -26,4 +26,14 @@
     <color name="quantum_bluegrey700">#FF455A64</color>
     <color name="quantum_bluegrey900">#FF263238</color>
     <color name="quantum_googblue600">#FF3B78E7</color>
+
+    <color name="bg_item_pressed">#67303030</color>
+    <color name="bg_item_activated">#ff424242</color>
+    <color name="bg_item_selected">#ff424242</color>
+    <color name="bg_item_unselected">#ff212121</color>
+
+    <color name="bg_transport_spinner_item_pressed">#ff282828</color>
+    <color name="compose_message_view_bg">#ff303030</color>
+
+    <color name="rich_status_content_color">#ffffffff</color>
 </resources>

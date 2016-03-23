@@ -59,6 +59,7 @@ public final class Config {
     public boolean sendLock = false;
     public boolean disableProximity = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
+    public boolean darkTheme = false;
     public boolean soundEnabled = false;
     public String soundAudioCallIn = "";
     public String soundAudioCallOut = "";
@@ -67,6 +68,8 @@ public final class Config {
     public String soundOutgoing = "";
     public String soundInCall = "";
     public boolean debug = false;
+    public boolean theming = false;
+    public boolean themeBubbles = false;
     public int outgoingColor = 0xffcfd8dc;
     public int outgoingColorOTR = 0xff455a64;
     public int outgoingFontColor = 0xff263238;
@@ -159,8 +162,17 @@ public final class Config {
                 case UI_DISABLE_PROXIMITY:
                     disableProximity = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
+                case UI_ENABLE_THEMING:
+                    theming = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
                 case UI_APP_COLOR:
                     appColor = Setting.AppColor.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_DARK_THEME:
+                    darkTheme = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_THEME_BUBBLES:
+                    themeBubbles = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_COLOR_INCOMING:
                     incomingColor = prefs.getInt(QUERY_ALL_VALUE);
