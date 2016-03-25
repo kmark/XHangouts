@@ -19,7 +19,7 @@
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.versobit.kmark.xhangouts.ui.XSwitchPreference
+    <SwitchPreference
         android:key="mod_enabled"
         android:title="@string/pref_title_mod_enabled"
         android:summary="@string/pref_desc_mod_enabled"
