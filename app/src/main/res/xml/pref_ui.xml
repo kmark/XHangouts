@@ -26,7 +26,7 @@
         android:summary="@string/pref_desc_theme"
         android:title="@string/pref_title_theme">
 
-        <com.versobit.kmark.xhangouts.ui.XSwitchPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="ui_enable_theming"
             android:summary="@string/pref_desc_enable_theming"
