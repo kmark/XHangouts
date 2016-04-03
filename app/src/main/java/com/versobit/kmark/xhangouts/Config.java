@@ -60,6 +60,8 @@ public final class Config {
     public boolean disableProximity = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean darkTheme = false;
+    public boolean useMainColorDark = true;
+    public boolean useMainColorLight = false;
     public boolean soundEnabled = false;
     public String soundAudioCallIn = "";
     public String soundAudioCallOut = "";
@@ -68,8 +70,8 @@ public final class Config {
     public String soundOutgoing = "";
     public String soundInCall = "";
     public boolean debug = false;
-    public boolean theming = false;
-    public boolean themeBubbles = false;
+    public boolean theming = true;
+    public boolean highlightUnread = true;
     public int outgoingColor = 0xffcfd8dc;
     public int outgoingColorOTR = 0xff455a64;
     public int outgoingFontColor = 0xff263238;
@@ -82,6 +84,18 @@ public final class Config {
     public int incomingFontColorOTR = 0xff263238;
     public int incomingLinkColor = 0xff3b78e7;
     public int incomingLinkColorOTR = 0xff3b78e7;
+    public int outgoingDarkColor = 0xff424242;
+    public int outgoingDarkColorOTR = 0xff424242;
+    public int outgoingDarkFontColor = 0xffffffff;
+    public int outgoingDarkFontColorOTR = 0xffffffff;
+    public int outgoingDarkLinkColor = 0xff212121;
+    public int outgoingDarkLinkColorOTR = 0xff212121;
+    public int incomingDarkColor = 0xff424242;
+    public int incomingDarkColorOTR = 0xff424242;
+    public int incomingDarkFontColor = 0xffffffff;
+    public int incomingDarkFontColorOTR = 0xffffffff;
+    public int incomingDarkLinkColor = 0xff212121;
+    public int incomingDarkLinkColorOTR = 0xff212121;
 
     public void reload(Context ctx) {
         reload(ctx, RELOAD_INTERVAL);
@@ -171,8 +185,14 @@ public final class Config {
                 case UI_DARK_THEME:
                     darkTheme = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
-                case UI_THEME_BUBBLES:
-                    themeBubbles = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                case UI_DARK_USE_MAIN:
+                    useMainColorDark = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_LIGHT_USE_MAIN:
+                    useMainColorLight = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_HIGHLIGHT_UNREAD:
+                    highlightUnread = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_COLOR_INCOMING:
                     incomingColor = prefs.getInt(QUERY_ALL_VALUE);
@@ -209,6 +229,42 @@ public final class Config {
                     continue;
                 case UI_COLOR_OUTGOING_LINK_OTR:
                     outgoingLinkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_INCOMING:
+                    incomingDarkColor = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_INCOMING_OTR:
+                    incomingDarkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_INCOMING_FONT:
+                    incomingDarkFontColor = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_INCOMING_FONT_OTR:
+                    incomingDarkFontColorOTR = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_INCOMING_LINK:
+                    incomingDarkLinkColor = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_INCOMING_LINK_OTR:
+                    incomingDarkLinkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_OUTGOING:
+                    outgoingDarkColor = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_OUTGOING_OTR:
+                    outgoingDarkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_OUTGOING_FONT:
+                    outgoingDarkFontColor = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_OUTGOING_FONT_OTR:
+                    outgoingDarkFontColorOTR = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_OUTGOING_LINK:
+                    outgoingDarkLinkColor = prefs.getInt(QUERY_ALL_VALUE);
+                    continue;
+                case UI_DARK_COLOR_OUTGOING_LINK_OTR:
+                    outgoingDarkLinkColorOTR = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case SOUND_ENABLED:
                     soundEnabled = prefs.getInt(QUERY_ALL_VALUE) == TRUE;

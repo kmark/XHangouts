@@ -18,8 +18,10 @@
     along with XHangouts.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="pref_desc_chat_screen">Change the colour of bubbles, text and hyperlinks</string>
-    <string name="pref_desc_ui_theme_bubbles">The outgoing bubble colour will match the main app colour</string>
+    <string name="pref_desc_themes">Change the colour of bubbles, text and hyperlinks</string>
+    <string name="pref_title_use_main">Use main app colour</string>
+    <string name="pref_desc_use_main_dark">The main app colour will be applied to outgoing bubbles and incoming hyperlinks</string>
+    <string name="pref_desc_use_main_light">The main app colour will be applied to outgoing bubbles</string>
     <string name="pref_title_ui_app_color">Main app colour</string>
     <string name="pref_header_bubbles">Bubble colour</string>
     <string name="pref_header_bubbles_otr">Bubble colour (OTR)</string>

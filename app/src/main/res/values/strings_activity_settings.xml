@@ -107,9 +107,6 @@
     <string name="pref_title_theme">Theme</string>
     <string name="pref_desc_theme">Change the appearance of Hangouts</string>
 
-    <string name="pref_title_chat_screen">Chat screen</string>
-    <string name="pref_desc_chat_screen">Change the color of bubbles, text and hyperlinks</string>
-
     <string name="pref_title_enable_theming">Enable theming</string>
     <string name="pref_desc_enable_theming">Enable all of the theme options or completely disable theming</string>
 
@@ -165,10 +162,17 @@
         <item>22</item>
     </string-array>
 
-    <string name="pref_title_ui_dark_theme">Dark theme</string>
+    <string name="pref_title_light_theme">Light theme options</string>
+    <string name="pref_title_dark_theme">Dark theme options</string>
+    <string name="pref_desc_themes">Change the color of bubbles, text and hyperlinks</string>
 
-    <string name="pref_title_ui_theme_bubbles">Theme outgoing bubbles</string>
-    <string name="pref_desc_ui_theme_bubbles">The outgoing bubble color will match the main app color</string>
+    <string name="pref_title_use_dark_theme">Use dark theme</string>
+
+    <string name="pref_title_highlight_unread">Highlight unread conversations</string>
+
+    <string name="pref_title_use_main">Use main app color</string>
+    <string name="pref_desc_use_main_dark">The main app color will be applied to outgoing bubbles and incoming hyperlinks</string>
+    <string name="pref_desc_use_main_light">The main app color will be applied to outgoing bubbles</string>
 
     <string name="pref_title_outgoing">Outgoing</string>
     <string name="pref_title_incoming">Incoming</string>

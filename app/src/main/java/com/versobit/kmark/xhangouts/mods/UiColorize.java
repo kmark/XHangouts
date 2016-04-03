@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
@@ -31,6 +32,7 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -101,6 +103,7 @@ public final class UiColorize {
     private static int resDefaultAvatar = RES_ID_UNSET;
     private static int resDefaultAvatarLarge = RES_ID_UNSET;
     private static int sysDpi = 0;
+    private static int UNREAD_COLOR = 0xffffffff;
 
     private static final int COLOR_GROUP_1 = 0xffffffff; // Text
     private static final int COLOR_GROUP_2 = 0xff808080; // Timestamps, secondary text color & icon colors
@@ -122,7 +125,7 @@ public final class UiColorize {
         sysDpi = Resources.getSystem().getDisplayMetrics().densityDpi;
     }
 
-    public static void handleLoadPackage(Config config, final ClassLoader loader) {
+    public static void handleLoadPackage(final Config config, final ClassLoader loader) {
         if (!config.modEnabled || !config.theming) {
             return;
         }
@@ -152,15 +155,50 @@ public final class UiColorize {
             }
         });
 
-        if (config.darkTheme) {
-            final Class cConversationList = findClass(HANGOUTS_CONVO_LIST, loader);
-            findAndHookMethod(cConversationList, HANGOUTS_A, int.class, int.class, int.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+        final Class cConversationList = findClass(HANGOUTS_CONVO_LIST, loader);
+        findAndHookMethod(cConversationList, HANGOUTS_A, int.class, int.class, int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (config.darkTheme) {
                     // Color the contact name
-                    param.args[0] = COLOR_GROUP_1;
+                    if ((int) param.args[2] == Typeface.BOLD) {
+                        param.args[0] = config.highlightUnread ? UNREAD_COLOR : COLOR_GROUP_1;
+                    } else {
+                        param.args[0] = COLOR_GROUP_1;
+                    }
                     // Color the message snippet and timestamp
                     param.args[1] = COLOR_GROUP_2;
+
+                } else {
+                    // Highlight unread messages for the light theme too
+                    if (config.highlightUnread) {
+                        if ((int) param.args[2] == Typeface.BOLD) {
+                            param.args[0] = UNREAD_COLOR;
+                        }
+                    }
+                }
+            }
+        });
+
+        if (config.darkTheme) {
+            // Various conversation list icons
+            findAndHookMethod(cConversationList, HANGOUTS_A, Drawable.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    ((Drawable) param.args[0]).setColorFilter(COLOR_GROUP_2, PorterDuff.Mode.SRC_IN);
+                }
+            });
+            findAndHookMethod(cConversationList, HANGOUTS_B, Drawable.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    ((Drawable) param.args[0]).setColorFilter(COLOR_GROUP_2, PorterDuff.Mode.SRC_IN);
+                }
+            });
+            findAndHookMethod(cConversationList, HANGOUTS_C, Drawable.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    ((Drawable) param.args[0]).setColorFilter(COLOR_GROUP_2, PorterDuff.Mode.SRC_IN);
                 }
             });
 
@@ -171,8 +209,8 @@ public final class UiColorize {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     FrameLayout root = (FrameLayout) param.thisObject;
                     int id = root.getContext().getResources().getIdentifier("name", "id", HANGOUTS_RES_PKG_NAME);
-                    TextView test = (TextView) root.findViewById(id);
-                    test.setTextColor(COLOR_GROUP_1);
+                    TextView textview = (TextView) root.findViewById(id);
+                    textview.setTextColor(COLOR_GROUP_1);
                 }
             });
 
@@ -182,12 +220,6 @@ public final class UiColorize {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     ((TextView) getObjectField(param.thisObject, HANGOUTS_B)).setTextColor(COLOR_GROUP_1);
-                }
-            });
-            findAndHookMethod(cSnackbar, HANGOUTS_B, ColorStateList.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    ((TextView) getObjectField(param.thisObject, HANGOUTS_C)).setTextColor(COLOR_GROUP_1);
                 }
             });
 
@@ -280,6 +312,7 @@ public final class UiColorize {
     }
 
 
+    @SuppressLint("DefaultLocale")
     public static void handleInitPackageResources(final Config config, final XResources res) {
         if (!config.modEnabled || !config.theming) {
             return;
@@ -319,6 +352,9 @@ public final class UiColorize {
                     toPrefix + HANGOUTS_QUANTUM_COLOR_SUFFIXES[i], appColors[i]);
         }
 
+        // Set the unread conversation color
+        UNREAD_COLOR = appColors[5];
+
         // The above replacements do not style everything. Some manual fixes.
         replaceDrawableColor(res, HANGOUTS_DRAWABLE_JHPS, appColors[3]);
         replaceDrawableColor(res, HANGOUTS_DRAWABLE_JHAS, appColors[4]);
@@ -337,7 +373,7 @@ public final class UiColorize {
             }
         });
 
-
+        // We can't use ic_dialpad_header.png because it contains green and adjusting the hue doesn't work
         final int googleLogo;
         if (sysDpi <= 320) {
             googleLogo = res.getIdentifier(HANGOUTS_DRAWABLE_GOOGLE, "drawable", HANGOUTS_RES_PKG_NAME);
@@ -345,6 +381,7 @@ public final class UiColorize {
             googleLogo = res.getIdentifier(HANGOUTS_DRAWABLE_GOOGLE_LARGE, "drawable", HANGOUTS_RES_PKG_NAME);
         }
 
+        // If we're using the dark theme then we need to lighten the Google logo
         if (config.darkTheme) {
             final Bitmap customLogo;
             {
@@ -373,8 +410,6 @@ public final class UiColorize {
             });
         }
 
-
-        // We can't use ic_dialpad_header.png because it contains green and adjusting the hue doesn't work
         res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", HANGOUTS_LAYOUT_DIALER, new XC_LayoutInflated() {
             public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
                 ImageView dialpadHeader = (ImageView) liparam.view.findViewById(
@@ -384,7 +419,6 @@ public final class UiColorize {
             }
         });
 
-
         // Replace bubble, font and hyperlink colors
         replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN, config.incomingColor);
         replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN_OTR, config.incomingColorOTR);
@@ -392,13 +426,12 @@ public final class UiColorize {
         replaceColor(res, HANGOUTS_COLOR_FONT_IN_OTR, config.incomingFontColorOTR);
         replaceColor(res, HANGOUTS_COLOR_LINK_IN, config.incomingLinkColor);
         replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, config.incomingLinkColorOTR);
-        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.themeBubbles ? appColors[5] : config.outgoingColor);
-        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.themeBubbles ? appColors[5] : config.outgoingColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.useMainColorLight ? appColors[5] : config.outgoingColor);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.useMainColorLight ? appColors[5] : config.outgoingColorOTR);
         replaceColor(res, HANGOUTS_COLOR_FONT_OUT, config.outgoingFontColor);
         replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, config.outgoingFontColorOTR);
         replaceColor(res, HANGOUTS_COLOR_LINK_OUT, config.outgoingLinkColor);
         replaceColor(res, HANGOUTS_COLOR_LINK_OUT_OTR, config.outgoingLinkColorOTR);
-
 
         // Make the dialers dividers a little more consistent
         replaceColor(res, "dialpad_separator_line_color", 0xffcccccc);
@@ -434,7 +467,23 @@ public final class UiColorize {
         if (config.darkTheme) {
             // Background colors
             replaceLayoutBackgroundColor(res, "conversation_fragment_v2", "list_layout_parent", COLOR_GROUP_3);
+            replaceLayoutBackgroundColor(res, "conversation_list_activity", null, COLOR_GROUP_3);
             replaceLayoutBackgroundColor(res, "attachment_picker_fragment", null, COLOR_GROUP_4);
+
+
+            // Empty list text e.g. no conversations
+            setTextColor(res, "conversation_list_fragment", "zero_state_text", COLOR_GROUP_2);
+
+
+            // Invites text color
+            res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "invite_list_item_view", new XC_LayoutInflated() {
+                public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                    ((TextView) liparam.view.findViewById(liparam.res.getIdentifier("inviter", "id",
+                            HANGOUTS_RES_PKG_NAME))).setTextColor(config.highlightUnread ? UNREAD_COLOR : COLOR_GROUP_1);
+                    ((TextView) liparam.view.findViewById(liparam.res.getIdentifier("invite_text", "id",
+                            HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_1);
+                }
+            });
 
 
             // Divider
@@ -451,14 +500,14 @@ public final class UiColorize {
 
 
             // Spinner
-            final Drawable msgType = res.getDrawable(res.getIdentifier("ic_msg_toggle_gray", "drawable", HANGOUTS_RES_PKG_NAME));
+            final Drawable offlineIcon = res.getDrawable(res.getIdentifier("ic_msg_toggle_gray", "drawable", HANGOUTS_RES_PKG_NAME));
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "ic_msg_toggle_gray", new XResources.DrawableLoader() {
                 @Override
                 public Drawable newDrawable(XResources res, int id) throws Throwable {
                     //noinspection ConstantConditions
-                    Drawable moddedLogo = msgType.mutate().getConstantState().newDrawable();
-                    moddedLogo.setColorFilter(COLOR_GROUP_2, PorterDuff.Mode.SRC_IN);
-                    return moddedLogo;
+                    Drawable icon = offlineIcon.mutate().getConstantState().newDrawable();
+                    icon.setColorFilter(COLOR_GROUP_2, PorterDuff.Mode.SRC_IN);
+                    return icon;
                 }
             });
 
@@ -475,9 +524,39 @@ public final class UiColorize {
             // Color some icons
             replaceColor(res, "quantum_bluegrey500", COLOR_GROUP_2);
 
+            res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "conversation_list_item_view", new XC_LayoutInflated() {
+                public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                    ((ImageView) liparam.view.findViewById(liparam.res
+                            .getIdentifier("conversation_muted_indicator", "id", HANGOUTS_RES_PKG_NAME)))
+                            .setColorFilter(COLOR_GROUP_2);
+                    ((ImageView) liparam.view.findViewById(liparam.res
+                            .getIdentifier("user_blocked_indicator", "id", HANGOUTS_RES_PKG_NAME)))
+                            .setColorFilter(COLOR_GROUP_2);
+                    ((ImageView) liparam.view.findViewById(liparam.res
+                            .getIdentifier("gv_voicemail_indicator", "id", HANGOUTS_RES_PKG_NAME)))
+                            .setColorFilter(COLOR_GROUP_2);
+                    ((ImageView) liparam.view.findViewById(liparam.res
+                            .getIdentifier("hangoutButton", "id", HANGOUTS_RES_PKG_NAME)))
+                            .setColorFilter(COLOR_GROUP_1);
+                }
+            });
+
 
             // Color the status icons
             replaceColor(res, "rich_status_content_color", COLOR_GROUP_1);
+
+
+            // Sticker color
+            final Drawable sticker = res.getDrawable(res.getIdentifier("ic_stickers", "drawable", HANGOUTS_RES_PKG_NAME));
+            res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "ic_stickers", new XResources.DrawableLoader() {
+                @Override
+                public Drawable newDrawable(XResources res, int id) throws Throwable {
+                    //noinspection ConstantConditions
+                    Drawable icon = sticker.mutate().getConstantState().newDrawable();
+                    icon.setColorFilter(COLOR_GROUP_2, PorterDuff.Mode.SRC_IN);
+                    return icon;
+                }
+            });
 
 
             // Attach image action button icon color
@@ -511,30 +590,34 @@ public final class UiColorize {
 
 
             // Replace bubble, font and hyperlink colors
-            replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN, COLOR_GROUP_5);
-            replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN_OTR, COLOR_GROUP_5);
-            replaceColor(res, HANGOUTS_COLOR_FONT_IN, COLOR_GROUP_1);
-            replaceColor(res, HANGOUTS_COLOR_FONT_IN_OTR, COLOR_GROUP_1);
-            replaceColor(res, HANGOUTS_COLOR_LINK_IN, appColors[5]);
-            replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, appColors[5]);
-            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, appColors[5]);
-            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, appColors[5]);
-            replaceColor(res, HANGOUTS_COLOR_FONT_OUT, COLOR_GROUP_1);
-            replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, COLOR_GROUP_1);
-            replaceColor(res, HANGOUTS_COLOR_LINK_OUT, COLOR_GROUP_3);
-            replaceColor(res, HANGOUTS_COLOR_LINK_OUT_OTR, COLOR_GROUP_3);
+            replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN, config.incomingDarkColor);
+            replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN_OTR, config.incomingDarkColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_FONT_IN, config.incomingDarkFontColor);
+            replaceColor(res, HANGOUTS_COLOR_FONT_IN_OTR, config.incomingDarkFontColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_LINK_IN, config.useMainColorDark ? appColors[5] : config.incomingDarkLinkColor);
+            replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, config.useMainColorDark ? appColors[5] : config.incomingDarkLinkColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.useMainColorDark ? appColors[5] : config.outgoingDarkColor);
+            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.useMainColorDark ? appColors[5] : config.outgoingDarkColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_FONT_OUT, config.outgoingDarkFontColor);
+            replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, config.outgoingDarkFontColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_LINK_OUT, config.outgoingDarkLinkColor);
+            replaceColor(res, HANGOUTS_COLOR_LINK_OUT_OTR, config.outgoingDarkLinkColorOTR);
 
 
+            // OTR notifications, missed calls etc
             themeListItemView(res, "hangout_event_message_list_item_view", true);
             themeListItemView(res, "otr_modification_message_list_item_view", false);
             themeListItemView(res, "system_message_list_item_view", false);
 
+
             // Timestamp color
             setTextColor(res, "message_status", "time", COLOR_GROUP_2);
 
-            // Fab
+
+            // FAB
             replaceColor(res, "fab_hangouts_inactive_color", COLOR_GROUP_3);
             replaceColor(res, "fab_hangouts_image_tint_color", COLOR_GROUP_2);
+
 
             // Theme the snackbars
             replaceLayoutBackgroundColor(res, "conversation_fragment_v2_fauxbar", "snackbar", COLOR_GROUP_4);
@@ -545,7 +628,7 @@ public final class UiColorize {
                     ((TextView) liparam.view.findViewById(liparam.res.getIdentifier("message", "id",
                             HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_1);
                     ((TextView) liparam.view.findViewById(liparam.res.getIdentifier("action", "id",
-                            HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_1);
+                            HANGOUTS_RES_PKG_NAME))).setTextColor(appColors[5]);
                 }
             });
 
@@ -562,6 +645,7 @@ public final class UiColorize {
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "conversation_list_item_selector",
                     moduleRes.fwd(R.drawable.conversation_list_item_selector));
 
+
             // Dialer text color
             res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "call_contact_item", new XC_LayoutInflated() {
                 public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
@@ -573,6 +657,7 @@ public final class UiColorize {
                             HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_2);
                 }
             });
+
 
             // Recent calls search
             res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "call_contact_picker_fragment", new XC_LayoutInflated() {
@@ -591,6 +676,7 @@ public final class UiColorize {
 
             replaceColor(res, "hangouts_search_query_highlight_color", appColors[5]);
 
+
             // Dialpad colors
             replaceColor(res, "background_dialpad", COLOR_GROUP_3);
             replaceColor(res, "dialpad_separator_line_color", COLOR_GROUP_5);
@@ -601,6 +687,7 @@ public final class UiColorize {
             replaceColor(res, "background_edittext_focused", COLOR_GROUP_3);
             replaceColor(res, "background_edittext_pressed", COLOR_GROUP_3);
             setTextColor(res, "dialpad_digits", "callFromDisplay", COLOR_GROUP_1);
+
 
             // Floating action button background and text color
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "quick_button_container_background",
