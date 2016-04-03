@@ -200,25 +200,13 @@ final public class SettingsActivity extends Activity {
             });
             updatePrefDialog(UiAppColorDialog.FRAGMENT_TAG, colorConfig);
 
-            // Disable theme options if the dark theme is enabled
-            Preference pref = findPreference(Setting.UI_DARK_THEME.toString());
-            findPreference("pref_chat_screen").setEnabled(!PreferenceManager
-                    .getDefaultSharedPreferences(pref.getContext()).getBoolean(pref.getKey(), true));
-            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    findPreference("pref_chat_screen").setEnabled(!(Boolean) newValue);
-                    return true;
-                }
-            });
-
-            // Add Sound preferences, and a corresponding header.
+            // Add Sound preferences and a corresponding header.
             header = new PreferenceCategory(getActivity());
             header.setTitle(R.string.pref_header_sound);
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_sound);
 
-            // Add About preferences, and a corresponding header.
+            // Add About preferences and a corresponding header.
             header = new PreferenceCategory(getActivity());
             header.setTitle(R.string.pref_header_about);
             getPreferenceScreen().addPreference(header);
