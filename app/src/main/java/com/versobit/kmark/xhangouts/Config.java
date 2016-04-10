@@ -60,6 +60,7 @@ public final class Config {
     public boolean disableProximity = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean darkTheme = false;
+    public boolean blackBackgrounds = false;
     public boolean useMainColorDark = true;
     public boolean useMainColorLight = false;
     public boolean soundEnabled = false;
@@ -184,6 +185,9 @@ public final class Config {
                     continue;
                 case UI_DARK_THEME:
                     darkTheme = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_BLACK_BACKGROUNDS:
+                    blackBackgrounds = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_DARK_USE_MAIN:
                     useMainColorDark = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
