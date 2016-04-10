@@ -66,6 +66,12 @@
                 android:summary="@string/pref_desc_use_main_dark"
                 android:title="@string/pref_title_use_main" />
 
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="ui_black_backgrounds"
+                android:summary="@string/pref_desc_black_backgrounds"
+                android:title="@string/pref_title_black_backgrounds" />
+
             <PreferenceCategory android:title="@string/pref_header_bubbles">
                 <com.rarepebble.colorpicker.ColorPreference
                     android:key="ui_dark_color_incoming"

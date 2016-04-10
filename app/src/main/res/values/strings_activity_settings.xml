@@ -168,6 +168,9 @@
 
     <string name="pref_title_use_dark_theme">Use dark theme</string>
 
+    <string name="pref_title_black_backgrounds">Black backgrounds</string>
+    <string name="pref_desc_black_backgrounds">Use black backgrounds instead of dark backgrounds</string>
+
     <string name="pref_title_highlight_unread">Highlight unread conversations</string>
 
     <string name="pref_title_use_main">Use main app color</string>

@@ -21,6 +21,7 @@
     <color name="primary">#FF15577B</color>
     <color name="primary_dark">#FF0F3F59</color>
     <color name="accent">#FF00796B</color>
+    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="quantum_bluegrey100">#FFCFD8DC</color>
     <color name="quantum_bluegrey700">#FF455A64</color>

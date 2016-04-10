@@ -107,8 +107,8 @@ public final class UiColorize {
 
     private static final int COLOR_GROUP_1 = 0xffffffff; // Text
     private static final int COLOR_GROUP_2 = 0xff808080; // Timestamps, secondary text color & icon colors
-    private static final int COLOR_GROUP_3 = 0xff212121; // Main background color
-    private static final int COLOR_GROUP_4 = 0xff303030; // Secondary background color
+    private static int COLOR_GROUP_3 = 0xff212121; // Main background color
+    private static int COLOR_GROUP_4 = 0xff303030; // Secondary background color
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
@@ -209,8 +209,7 @@ public final class UiColorize {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     FrameLayout root = (FrameLayout) param.thisObject;
                     int id = root.getContext().getResources().getIdentifier("name", "id", HANGOUTS_RES_PKG_NAME);
-                    TextView textview = (TextView) root.findViewById(id);
-                    textview.setTextColor(COLOR_GROUP_1);
+                    ((TextView) root.findViewById(id)).setTextColor(COLOR_GROUP_1);
                 }
             });
 
@@ -319,6 +318,12 @@ public final class UiColorize {
         }
 
         XHangouts.debug(config.appColor.name());
+
+        // An option to use black backgrounds
+        if (config.blackBackgrounds) {
+            COLOR_GROUP_3 = 0xff000000;
+            COLOR_GROUP_4 = 0xff212121;
+        }
 
         // Handle any custom DPI that Hangouts might be set to
         final XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.MODULE_PATH, res);
@@ -488,7 +493,8 @@ public final class UiColorize {
 
             // Divider
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "compose_message_view_bg",
-                    moduleRes.fwd(R.drawable.compose_message_view_bg));
+                    config.blackBackgrounds ? moduleRes.fwd(R.drawable.compose_message_view_bg_black) :
+                            moduleRes.fwd(R.drawable.compose_message_view_bg));
 
 
             // Stickers sliding tab
@@ -641,7 +647,8 @@ public final class UiColorize {
             replaceLayoutBackgroundColor(res, "babel_home_activity_tabless", "drawer_layout", COLOR_GROUP_3);
 
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "bg_item_selectable_conversation_list",
-                    moduleRes.fwd(R.drawable.bg_item_selectable_conversation_list));
+                    config.blackBackgrounds ? moduleRes.fwd(R.drawable.bg_item_selectable_conversation_list_black) :
+                            moduleRes.fwd(R.drawable.bg_item_selectable_conversation_list));
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "conversation_list_item_selector",
                     moduleRes.fwd(R.drawable.conversation_list_item_selector));
 
