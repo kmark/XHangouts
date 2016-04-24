@@ -61,8 +61,9 @@ public final class Config {
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean darkTheme = false;
     public boolean blackBackgrounds = false;
-    public boolean useMainColorDark = true;
-    public boolean useMainColorLight = false;
+    public boolean themeBubblesDark = true;
+    public boolean themeBubblesLight = false;
+    public boolean themeHyperlinks = true;
     public boolean soundEnabled = false;
     public String soundAudioCallIn = "";
     public String soundAudioCallOut = "";
@@ -189,11 +190,14 @@ public final class Config {
                 case UI_BLACK_BACKGROUNDS:
                     blackBackgrounds = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
-                case UI_DARK_USE_MAIN:
-                    useMainColorDark = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                case UI_DARK_THEME_BUBBLES:
+                    themeBubblesDark = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
-                case UI_LIGHT_USE_MAIN:
-                    useMainColorLight = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                case UI_LIGHT_THEME_BUBBLES:
+                    themeBubblesLight = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_THEME_HYPERLINKS:
+                    themeHyperlinks = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_HIGHLIGHT_UNREAD:
                     highlightUnread = prefs.getInt(QUERY_ALL_VALUE) == TRUE;

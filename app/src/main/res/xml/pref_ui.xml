@@ -62,9 +62,16 @@
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:disableDependentsState="true"
-                android:key="ui_dark_use_main"
-                android:summary="@string/pref_desc_use_main_dark"
-                android:title="@string/pref_title_use_main" />
+                android:key="ui_dark_theme_bubbles"
+                android:summary="@string/pref_desc_ui_theme_bubbles"
+                android:title="@string/pref_title_ui_theme_bubbles" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:disableDependentsState="true"
+                android:key="ui_theme_hyperlinks"
+                android:summary="@string/pref_desc_ui_theme_hyperlinks"
+                android:title="@string/pref_title_ui_theme_hyperlinks" />
 
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -79,7 +86,7 @@
                     app:colorpicker_defaultColor="@color/bg_item_activated"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
                 <com.rarepebble.colorpicker.ColorPreference
-                    android:dependency="ui_dark_use_main"
+                    android:dependency="ui_dark_theme_bubbles"
                     android:key="ui_dark_color_outgoing"
                     android:title="@string/pref_title_outgoing"
                     app:colorpicker_defaultColor="@color/bg_item_activated"
@@ -92,7 +99,7 @@
                     app:colorpicker_defaultColor="@color/bg_item_activated"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
                 <com.rarepebble.colorpicker.ColorPreference
-                    android:dependency="ui_dark_use_main"
+                    android:dependency="ui_dark_theme_bubbles"
                     android:key="ui_dark_color_outgoing_otr"
                     android:title="@string/pref_title_outgoing"
                     app:colorpicker_defaultColor="@color/bg_item_activated"
@@ -124,7 +131,7 @@
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref_header_links">
                 <com.rarepebble.colorpicker.ColorPreference
-                    android:dependency="ui_dark_use_main"
+                    android:dependency="ui_theme_hyperlinks"
                     android:key="ui_dark_color_incoming_link"
                     android:title="@string/pref_title_incoming"
                     app:colorpicker_defaultColor="@color/bg_item_unselected"
@@ -137,7 +144,7 @@
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref_header_links_otr">
                 <com.rarepebble.colorpicker.ColorPreference
-                    android:dependency="ui_dark_use_main"
+                    android:dependency="ui_theme_hyperlinks"
                     android:key="ui_dark_color_incoming_link_otr"
                     android:title="@string/pref_title_incoming"
                     app:colorpicker_defaultColor="@color/bg_item_unselected"
@@ -160,9 +167,9 @@
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:disableDependentsState="true"
-                android:key="ui_light_use_main"
-                android:summary="@string/pref_desc_use_main_light"
-                android:title="@string/pref_title_use_main" />
+                android:key="ui_light_theme_bubbles"
+                android:summary="@string/pref_desc_ui_theme_bubbles"
+                android:title="@string/pref_title_ui_theme_bubbles" />
 
             <PreferenceCategory android:title="@string/pref_header_bubbles">
                 <com.rarepebble.colorpicker.ColorPreference
@@ -171,7 +178,7 @@
                     app:colorpicker_defaultColor="@color/white"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
                 <com.rarepebble.colorpicker.ColorPreference
-                    android:dependency="ui_light_use_main"
+                    android:dependency="ui_light_theme_bubbles"
                     android:key="ui_color_outgoing"
                     android:title="@string/pref_title_outgoing"
                     app:colorpicker_defaultColor="@color/quantum_bluegrey100"
@@ -184,7 +191,7 @@
                     app:colorpicker_defaultColor="@color/quantum_bluegrey100"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
                 <com.rarepebble.colorpicker.ColorPreference
-                    android:dependency="ui_light_use_main"
+                    android:dependency="ui_light_theme_bubbles"
                     android:key="ui_color_outgoing_otr"
                     android:title="@string/pref_title_outgoing"
                     app:colorpicker_defaultColor="@color/quantum_bluegrey700"
