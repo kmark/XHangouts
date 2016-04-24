@@ -173,9 +173,11 @@
 
     <string name="pref_title_highlight_unread">Highlight unread conversations</string>
 
-    <string name="pref_title_use_main">Use main app color</string>
-    <string name="pref_desc_use_main_dark">The main app color will be applied to outgoing bubbles and incoming hyperlinks</string>
-    <string name="pref_desc_use_main_light">The main app color will be applied to outgoing bubbles</string>
+    <string name="pref_title_ui_theme_bubbles">Theme outgoing bubbles</string>
+    <string name="pref_desc_ui_theme_bubbles">The main app color will be applied to outgoing bubbles</string>
+
+    <string name="pref_title_ui_theme_hyperlinks">Theme incoming hyperlinks</string>
+    <string name="pref_desc_ui_theme_hyperlinks">The main app color will be applied to incoming hyperlinks</string>
 
     <string name="pref_title_outgoing">Outgoing</string>
     <string name="pref_title_incoming">Incoming</string>

@@ -431,8 +431,8 @@ public final class UiColorize {
         replaceColor(res, HANGOUTS_COLOR_FONT_IN_OTR, config.incomingFontColorOTR);
         replaceColor(res, HANGOUTS_COLOR_LINK_IN, config.incomingLinkColor);
         replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, config.incomingLinkColorOTR);
-        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.useMainColorLight ? appColors[5] : config.outgoingColor);
-        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.useMainColorLight ? appColors[5] : config.outgoingColorOTR);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.themeBubblesLight ? appColors[5] : config.outgoingColor);
+        replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.themeBubblesLight ? appColors[5] : config.outgoingColorOTR);
         replaceColor(res, HANGOUTS_COLOR_FONT_OUT, config.outgoingFontColor);
         replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, config.outgoingFontColorOTR);
         replaceColor(res, HANGOUTS_COLOR_LINK_OUT, config.outgoingLinkColor);
@@ -600,10 +600,10 @@ public final class UiColorize {
             replaceColor(res, HANGOUTS_COLOR_BUBBLE_IN_OTR, config.incomingDarkColorOTR);
             replaceColor(res, HANGOUTS_COLOR_FONT_IN, config.incomingDarkFontColor);
             replaceColor(res, HANGOUTS_COLOR_FONT_IN_OTR, config.incomingDarkFontColorOTR);
-            replaceColor(res, HANGOUTS_COLOR_LINK_IN, config.useMainColorDark ? appColors[5] : config.incomingDarkLinkColor);
-            replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, config.useMainColorDark ? appColors[5] : config.incomingDarkLinkColorOTR);
-            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.useMainColorDark ? appColors[5] : config.outgoingDarkColor);
-            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.useMainColorDark ? appColors[5] : config.outgoingDarkColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_LINK_IN, config.themeHyperlinks ? appColors[5] : config.incomingDarkLinkColor);
+            replaceColor(res, HANGOUTS_COLOR_LINK_IN_OTR, config.themeHyperlinks ? appColors[5] : config.incomingDarkLinkColorOTR);
+            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT, config.themeBubblesDark ? appColors[5] : config.outgoingDarkColor);
+            replaceColor(res, HANGOUTS_COLOR_BUBBLE_OUT_OTR, config.themeBubblesDark ? appColors[5] : config.outgoingDarkColorOTR);
             replaceColor(res, HANGOUTS_COLOR_FONT_OUT, config.outgoingDarkFontColor);
             replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, config.outgoingDarkFontColorOTR);
             replaceColor(res, HANGOUTS_COLOR_LINK_OUT, config.outgoingDarkLinkColor);
