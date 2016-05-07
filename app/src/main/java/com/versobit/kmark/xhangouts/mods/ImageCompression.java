@@ -34,10 +34,9 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class ImageCompression {
 
-    private static final String HANGOUTS_PROCESS_IMG_CLASS = "eye";
+    private static final String HANGOUTS_PROCESS_IMG_CLASS = "ezm";
     // public static byte[] a(Bitmap paramBitmap, int paramInt)
     private static final String HANGOUTS_PROCESS_IMG_METHOD = "a";
-
 
     public static void handleLoadPackage(final Config config, ClassLoader loader) {
         if (!config.modEnabled || !config.resizing) {

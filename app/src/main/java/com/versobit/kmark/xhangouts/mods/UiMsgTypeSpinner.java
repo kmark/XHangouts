@@ -19,28 +19,27 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.os.Build;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Spinner;
 
 import com.versobit.kmark.xhangouts.Config;
 
+import java.util.Locale;
+
 import de.robv.android.xposed.XC_MethodHook;
 
-import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiMsgTypeSpinner {
-    private static final String HANGOUTS_CONVERSATION_RTL_HELP = "ezc";
-    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "bmx";
+    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "bno";
 
-    private static final String HANGOUTS_CONVERSATION_IS_RTL = "c";
     private static final String HANGOUTS_CONVERSATION_LAYOUT = "f";
     private static final String HANGOUTS_CONVERSATION_METHOD = "a";
     private static final String HANGOUTS_CONVERSATION_SPINNER = "a";
-
-    private static Class cRTL;
 
     public static void handleLoadPackage(Config config, ClassLoader loader) {
         // This doesn't need a menu setting as it fixes a bug in Hangouts
@@ -49,7 +48,6 @@ public final class UiMsgTypeSpinner {
         }
 
         Class cTextFrame = findClass(HANGOUTS_CONVERSATION_TEXTFRAME, loader);
-        cRTL = findClass(HANGOUTS_CONVERSATION_RTL_HELP, loader);
 
         findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_METHOD, new XC_MethodHook() {
             @Override
@@ -57,11 +55,12 @@ public final class UiMsgTypeSpinner {
                 View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_LAYOUT);
                 Spinner TransportSpinner = (Spinner) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_SPINNER);
                 if (TransportSpinner.getVisibility() != View.GONE) {
-                    boolean RTL = (boolean) callStaticMethod(cRTL, HANGOUTS_CONVERSATION_IS_RTL);
-                    if (!RTL) {
-                        msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
-                    } else {
-                        msgView.setPadding(msgView.getPaddingLeft(), msgView.getPaddingTop(), 0, msgView.getPaddingBottom());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        if (TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL) {
+                            msgView.setPadding(msgView.getPaddingLeft(), msgView.getPaddingTop(), 0, msgView.getPaddingBottom());
+                        } else {
+                            msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
+                        }
                     }
                 }
             }

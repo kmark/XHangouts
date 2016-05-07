@@ -112,7 +112,7 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
-    private static final String HANGOUTS_RECENT_CALLS = "fbe";
+    private static final String HANGOUTS_RECENT_CALLS = "fcm";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
 
