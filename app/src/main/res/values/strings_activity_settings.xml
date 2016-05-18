@@ -101,7 +101,10 @@
     <string name="pref_desc_ui_send_lock">Long press the send button to send and lock the screen. Hangouts will ask for root.</string>
 
     <string name="pref_title_ui_disable_proximity">Disable proximity sensor</string>
-    <string name="pref_desc_ui_disable_proximity">Proximity sensor will no longer be used.</string>
+    <string name="pref_desc_ui_disable_proximity">Proximity sensor will no longer be used</string>
+
+    <string name="pref_title_show_ui_debug_options">Show debug options</string>
+    <string name="pref_desc_show_ui_debug_options">Access all of the hidden debug options built into Hangouts</string>
 
 
     <string name="pref_title_theme">Theme</string>
