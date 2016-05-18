@@ -58,6 +58,7 @@ public final class Config {
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
     public boolean disableProximity = false;
+    public boolean showDebugOptions = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
     public boolean darkTheme = false;
     public boolean blackBackgrounds = false;
@@ -177,6 +178,9 @@ public final class Config {
                     continue;
                 case UI_DISABLE_PROXIMITY:
                     disableProximity = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_SHOW_DEBUG_OPTIONS:
+                    showDebugOptions = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_ENABLE_THEMING:
                     theming = prefs.getInt(QUERY_ALL_VALUE) == TRUE;

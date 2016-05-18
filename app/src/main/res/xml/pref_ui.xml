@@ -291,4 +291,11 @@
         android:summary="@string/pref_desc_ui_disable_proximity"
         android:title="@string/pref_title_ui_disable_proximity" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:dependency="mod_enabled"
+        android:key="ui_show_debug_options"
+        android:summary="@string/pref_desc_show_ui_debug_options"
+        android:title="@string/pref_title_show_ui_debug_options" />
+
 </PreferenceScreen>
