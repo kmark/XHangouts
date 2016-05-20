@@ -94,6 +94,9 @@
         <item>2</item>
     </string-array>
 
+    <string name="pref_title_ui_enhance_call_button">Enhance the call button</string>
+    <string name="pref_desc_ui_enhance_call_button">Use your default dialer or select your preferred calling method</string>
+
     <string name="pref_title_ui_hide_call_buttons">Hide call buttons</string>
     <string name="pref_desc_ui_hide_call_buttons">Stuff the call icons back into the dropdown menu</string>
 

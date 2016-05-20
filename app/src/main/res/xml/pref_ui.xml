@@ -271,6 +271,13 @@
         android:title="@string/pref_title_ui_emoji" />
 
     <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="mod_enabled"
+        android:key="ui_enhance_call_button"
+        android:summary="@string/pref_desc_ui_enhance_call_button"
+        android:title="@string/pref_title_ui_enhance_call_button" />
+
+    <CheckBoxPreference
         android:defaultValue="false"
         android:dependency="mod_enabled"
         android:key="ui_hide_call_buttons"

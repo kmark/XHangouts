@@ -55,6 +55,7 @@ public final class Config {
     public int proxyPort = -1;
     public Setting.UiEmoji emoji = Setting.UiEmoji.DEFAULT;
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
+    public boolean enhanceCallButton = true;
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
     public boolean disableProximity = false;
@@ -169,6 +170,9 @@ public final class Config {
                     continue;
                 case UI_ENTER_KEY:
                     enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_ENHANCE_CALL_BUTTON:
+                    enhanceCallButton = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_HIDE_CALL_BUTTONS:
                     hideCallButtons = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
