@@ -55,16 +55,24 @@ public final class UiMsgTypeSpinner {
                 View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_LAYOUT);
                 Spinner TransportSpinner = (Spinner) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_SPINNER);
                 if (TransportSpinner.getVisibility() != View.GONE) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        if (TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL) {
-                            msgView.setPadding(msgView.getPaddingLeft(), msgView.getPaddingTop(), 0, msgView.getPaddingBottom());
-                        } else {
-                            msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
-                        }
+                    if (isRTL()) {
+                        msgView.setPadding(msgView.getPaddingLeft(), msgView.getPaddingTop(), 0, msgView.getPaddingBottom());
+                    } else {
+                        msgView.setPadding(0, msgView.getPaddingTop(), msgView.getPaddingRight(), msgView.getPaddingBottom());
                     }
                 }
             }
         });
 
+    }
+
+    private static boolean isRTL() {
+        Locale defaultLocale = Locale.getDefault();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return TextUtils.getLayoutDirectionFromLocale(defaultLocale) == View.LAYOUT_DIRECTION_RTL;
+        } else {
+            return Character.getDirectionality(defaultLocale.getDisplayName(defaultLocale)
+                    .charAt(0)) == Character.DIRECTIONALITY_RIGHT_TO_LEFT;
+        }
     }
 }
