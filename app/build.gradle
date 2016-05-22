@@ -25,7 +25,7 @@ apply from: 'signing.gradle'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
