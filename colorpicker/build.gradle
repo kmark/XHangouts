@@ -10,4 +10,8 @@ android {
         versionCode 10600
         versionName "1.6.0-XHangouts"
     }
+
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
