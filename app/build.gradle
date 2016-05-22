@@ -34,6 +34,10 @@ android {
         versionCode getVersionDef()[0].toInteger()
         versionName getVersionName()
     }
+
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
 
 dependencies {
