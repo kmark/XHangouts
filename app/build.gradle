@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    provided files('libs/XposedBridgeApi-54.jar')
+    provided 'de.robv.android.xposed:api:53'
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile project(':afilechooser')
     compile project(':colorpicker')
