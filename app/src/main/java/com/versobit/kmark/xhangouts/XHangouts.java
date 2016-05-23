@@ -142,7 +142,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiQuickSettings.handleInitPackageResources(initPackageResourcesParam.res);
     }
 
-    public static boolean versionSupported(int vCode) {
+    static boolean versionSupported(int vCode) {
         return vCode >= MIN_VERSION_INT && vCode <= MAX_VERSION_INT;
     }
 
