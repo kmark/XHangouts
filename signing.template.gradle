@@ -1,0 +1,30 @@
+/* This is a template for your own signing configuration
+ * This unconfigured template is not (and should not be) included by the build system.
+ * It can be placed anywhere as long as it is referenced in your own gradle.properties
+ * It's best to keep this outside the repository to avoid accidental commits
+ *
+ * To set up signing for this project copy this file to somewhere outside this repository.
+ * Configure the below. Use a full absolute path for storeFile.
+ * Create a gradle.properties file in this directory if you do not have one already.
+ * Open it and place the following:
+ * signing.file=/full/absolute/path/to/my/signing.gradle
+ * Of course replacing that dummy path with the path to your new signing configuration
+ * Resync the gradle project with Android Studio
+ */
+
+android {
+    signingConfigs {
+        release {
+            storeFile file('keystore.jks')
+            storePassword 'password'
+            keyAlias 'alias'
+            keyPassword 'password'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}

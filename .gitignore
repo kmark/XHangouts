@@ -4,6 +4,7 @@ gen/
 
 # Local configuration file (sdk path, etc)
 local.properties
+gradle.properties
 
 # Eclipse project files
 .classpath
@@ -26,4 +27,5 @@ local.properties
 
 # Signing stuff
 /*/signing.gradle
+signing.gradle
 
