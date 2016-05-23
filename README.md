@@ -20,13 +20,16 @@ Hangouts IM platform and SMS. XHangouts is tasked with improving the Google Hang
 * Change the enter key on your keyboard to add a new line or send your message (as opposed to opening the emoji keyboard).
 * (Currently deactivated) MMS APN Splicing. Send and receive MMS very quickly (and waste less battery) while on your mobile connection.
 * Personalize Hangouts! Choose from 23 different material design colors.
-* Activate the dark theme to make Hangouts easier on the eyes.
+* Activate the dark or AMOLED-friendly black theme to make Hangouts easier on the eyes and battery.
+* Change the chat bubble and text colors in conversations!
 * Hide the video and audio call toolbar buttons.
+* Enhance the Hangouts call button logic
 * Toggle the app's launcher presence
 * Access XHangouts easily from an entry in the Hangouts menu
 * Send a message and lock your device with one tap
 * Customize ringtones and sounds
 * Disable the proximity sensor
+* Access the hidden and powerful Hangouts debug menu
 * Works on Xposed for Lollipop and Marshmallow!
 * Free and open-source software. No nags. No data collection. No secrets.
 
