@@ -21,7 +21,6 @@ Closure<String> getVersionName = {
 }
 
 apply plugin: 'com.android.application'
-apply from: 'signing.gradle'
 
 android {
     compileSdkVersion 23
@@ -45,4 +44,17 @@ dependencies {
     compile 'eu.chainfire:libsuperuser:1.0.0.+'
     compile project(':afilechooser')
     compile project(':colorpicker')
+}
+
+// Find and apply the signing file
+// See signing.template.gradle for more information
+if (project.hasProperty('signing.file')) {
+    if (new File(project.property('signing.file') as String).exists()) {
+        apply from: project.property('signing.file')
+    } else {
+        throw new InvalidUserDataException('Signing configuration file does not exist: ' +
+                project.property('signing.file'))
+    }
+} else {
+    logger.log(LogLevel.WARN, 'WARNING: No signing configuration file defined.')
 }
