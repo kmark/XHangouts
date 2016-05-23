@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
@@ -78,6 +79,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiColorize.initZygote();
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (BuildConfig.APPLICATION_ID.equals(loadPackageParam.packageName)) {
