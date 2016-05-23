@@ -177,7 +177,7 @@ public final class UiCallButtons {
                 && gaiaID.contains(phoneNumber) && gaiaID.contains("g:");
     }
 
-    private static void callNumber(Context context, String callIntent) {
+    private static void callNumber(String callIntent) {
         Intent intent = new Intent(callIntent, Uri.parse("tel:" + phoneNumber));
         try {
             context.startActivity(intent);
@@ -221,11 +221,11 @@ public final class UiCallButtons {
         phoneNumber = phoneNumber.replaceAll("[\\s\\-()]", "");
         if (PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
             XHangouts.debug("Calling: " + phoneNumber);
-            callNumber(context, Intent.ACTION_CALL);
+            callNumber(Intent.ACTION_CALL);
         } else {
             phoneNumber = PhoneNumberUtils.convertKeypadLettersToDigits(phoneNumber);
             XHangouts.debug("Opening dialer with digits: " + phoneNumber);
-            callNumber(context, Intent.ACTION_DIAL);
+            callNumber(Intent.ACTION_DIAL);
         }
     }
 
