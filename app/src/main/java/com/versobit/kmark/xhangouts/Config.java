@@ -34,7 +34,7 @@ public final class Config {
 
     private static final Uri ALL_PREFS_URI = Uri.parse("content://" + SettingsProvider.AUTHORITY + "/all");
 
-    // Prevent reloading from occurring less than 2 seconds
+    // Ignore reloads that fall within two seconds of the last successful one
     private static final long RELOAD_INTERVAL = 2000;
 
     private long lastReload = 0;
