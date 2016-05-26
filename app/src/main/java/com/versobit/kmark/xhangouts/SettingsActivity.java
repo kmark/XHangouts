@@ -19,7 +19,6 @@
 
 package com.versobit.kmark.xhangouts;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
@@ -28,7 +27,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -50,8 +48,14 @@ import com.versobit.kmark.xhangouts.dialogs.MmsTypeQualityDialog;
 import com.versobit.kmark.xhangouts.dialogs.UiAppColorDialog;
 import com.versobit.kmark.xhangouts.ui.FilePickerPreference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import eu.chainfire.libsuperuser.Shell;
+
+import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_PKG_NAME;
 
 final public class SettingsActivity extends Activity {
 
@@ -80,9 +84,9 @@ final public class SettingsActivity extends Activity {
 
     public static final class SettingsFragment extends PreferenceFragment implements AdapterView.OnItemLongClickListener {
 
-        private static final int PERMISSION_READ_EXT_STORAGE = 9200;
+        private static Shell.Interactive rootSession;
 
-        Map<Integer, FilePickerPrefHolder> filePickerRequests = new HashMap<>();
+        Map<Integer, FilePickerPreference> filePickerRequests = new HashMap<>();
 
         // Inject OnItemLongClickListener into the backing ListView
         @Override
@@ -317,42 +321,77 @@ final public class SettingsActivity extends Activity {
             preference.setSummary(names[color.toInt()]);
         }
 
-        public void filePickerStartActForResult(FilePickerPreference pref, Intent intent, int requestCode) {
-            filePickerRequests.put(requestCode, new FilePickerPrefHolder(pref, intent));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
-                        PERMISSION_READ_EXT_STORAGE + requestCode);
-                return;
-            }
+        private static boolean isPermissionGranted(Context context, String pkgName) {
+            return context.getPackageManager().checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    pkgName) == PackageManager.PERMISSION_GRANTED;
+        }
+
+        private void reportError() {
+            rootSession = null;
+            Toast.makeText(getActivity(), "This feature requires root access", Toast.LENGTH_SHORT).show();
+        }
+
+        private void addRequest(List<String> command, String pkgName) {
+            command.add("pm grant " + pkgName + " android.permission.READ_EXTERNAL_STORAGE");
+        }
+
+        private void openRootShell(final FilePickerPreference pref, final Intent intent, final int requestCode) {
+            rootSession = new Shell.Builder().
+                    useSU().
+                    setWantSTDERR(true).
+                    setWatchdogTimeout(15).
+                    setMinimalLogging(true).
+                    open(new Shell.OnCommandResultListener() {
+                        @Override
+                        public void onCommandResult(int commandCode, int exitCode, List<String> output) {
+                            if (exitCode != Shell.OnCommandResultListener.SHELL_RUNNING) {
+                                reportError();
+                            } else {
+                                sendRootCommand(pref, intent, requestCode);
+                            }
+                        }
+                    });
+        }
+
+        private void sendRootCommand(final FilePickerPreference pref, final Intent intent, final int requestCode) {
+            List<String> commands = new ArrayList<>();
+            addRequest(commands, BuildConfig.APPLICATION_ID);
+            addRequest(commands, HANGOUTS_PKG_NAME);
+
+            rootSession.addCommand(commands, 0, new Shell.OnCommandResultListener() {
+                @Override
+                public void onCommandResult(int commandCode, int exitCode, List<String> output) {
+                    rootSession.close();
+                    if (exitCode < 0) {
+                        reportError();
+                    } else {
+                        startFilePickerActivity(pref, intent, requestCode);
+                    }
+                }
+            });
+        }
+
+        private void startFilePickerActivity(FilePickerPreference pref, Intent intent, int requestCode) {
+            filePickerRequests.put(requestCode, pref);
             startActivityForResult(intent, requestCode);
         }
 
-        @Override
-        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-            int originalRequestCode = requestCode - PERMISSION_READ_EXT_STORAGE;
-            FilePickerPrefHolder holder = filePickerRequests.get(originalRequestCode);
-            if (holder != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startActivityForResult(holder.intent, originalRequestCode);
+        public void filePickerStartActForResult(final FilePickerPreference pref, final Intent intent, final int requestCode) {
+            boolean xhangouts = isPermissionGranted(getActivity(), BuildConfig.APPLICATION_ID);
+            boolean hangouts = isPermissionGranted(getActivity(), HANGOUTS_PKG_NAME);
+
+            if (xhangouts && hangouts) {
+                startFilePickerActivity(pref, intent, requestCode);
+            } else {
+                openRootShell(pref, intent, requestCode);
             }
         }
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            FilePickerPrefHolder holder = filePickerRequests.remove(requestCode);
-            if (holder != null) {
-                holder.pref.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-
-        private static final class FilePickerPrefHolder {
-            private final FilePickerPreference pref;
-            private final Intent intent;
-
-            private FilePickerPrefHolder(FilePickerPreference pref, Intent intent) {
-                this.pref = pref;
-                this.intent = intent;
+            FilePickerPreference pref = filePickerRequests.remove(requestCode);
+            if (pref != null) {
+                pref.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
