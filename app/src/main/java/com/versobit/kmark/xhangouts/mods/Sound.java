@@ -21,6 +21,7 @@ package com.versobit.kmark.xhangouts.mods;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -81,9 +82,7 @@ public final class Sound {
                     Resources res = ctx.getResources();
                     soundJoin = res.getIdentifier(HANGOUTS_SOUND_JOIN, "raw", HANGOUTS_RES_PKG_NAME);
                     soundLeave = res.getIdentifier(HANGOUTS_SOUND_LEAVE, "raw", HANGOUTS_RES_PKG_NAME);
-                    if (config.debug) {
-                        XHangouts.log(String.format("join: 0x%x, leave: 0x%x", soundJoin, soundLeave));
-                    }
+                    XHangouts.debug(String.format("join: 0x%x, leave: 0x%x", soundJoin, soundLeave));
                 }
 
                 int soundId = (int) param.args[1];
@@ -101,10 +100,13 @@ public final class Sound {
                     return;
                 }
 
-                // Do it
-                param.setResult(MediaPlayer.create(ctx, Uri.parse(newSound)));
-                if (config.debug) {
-                    XHangouts.log(String.format("0x%x redirected to %s", soundId, newSound));
+                if (isPermissionGranted(ctx)) {
+                    // Do it
+                    ((MediaPlayer) param.thisObject).setDataSource(newSound);
+                    param.setResult(null);
+                    XHangouts.debug(String.format("0x%x redirected to %s", soundId, newSound));
+                } else {
+                    XHangouts.debug(String.format("Denied access to %s", newSound));
                 }
             }
         });
@@ -155,10 +157,8 @@ public final class Sound {
                     soundAudioCallOut = res.getIdentifier(HANGOUTS_SOUND_AUDIO_CALL_OUT, "raw", HANGOUTS_RES_PKG_NAME);
                     soundOutgoing = res.getIdentifier(HANGOUTS_SOUND_OUTGOING, "raw", HANGOUTS_RES_PKG_NAME);
                     soundInCall = res.getIdentifier(HANGOUTS_SOUND_IN_CALL, "raw", HANGOUTS_RES_PKG_NAME);
-                    if (config.debug) {
-                        XHangouts.log(String.format("audioCallIn: 0x%x, audioCallOut: 0x%x, outgoing: 0x%x, inCall: 0x%x",
-                                soundAudioCallIn, soundAudioCallOut, soundOutgoing, soundInCall));
-                    }
+                    XHangouts.debug(String.format("audioCallIn: 0x%x, audioCallOut: 0x%x, outgoing: 0x%x, inCall: 0x%x",
+                            soundAudioCallIn, soundAudioCallOut, soundOutgoing, soundInCall));
                 }
 
                 // If only we could use a switch here...
@@ -179,14 +179,21 @@ public final class Sound {
                     return;
                 }
 
-                // Do it
-                ((MediaPlayer) param.thisObject).setDataSource(newSound);
-                param.setResult(null);
-                if (config.debug) {
-                    XHangouts.log(String.format("0x%x redirected to %s", soundId, newSound));
+                if (isPermissionGranted(ctx)) {
+                    // Do it
+                    ((MediaPlayer) param.thisObject).setDataSource(newSound);
+                    param.setResult(null);
+                    XHangouts.debug(String.format("0x%x redirected to %s", soundId, newSound));
+                } else {
+                    XHangouts.debug(String.format("Denied access to %s", newSound));
                 }
             }
         });
 
+    }
+
+    private static boolean isPermissionGranted(Context context) {
+        return context.getPackageManager().checkPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                context.getPackageName()) == PackageManager.PERMISSION_GRANTED;
     }
 }
