@@ -102,8 +102,7 @@ public final class Sound {
 
                 if (isPermissionGranted(ctx)) {
                     // Do it
-                    ((MediaPlayer) param.thisObject).setDataSource(newSound);
-                    param.setResult(null);
+                    param.setResult(MediaPlayer.create(ctx, Uri.parse(newSound)));
                     XHangouts.debug(String.format("0x%x redirected to %s", soundId, newSound));
                 } else {
                     XHangouts.debug(String.format("Denied access to %s", newSound));
