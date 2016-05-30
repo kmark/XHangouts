@@ -57,6 +57,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
+@SuppressWarnings("deprecation")
 public final class UiColorize {
 
     private static final String[] HANGOUTS_QUANTUM_COLOR_SUFFIXES = {"50", "100", "200", "300",
@@ -146,10 +147,10 @@ public final class UiColorize {
                             "drawable", HANGOUTS_RES_PKG_NAME);
                 }
                 if (id == resDefaultAvatar) {
-                    //noinspection ConstantConditions,deprecation
+                    //noinspection ConstantConditions
                     param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
                 } else if (id == resDefaultAvatarLarge) {
-                    //noinspection ConstantConditions,deprecation
+                    //noinspection ConstantConditions
                     param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
                 }
             }
@@ -226,7 +227,6 @@ public final class UiColorize {
     }
 
     private static int getColorFromResources(Resources res, String name) {
-        //noinspection deprecation
         return res.getColor(res.getIdentifier(name, "color", HANGOUTS_RES_PKG_NAME));
     }
 
@@ -544,6 +544,15 @@ public final class UiColorize {
                     ((ImageView) liparam.view.findViewById(liparam.res
                             .getIdentifier("hangoutButton", "id", HANGOUTS_RES_PKG_NAME)))
                             .setColorFilter(COLOR_GROUP_1);
+                    liparam.view.findViewById(liparam.res
+                            .getIdentifier("voicemail_duration_snippet", "id", HANGOUTS_RES_PKG_NAME))
+                            .setBackgroundColor(COLOR_GROUP_4);
+                    ((TextView) liparam.view.findViewById(liparam.res
+                            .getIdentifier("voicemail_duration_snippet", "id", HANGOUTS_RES_PKG_NAME)))
+                            .setTextColor(COLOR_GROUP_2);
+                    ((TextView) liparam.view.findViewById(liparam.res
+                            .getIdentifier("voicemail_message_snippet", "id", HANGOUTS_RES_PKG_NAME)))
+                            .setTextColor(COLOR_GROUP_2);
                 }
             });
 
