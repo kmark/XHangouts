@@ -41,10 +41,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "cwg";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "coz";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "ddu";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "cwl";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "isf";
+    private static final String HANGOUTS_MENU_POPULATOR = "jua";
 
     private static final int HANGOUTS_RES_MENU_TITLE = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":string/hangouts_menu_title");
     private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
@@ -68,7 +68,8 @@ public final class UiQuickSettings {
         // Field corrections
         findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE));
         findAndHookMethod(cMenuItemBase, "a", Activity.class, onMenuItemClick);
-        findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON));
+        // TODO fix this before a new release
+        //findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON));
         findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(10));
         findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(3));
         findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(10));
