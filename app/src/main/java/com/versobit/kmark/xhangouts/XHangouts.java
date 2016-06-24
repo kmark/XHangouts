@@ -20,6 +20,7 @@
 package com.versobit.kmark.xhangouts;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
@@ -37,9 +38,12 @@ import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
 
+import java.lang.ref.WeakReference;
+
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
@@ -71,6 +75,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
     private static final Config config = new Config();
 
     public static String MODULE_PATH = null;
+    public static WeakReference<Application> hangoutsApp = new WeakReference<>(null);
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -109,6 +114,16 @@ public final class XHangouts implements IXposedHookZygoteInit,
             log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
                     TESTED_VERSION_STR, MIN_VERSION_INT), false);
         }
+
+        findAndHookMethod(Application.class, "onCreate", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Application app = (Application)param.thisObject;
+                hangoutsApp = new WeakReference<>(app);
+
+                UiQuickSettings.onContextAvailable(app);
+            }
+        });
 
         ImageCompression.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageResizing.handleLoadPackage(config, loadPackageParam.classLoader);

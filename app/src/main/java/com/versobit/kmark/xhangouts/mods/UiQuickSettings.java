@@ -21,6 +21,7 @@ package com.versobit.kmark.xhangouts.mods;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.XModuleResources;
 import android.content.res.XResources;
@@ -36,6 +37,7 @@ import java.lang.reflect.Array;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 
+import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
@@ -46,14 +48,16 @@ public final class UiQuickSettings {
 
     private static final String HANGOUTS_MENU_POPULATOR = "jua";
 
+    private static final String HANGOUTS_UNUSED_ICON = HANGOUTS_RES_PKG_NAME + ":drawable/quantum_ic_settings_grey600_48";
+
     private static final int HANGOUTS_RES_MENU_TITLE = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":string/hangouts_menu_title");
-    private static final int HANGOUTS_RES_MENU_ICON = XResources.getFakeResId(BuildConfig.APPLICATION_ID + ":drawable/ic_hangouts_menu");
     private static final String ACTUAL_TITLE = "XHangouts v" +
             BuildConfig.VERSION_NAME.substring(0, BuildConfig.VERSION_NAME.lastIndexOf('-'));
 
     private static Class cMenuItemBase = null;
     private static Class cMenuItemBaseArray = null;
 
+    private static int hangoutsResMenuIcon = 0;
 
     public static void handleLoadPackage(Config config, ClassLoader loader) {
         if (!config.modEnabled) {
@@ -68,8 +72,6 @@ public final class UiQuickSettings {
         // Field corrections
         findAndHookMethod(cMenuItemBase, "a", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_TITLE));
         findAndHookMethod(cMenuItemBase, "a", Activity.class, onMenuItemClick);
-        // TODO fix this before a new release
-        //findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(HANGOUTS_RES_MENU_ICON));
         findAndHookMethod(cMenuItemBase, "c", XC_MethodReplacement.returnConstant(10));
         findAndHookMethod(cMenuItemBase, "d", XC_MethodReplacement.returnConstant(3));
         findAndHookMethod(cMenuItemBase, "e", XC_MethodReplacement.returnConstant(10));
@@ -80,6 +82,13 @@ public final class UiQuickSettings {
 
         // Populate dat menu
         findAndHookMethod(cMenuPop, "a", Class.class, Object[].class, populateMenu);
+    }
+
+    public static void onContextAvailable(Context ctx) {
+        if (hangoutsResMenuIcon == 0) {
+            hangoutsResMenuIcon = ctx.getResources().getIdentifier(HANGOUTS_UNUSED_ICON, null, null);
+        }
+        findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(hangoutsResMenuIcon));
     }
 
     private static final XC_MethodReplacement onMenuItemClick = new XC_MethodReplacement() {
@@ -128,6 +137,7 @@ public final class UiQuickSettings {
         res.setReplacement(res.addResource(moduleRes, R.string.hangouts_menu_title), ACTUAL_TITLE);
 
         // Add the desired menu icon to the Google Hangouts resources for use like above
-        res.addResource(moduleRes, R.drawable.ic_hangouts_menu);
+        hangoutsResMenuIcon = res.getIdentifier(HANGOUTS_UNUSED_ICON, null, null);
+        res.setReplacement(hangoutsResMenuIcon, moduleRes.fwd(R.drawable.ic_hangouts_menu));
     }
 }
