@@ -177,8 +177,8 @@ public final class UiCallButtons {
                 && gaiaID.contains(phoneNumber) && gaiaID.contains("g:");
     }
 
-    private static void callNumber(String callIntent) {
-        Intent intent = new Intent(callIntent, Uri.parse("tel:" + phoneNumber));
+    private static void callNumber(String callIntent, String number) {
+        Intent intent = new Intent(callIntent, Uri.parse("tel:" + number));
         try {
             context.startActivity(intent);
         } catch (SecurityException se) {
@@ -218,14 +218,14 @@ public final class UiCallButtons {
     }
 
     private static void cellularCall() {
-        phoneNumber = phoneNumber.replaceAll("[\\s\\-()]", "");
-        if (PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
-            XHangouts.debug("Calling: " + phoneNumber);
-            callNumber(Intent.ACTION_CALL);
+        String number = phoneNumber.replaceAll("[\\s\\-()]", "");
+        if (PhoneNumberUtils.isGlobalPhoneNumber(number)) {
+            XHangouts.debug("Calling: " + number);
+            callNumber(Intent.ACTION_CALL, number);
         } else {
-            phoneNumber = PhoneNumberUtils.convertKeypadLettersToDigits(phoneNumber);
-            XHangouts.debug("Opening dialer with digits: " + phoneNumber);
-            callNumber(Intent.ACTION_DIAL);
+            number = PhoneNumberUtils.convertKeypadLettersToDigits(number);
+            XHangouts.debug("Opening dialer with digits: " + number);
+            callNumber(Intent.ACTION_DIAL, number);
         }
     }
 
