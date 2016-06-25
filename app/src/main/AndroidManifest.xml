@@ -39,9 +39,6 @@
         <meta-data
             android:name="xposedminversion"
             android:value="42+" />
-        <meta-data
-            android:name="storeprefs_mainclass"
-            android:value="com.versobit.kmark.xhangouts.StorePrefsHandler" />
 
         <activity
             android:name=".SettingsActivity"
