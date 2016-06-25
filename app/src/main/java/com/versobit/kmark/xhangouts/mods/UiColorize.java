@@ -379,7 +379,7 @@ public final class UiColorize {
         }
 
         // Handle any custom DPI that Hangouts might be set to
-        final XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.MODULE_PATH, res);
+        final XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.modulePath, res);
 
         final int hangoutsDpi = res.getDisplayMetrics().densityDpi;
         XHangouts.debug(String.format("System: %d / Hangouts: %d", sysDpi, hangoutsDpi));
