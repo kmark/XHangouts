@@ -68,7 +68,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
-    private static final String TESTED_VERSION_STR = "10.0.123391178";
+    public static final String TESTED_VERSION_STR = "10.0.123391178";
     private static final int MIN_VERSION_INT = 23184376;
     private static final int MAX_VERSION_INT = 23184409;
 
@@ -76,6 +76,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
 
     public static String MODULE_PATH = null;
     public static WeakReference<Application> hangoutsApp = new WeakReference<>(null);
+    public static boolean unsupportedVersion;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -111,6 +112,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
 
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
         if (!versionSupported(pi.versionCode)) {
+            unsupportedVersion = true;
             log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
                     TESTED_VERSION_STR, MIN_VERSION_INT), false);
         }
@@ -118,7 +120,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         findAndHookMethod(Application.class, "onCreate", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Application app = (Application)param.thisObject;
+                Application app = (Application) param.thisObject;
                 hangoutsApp = new WeakReference<>(app);
 
                 UiQuickSettings.onContextAvailable(app);
