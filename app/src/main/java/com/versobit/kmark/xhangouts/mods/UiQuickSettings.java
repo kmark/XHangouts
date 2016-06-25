@@ -131,7 +131,7 @@ public final class UiQuickSettings {
 
     public static void handleInitPackageResources(XResources res) {
         // Get the resources for this module
-        XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.MODULE_PATH, res);
+        XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.modulePath, res);
 
         // Add a new "fake" resource and instantly replace it with the string we actually want
         res.setReplacement(res.addResource(moduleRes, R.string.hangouts_menu_title), ACTUAL_TITLE);

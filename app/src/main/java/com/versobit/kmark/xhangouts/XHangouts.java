@@ -74,13 +74,13 @@ public final class XHangouts implements IXposedHookZygoteInit,
 
     private static final Config config = new Config();
 
-    public static String MODULE_PATH = null;
+    public static String modulePath = null;
     public static WeakReference<Application> hangoutsApp = new WeakReference<>(null);
     public static boolean unsupportedVersion;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
-        MODULE_PATH = startupParam.modulePath;
+        modulePath = startupParam.modulePath;
 
         UiColorize.initZygote();
     }
