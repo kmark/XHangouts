@@ -20,6 +20,7 @@
 package com.versobit.kmark.xhangouts.mods;
 
 import android.annotation.SuppressLint;
+import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -45,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.R;
@@ -130,6 +132,7 @@ public final class UiColorize {
     private static final String HANGOUTS_B = "b";
     private static final String HANGOUTS_C = "c";
     private static Context context;
+    private static boolean runOnce;
 
 
     public static void initZygote() {
@@ -137,7 +140,7 @@ public final class UiColorize {
     }
 
     public static void handleLoadPackage(final Config config, final ClassLoader loader) {
-        if (!config.modEnabled || !config.theming) {
+        if (!config.modEnabled) {
             return;
         }
 
@@ -146,25 +149,40 @@ public final class UiColorize {
                 Resources.class, int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Resources res = (Resources) param.args[0];
-                int id = (int) param.args[1];
-                if (resDefaultAvatar == RES_ID_UNSET) {
-                    resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR,
-                            "drawable", HANGOUTS_RES_PKG_NAME);
+                // Tell people what version of Hangouts they need
+                if (XHangouts.unsupportedVersion && !runOnce) {
+                    runOnce = true;
+                    Toast.makeText(AndroidAppHelper.currentApplication().getBaseContext(),
+                            String.format("Install Hangouts v%s", XHangouts.TESTED_VERSION_STR),
+                            Toast.LENGTH_LONG).show();
                 }
-                if (resDefaultAvatarLarge == RES_ID_UNSET) {
-                    resDefaultAvatarLarge = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR_LARGE,
-                            "drawable", HANGOUTS_RES_PKG_NAME);
-                }
-                if (id == resDefaultAvatar) {
-                    //noinspection ConstantConditions
-                    param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
-                } else if (id == resDefaultAvatarLarge) {
-                    //noinspection ConstantConditions
-                    param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
+
+                if (config.theming) {
+                    Resources res = (Resources) param.args[0];
+                    int id = (int) param.args[1];
+                    if (resDefaultAvatar == RES_ID_UNSET) {
+                        resDefaultAvatar = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR,
+                                "drawable", HANGOUTS_RES_PKG_NAME);
+                    }
+                    if (resDefaultAvatarLarge == RES_ID_UNSET) {
+                        resDefaultAvatarLarge = res.getIdentifier(HANGOUTS_DRAWABLE_DEFAULT_AVATAR_LARGE,
+                                "drawable", HANGOUTS_RES_PKG_NAME);
+                    }
+                    if (id == resDefaultAvatar) {
+                        //noinspection ConstantConditions
+                        param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
+                    } else if (id == resDefaultAvatarLarge) {
+                        //noinspection ConstantConditions
+                        param.setResult(((BitmapDrawable) res.getDrawable(id)).getBitmap());
+                    }
                 }
             }
         });
+
+
+        if (!config.theming) {
+            return;
+        }
 
 
         final Class cConversationList = findClass(HANGOUTS_CONVO_LIST, loader);
