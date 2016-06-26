@@ -587,6 +587,7 @@ public final class UiColorize {
 
             // Color some icons
             replaceColor(res, "quantum_bluegrey500", COLOR_GROUP_2);
+            replaceColor(res, "realtimechat_system_information_foreground", COLOR_GROUP_1);
 
             res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "conversation_list_item_view", new XC_LayoutInflated() {
                 public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
