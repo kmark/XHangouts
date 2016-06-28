@@ -129,7 +129,11 @@ public final class UiQuickSettings {
         }
     };
 
-    public static void handleInitPackageResources(XResources res) {
+    public static void handleInitPackageResources(Config config, XResources res) {
+        if (!config.modEnabled) {
+            return;
+        }
+
         // Get the resources for this module
         XModuleResources moduleRes = XModuleResources.createInstance(XHangouts.modulePath, res);
 
