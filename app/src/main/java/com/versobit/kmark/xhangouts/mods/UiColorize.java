@@ -129,6 +129,7 @@ public final class UiColorize {
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";
     private static final String HANGOUTS_C = "c";
+    // FIXME: Can we get away with a Weak/Soft Reference here?
     private static Context context;
 
 
