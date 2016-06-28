@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2014-2015 Kevin Mark
+    Copyright (C) 2014-2016 Kevin Mark
 
     This file is part of XHangouts.
 
@@ -23,4 +23,10 @@
 
     <!-- This a dummy value for the sake of replacement and usage within UiQuickSettings -->
     <string name="hangouts_menu_title">Ce-r_f2ayAST</string>
+
+    <string name="hangouts_vdialog_title">Unsupported Hangouts Version</string>
+    <string name="hangouts_vdialog_msg">Your current version of Hangouts, %1$s, is incompatible with XHangouts v%2$s. Please %3$s to Hangouts %4$s.</string>
+    <string name="hangouts_vdialog_upgrade">upgrade</string>
+    <string name="hangouts_vdialog_downgrade">downgrade</string>
+    <string name="hangouts_vdialog_button">Gotcha</string>
 </resources>

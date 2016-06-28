@@ -37,6 +37,7 @@ import com.versobit.kmark.xhangouts.mods.UiEnterKey;
 import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
+import com.versobit.kmark.xhangouts.mods.UiVersionNotice;
 
 import java.lang.ref.WeakReference;
 
@@ -69,14 +70,16 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
     public static final String TESTED_VERSION_STR = "10.0.123391178";
-    private static final int MIN_VERSION_INT = 23184376;
-    private static final int MAX_VERSION_INT = 23184409;
+    public static final int MIN_VERSION_INT = 23184376;
+    public static final int MAX_VERSION_INT = 23184409;
 
     private static final Config config = new Config();
 
     public static String modulePath = null;
     public static WeakReference<Application> hangoutsApp = new WeakReference<>(null);
-    public static boolean unsupportedVersion;
+    public static boolean unsupportedVersion = false;
+    public static String hangoutsVerName = null;
+    public static int hangoutsVerCode = -1;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -108,13 +111,15 @@ public final class XHangouts implements IXposedHookZygoteInit,
         debug(String.format("XHangouts v%s (%d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE), false);
 
         final PackageInfo pi = systemCtx.getPackageManager().getPackageInfo(HANGOUTS_PKG_NAME, 0);
-        debug(String.format("Google Hangouts v%s (%d)", pi.versionName, pi.versionCode), false);
+        hangoutsVerName = pi.versionName;
+        hangoutsVerCode = pi.versionCode;
+        debug(String.format("Google Hangouts v%s (%d)", hangoutsVerName, hangoutsVerCode), false);
 
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
-        if (!versionSupported(pi.versionCode)) {
+        if (!versionSupported(hangoutsVerCode)) {
             unsupportedVersion = true;
-            log(String.format("Warning: Your Hangouts version significantly differs from the version XHangouts was built against: v%s (%d)",
-                    TESTED_VERSION_STR, MIN_VERSION_INT), false);
+            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: v%s (%d)",
+                    hangoutsVerName, hangoutsVerCode, TESTED_VERSION_STR, MIN_VERSION_INT), false);
         }
 
         findAndHookMethod(Application.class, "onCreate", new XC_MethodHook() {
@@ -127,6 +132,8 @@ public final class XHangouts implements IXposedHookZygoteInit,
             }
         });
 
+        // UiVersionNotice must be loaded first (before other modules have the chance to fail)
+        UiVersionNotice.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageCompression.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageResizing.handleLoadPackage(config, loadPackageParam.classLoader);
         MmsResizing.handleLoadPackage(config, loadPackageParam.classLoader);
@@ -154,6 +161,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
             return;
         }
 
+        UiVersionNotice.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiColorize.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiQuickSettings.handleInitPackageResources(initPackageResourcesParam.res);
     }
