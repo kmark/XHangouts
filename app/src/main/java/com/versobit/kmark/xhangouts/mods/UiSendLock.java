@@ -22,7 +22,7 @@ package com.versobit.kmark.xhangouts.mods;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 
 import com.versobit.kmark.xhangouts.Config;
 import com.versobit.kmark.xhangouts.XHangouts;
@@ -37,7 +37,7 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 public final class UiSendLock {
 
     private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER = "com.google.android.apps.hangouts.conversation.v2.FloatingButtonWithCounter";
-    private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON = "a";
+    private static final String HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON = "d";
 
     private static Shell.Builder shell = null;
     private static volatile Shell.Interactive activeShell = null;
@@ -67,7 +67,7 @@ public final class UiSendLock {
 
                 newShell();
 
-                ((ImageView) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON))
+                ((ViewGroup) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_FLOATBTNCOUNTER_SENDBUTTON))
                         .setOnLongClickListener(onSendLongClick);
             }
         });
