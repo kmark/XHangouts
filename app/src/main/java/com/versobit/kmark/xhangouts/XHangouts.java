@@ -163,7 +163,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
 
         UiVersionNotice.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiColorize.handleInitPackageResources(config, initPackageResourcesParam.res);
-        UiQuickSettings.handleInitPackageResources(initPackageResourcesParam.res);
+        UiQuickSettings.handleInitPackageResources(config, initPackageResourcesParam.res);
     }
 
     static boolean versionSupported(int vCode) {
