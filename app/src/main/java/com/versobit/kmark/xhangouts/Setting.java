@@ -35,12 +35,6 @@ public enum Setting {
     MMS_IMAGE_PREFKEY("mms_image"),
     MMS_IMAGE_TYPE,
     MMS_IMAGE_QUALITY,
-    MMS_APN_SPLICING_ENABLED,
-    MMS_APN_SPLICING_APN_CONFIG_PREFKEY("mms_apn_splicing_apn_config"),
-    MMS_APN_SPLICING_APN_CONFIG_PRESET,
-    MMS_APN_SPLICING_APN_CONFIG_MMSC,
-    MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME,
-    MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT,
     UI_EMOJI,
     UI_ENTER_KEY,
     UI_ENHANCE_CALL_BUTTON,
@@ -197,59 +191,6 @@ public enum Setting {
                     return Bitmap.CompressFormat.PNG;
             }
             return null;
-        }
-    }
-
-    public enum ApnPreset {
-        // The order here can be changed as desired but the first integer provided in the constructor
-        // must remain the same.
-        CUSTOM(0, "Custom", "", "", -1),
-        ATT(2, "AT&T", "http://mmsc.mobile.att.net", "proxy.mobile.att.net", 80),
-        CRICKET(3, "Cricket", "http://mmsc.aiowireless.net", "proxy.aiowireless.net", 80),
-        VERIZON(1, "Verizon", "http://mms.vtext.com/servlets/mms", "", -1);
-
-        private final int value;
-        private final String name;
-        private final String mmsc;
-        private final String proxyHost;
-        private final int proxyPort;
-
-        ApnPreset(int value, String name, String mmsc, String proxyHost, int proxyPort) {
-            this.value = value;
-            this.name = name;
-            this.mmsc = mmsc;
-            this.proxyHost = proxyHost;
-            this.proxyPort = proxyPort;
-        }
-
-        public static ApnPreset fromInt(int value) {
-            for (ApnPreset u : values()) {
-                if (value == u.value) {
-                    return u;
-                }
-            }
-            throw new IllegalArgumentException("No constant with value " + value + " found");
-        }
-
-        public int toInt() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        public String getMmsc() {
-            return mmsc;
-        }
-
-        public String getProxyHost() {
-            return proxyHost;
-        }
-
-        public int getProxyPort() {
-            return proxyPort;
         }
     }
 

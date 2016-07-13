@@ -53,21 +53,5 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
-    <!-- MMS APN Splicing is currently unsupported.
-    Unfortunately there's no way to just set the visibility on these
-    to "gone". They need to be completely removed here or at runtime
-    <CheckBoxPreference
-        android:dependency="mod_enabled"
-        android:key="mms_apn_splicing_enabled"
-        android:title="@string/pref_title_mms_apn_splicing_enabled"
-        android:summary="@string/pref_desc_mms_apn_splicing_enabled"
-        android:defaultValue="false" />
-
-    <Preference
-        android:dependency="mms_apn_splicing_enabled"
-        android:key="mms_apn_splicing_apn_config"
-        android:title="@string/pref_title_mms_apn_splicing_apn_config" />
-    -->
-
 
 </PreferenceScreen>
