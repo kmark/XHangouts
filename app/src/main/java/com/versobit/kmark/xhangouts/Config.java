@@ -48,11 +48,6 @@ public final class Config {
     public int imageHeight = 1024;
     public Setting.ImageFormat imageFormat = Setting.ImageFormat.JPEG;
     public int imageQuality = 80;
-    public boolean apnSplicing = false;
-    public Setting.ApnPreset apnPreset = Setting.ApnPreset.CUSTOM;
-    public String mmsc = "";
-    public String proxyHost = "";
-    public int proxyPort = -1;
     public Setting.UiEmoji emoji = Setting.UiEmoji.DEFAULT;
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
     public boolean enhanceCallButton = true;
@@ -149,21 +144,6 @@ public final class Config {
                     continue;
                 case MMS_IMAGE_QUALITY:
                     imageQuality = prefs.getInt(QUERY_ALL_VALUE);
-                    continue;
-                case MMS_APN_SPLICING_ENABLED:
-                    apnSplicing = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
-                    continue;
-                case MMS_APN_SPLICING_APN_CONFIG_PRESET:
-                    apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(QUERY_ALL_VALUE));
-                    continue;
-                case MMS_APN_SPLICING_APN_CONFIG_MMSC:
-                    mmsc = prefs.getString(QUERY_ALL_VALUE);
-                    continue;
-                case MMS_APN_SPLICING_APN_CONFIG_PROXY_HOSTNAME:
-                    proxyHost = prefs.getString(QUERY_ALL_VALUE);
-                    continue;
-                case MMS_APN_SPLICING_APN_CONFIG_PROXY_PORT:
-                    proxyPort = prefs.getInt(QUERY_ALL_VALUE);
                     continue;
                 case UI_EMOJI:
                     emoji = Setting.UiEmoji.fromInt(prefs.getInt(QUERY_ALL_VALUE));

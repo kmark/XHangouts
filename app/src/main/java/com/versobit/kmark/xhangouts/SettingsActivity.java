@@ -167,22 +167,6 @@ final public class SettingsActivity extends Activity {
 
             bindPreferenceSummaryToValue(findPreference(Setting.MMS_ROTATE_MODE.toString()));
 
-            /* MMS APN Splicing is currently unsupported
-            Preference apnConfig = findPreference(Setting.MMS_APN_SPLICING_APN_CONFIG_PREFKEY.toString());
-            Setting.ApnPreset apnPreset = Setting.ApnPreset.fromInt(prefs.getInt(Setting.MMS_APN_SPLICING_APN_CONFIG_PRESET.toString(), Setting.ApnPreset.CUSTOM.toInt()));
-            updateMmsApnConfigSummary(apnConfig, apnPreset);
-
-            apnConfig.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    new MmsApnConfigDialog().setSettingPref(preference)
-                            .show(getFragmentManager(), MmsApnConfigDialog.FRAGMENT_TAG);
-                    return true;
-                }
-            });
-            updatePrefDialog(MmsApnConfigDialog.FRAGMENT_TAG, apnConfig);
-            */
-
             // Add UI Tweaks preferences, and a corresponding header.
             header = new PreferenceCategory(getActivity());
             header.setTitle(R.string.pref_header_ui);
@@ -310,10 +294,6 @@ final public class SettingsActivity extends Activity {
             Context ctx = preference.getContext();
             String strQuality = format == Setting.ImageFormat.PNG ? ctx.getString(R.string.dialog_mms_type_quality_lossless) : String.valueOf(quality);
             preference.setSummary(ctx.getString(R.string.pref_desc_mms_image_type, format.toString(), strQuality.toLowerCase()));
-        }
-
-        public static void updateMmsApnConfigSummary(final Preference preference, final Setting.ApnPreset preset) {
-            preference.setSummary(preset.toString());
         }
 
         public static void updateUiAppColorSummary(final Preference preference, final Setting.AppColor color) {
