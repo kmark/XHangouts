@@ -31,7 +31,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiEmoji {
-    private static final String HANGOUTS_CONVERSATION_EMOJI = "cbd";
+    private static final String HANGOUTS_CONVERSATION_EMOJI = "ccu";
 
     private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "b";
     private static final String HANGOUTS_CONVERSATION_DETECT_KEYBOARD = "a";
