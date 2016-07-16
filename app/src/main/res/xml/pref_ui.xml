@@ -45,12 +45,14 @@
             android:defaultValue="true"
             android:dependency="ui_enable_theming"
             android:key="ui_highlight_unread"
+            android:summary="@string/pref_desc_highlight_unread"
             android:title="@string/pref_title_highlight_unread" />
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="ui_enable_theming"
             android:key="ui_dark_theme"
+            android:summary="@string/pref_desc_use_dark_theme"
             android:title="@string/pref_title_use_dark_theme" />
 
         <PreferenceScreen
@@ -260,15 +262,73 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_ui_enter_key" />
 
-    <ListPreference
-        android:defaultValue="0"
+    <PreferenceScreen
         android:dependency="mod_enabled"
-        android:entries="@array/pref_ui_emoji_titles"
-        android:entryValues="@array/pref_ui_emoji_values"
-        android:key="ui_emoji"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_ui_emoji" />
+        android:key="pref_cat_buttons"
+        android:summary="@string/pref_desc_buttons"
+        android:title="@string/pref_title_buttons">
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="mod_enabled"
+            android:entries="@array/pref_ui_emoji_titles"
+            android:entryValues="@array/pref_ui_emoji_values"
+            android:key="ui_emoji"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_ui_emoji" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="mod_enabled"
+            android:entries="@array/pref_ui_buttons_titles"
+            android:entryValues="@array/pref_ui_buttons_values"
+            android:key="ui_gallery"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_ui_gallery" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="mod_enabled"
+            android:entries="@array/pref_ui_buttons_titles"
+            android:entryValues="@array/pref_ui_buttons_values"
+            android:key="ui_camera"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_ui_camera" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="mod_enabled"
+            android:entries="@array/pref_ui_buttons_titles"
+            android:entryValues="@array/pref_ui_buttons_values"
+            android:key="ui_video"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_ui_video" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="mod_enabled"
+            android:entries="@array/pref_ui_buttons_titles"
+            android:entryValues="@array/pref_ui_buttons_values"
+            android:key="ui_stickers"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_ui_stickers" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dependency="mod_enabled"
+            android:entries="@array/pref_ui_buttons_titles"
+            android:entryValues="@array/pref_ui_buttons_values"
+            android:key="ui_location"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_ui_location" />
+
+    </PreferenceScreen>
 
     <CheckBoxPreference
         android:defaultValue="true"

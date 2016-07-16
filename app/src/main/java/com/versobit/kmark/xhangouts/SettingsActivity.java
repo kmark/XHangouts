@@ -173,6 +173,11 @@ final public class SettingsActivity extends Activity {
             getPreferenceScreen().addPreference(header);
             addPreferencesFromResource(R.xml.pref_ui);
             bindPreferenceSummaryToValue(findPreference(Setting.UI_EMOJI.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_GALLERY.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_CAMERA.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_VIDEO.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_STICKERS.toString()));
+            bindPreferenceSummaryToValue(findPreference(Setting.UI_LOCATION.toString()));
             bindPreferenceSummaryToValue(findPreference(Setting.UI_ENTER_KEY.toString()));
             Preference colorConfig = findPreference(Setting.UI_APP_COLOR.toString());
             updateUiAppColorSummary(colorConfig,
