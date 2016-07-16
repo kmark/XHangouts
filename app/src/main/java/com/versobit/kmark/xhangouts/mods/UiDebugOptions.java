@@ -27,7 +27,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiDebugOptions {
-    private static final String HANGOUTS_DEBUG = "fnl";
+    private static final String HANGOUTS_DEBUG = "fsp";
     private static final String HANGOUTS_IS_DEBUG_ENABLED = "a";
 
     public static void handleLoadPackage(final Config config, ClassLoader loader) {
