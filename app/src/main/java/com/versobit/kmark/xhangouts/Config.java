@@ -49,6 +49,11 @@ public final class Config {
     public Setting.ImageFormat imageFormat = Setting.ImageFormat.JPEG;
     public int imageQuality = 80;
     public Setting.UiEmoji emoji = Setting.UiEmoji.DEFAULT;
+    public Setting.UiButtons gallery = Setting.UiButtons.DEFAULT;
+    public Setting.UiButtons camera = Setting.UiButtons.DEFAULT;
+    public Setting.UiButtons video = Setting.UiButtons.DEFAULT;
+    public Setting.UiButtons stickers = Setting.UiButtons.DEFAULT;
+    public Setting.UiButtons location = Setting.UiButtons.DEFAULT;
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
     public boolean enhanceCallButton = true;
     public boolean hideCallButtons = false;
@@ -147,6 +152,21 @@ public final class Config {
                     continue;
                 case UI_EMOJI:
                     emoji = Setting.UiEmoji.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_GALLERY:
+                    gallery = Setting.UiButtons.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_CAMERA:
+                    camera = Setting.UiButtons.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_VIDEO:
+                    video = Setting.UiButtons.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_STICKERS:
+                    stickers = Setting.UiButtons.fromInt(prefs.getInt(QUERY_ALL_VALUE));
+                    continue;
+                case UI_LOCATION:
+                    location = Setting.UiButtons.fromInt(prefs.getInt(QUERY_ALL_VALUE));
                     continue;
                 case UI_ENTER_KEY:
                     enterKey = Setting.UiEnterKey.fromInt(prefs.getInt(QUERY_ALL_VALUE));

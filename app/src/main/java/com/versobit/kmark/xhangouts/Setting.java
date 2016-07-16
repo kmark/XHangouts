@@ -36,6 +36,11 @@ public enum Setting {
     MMS_IMAGE_TYPE,
     MMS_IMAGE_QUALITY,
     UI_EMOJI,
+    UI_GALLERY,
+    UI_CAMERA,
+    UI_VIDEO,
+    UI_STICKERS,
+    UI_LOCATION,
     UI_ENTER_KEY,
     UI_ENHANCE_CALL_BUTTON,
     UI_HIDE_CALL_BUTTONS,
@@ -152,6 +157,26 @@ public enum Setting {
 
         static UiEmoji fromInt(int value) {
             for (UiEmoji u : values()) {
+                if (value == u.value) {
+                    return u;
+                }
+            }
+            throw new IllegalArgumentException("No constant with value " + value + " found");
+        }
+    }
+
+    public enum UiButtons {
+        DEFAULT(0),
+        HIDE(1);
+
+        private final int value;
+
+        UiButtons(final int value) {
+            this.value = value;
+        }
+
+        static UiButtons fromInt(int value) {
+            for (UiButtons u : values()) {
                 if (value == u.value) {
                     return u;
                 }

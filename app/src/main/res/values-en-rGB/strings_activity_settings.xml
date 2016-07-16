@@ -19,9 +19,10 @@
 -->
 <resources>
     <string name="pref_desc_themes">Change the colour of bubbles, text and hyperlinks</string>
-    <string name="pref_desc_ui_theme_bubbles">The main app colour will be applied to outgoing bubbles</string>
-    <string name="pref_desc_ui_theme_hyperlinks">The main app colour will be applied to incoming hyperlinks</string>
-    <string name="pref_title_ui_app_color">Main app colour</string>
+    <string name="pref_desc_highlight_unread">The primary colour will be used to highlight unread conversations</string>
+    <string name="pref_desc_ui_theme_bubbles">The primary colour will be applied to outgoing bubbles</string>
+    <string name="pref_desc_ui_theme_hyperlinks">The primary colour will be applied to incoming hyperlinks</string>
+    <string name="pref_title_ui_app_color">Primary colour</string>
     <string name="pref_header_bubbles">Bubble colour</string>
     <string name="pref_header_bubbles_otr">Bubble colour (OTR)</string>
     <string name="pref_header_fonts">Text colour</string>
