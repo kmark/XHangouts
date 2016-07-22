@@ -116,6 +116,9 @@
     <string name="pref_title_ui_send_lock">Send &amp; lock</string>
     <string name="pref_desc_ui_send_lock">Long press the send button to send and lock the screen. Hangouts will ask for root.</string>
 
+    <string name="pref_title_ui_screen_off">Screen off goes home</string>
+    <string name="pref_desc_ui_screen_off">Experimental: If you sometimes miss notifications then enable this setting</string>
+
     <string name="pref_title_ui_disable_proximity">Disable proximity sensor</string>
     <string name="pref_desc_ui_disable_proximity">Proximity sensor will no longer be used</string>
 

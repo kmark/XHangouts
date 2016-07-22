@@ -37,6 +37,7 @@ import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
 import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
+import com.versobit.kmark.xhangouts.mods.UiScreenOff;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
 import com.versobit.kmark.xhangouts.mods.UiVersionNotice;
 
@@ -148,6 +149,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiEnterKey.handleLoadPackage(config, loadPackageParam.classLoader);
         UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
         UiQuickSettings.handleLoadPackage(config, loadPackageParam.classLoader);
+        UiScreenOff.handleLoadPackage(config, loadPackageParam.classLoader);
         UiSendLock.handleLoadPackage(config, loadPackageParam.classLoader);
 
         debug("--- XHANGOUTS LOAD COMPLETE ---", false);
