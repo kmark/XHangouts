@@ -31,7 +31,6 @@ import java.util.Locale;
 import de.robv.android.xposed.XC_MethodHook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiMsgTypeSpinner {
@@ -47,9 +46,7 @@ public final class UiMsgTypeSpinner {
             return;
         }
 
-        Class cTextFrame = findClass(HANGOUTS_CONVERSATION_TEXTFRAME, loader);
-
-        findAndHookMethod(cTextFrame, HANGOUTS_CONVERSATION_METHOD, new XC_MethodHook() {
+        findAndHookMethod(HANGOUTS_CONVERSATION_TEXTFRAME, loader, HANGOUTS_CONVERSATION_METHOD, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 View msgView = (View) getObjectField(param.thisObject, HANGOUTS_CONVERSATION_LAYOUT);

@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -56,6 +57,7 @@ public final class ImageResizing {
              *
              * We're using beforeHookedMethod to avoid a performance hit.
              */
+            @SuppressLint("DefaultLocale")
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 try {
