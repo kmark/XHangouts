@@ -58,6 +58,7 @@ public final class Config {
     public boolean enhanceCallButton = true;
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
+    public boolean screenOff = false;
     public boolean disableProximity = false;
     public boolean showDebugOptions = false;
     public Setting.AppColor appColor = Setting.AppColor.GOOGLE_GREEN;
@@ -179,6 +180,9 @@ public final class Config {
                     continue;
                 case UI_SEND_LOCK:
                     sendLock = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
+                    continue;
+                case UI_SCREEN_OFF:
+                    screenOff = prefs.getInt(QUERY_ALL_VALUE) == TRUE;
                     continue;
                 case UI_DISABLE_PROXIMITY:
                     disableProximity = prefs.getInt(QUERY_ALL_VALUE) == TRUE;

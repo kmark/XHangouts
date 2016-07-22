@@ -354,6 +354,13 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:dependency="mod_enabled"
+        android:key="ui_screen_off"
+        android:summary="@string/pref_desc_ui_screen_off"
+        android:title="@string/pref_title_ui_screen_off" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:dependency="mod_enabled"
         android:key="ui_disable_proximity"
         android:summary="@string/pref_desc_ui_disable_proximity"
         android:title="@string/pref_title_ui_disable_proximity" />
