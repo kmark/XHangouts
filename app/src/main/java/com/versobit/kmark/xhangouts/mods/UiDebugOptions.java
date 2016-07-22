@@ -24,7 +24,6 @@ import com.versobit.kmark.xhangouts.Config;
 import de.robv.android.xposed.XC_MethodHook;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
-import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiDebugOptions {
     private static final String HANGOUTS_DEBUG = "fsp";
@@ -35,9 +34,7 @@ public final class UiDebugOptions {
             return;
         }
 
-        Class cDebugMenu = findClass(HANGOUTS_DEBUG, loader);
-
-        findAndHookMethod(cDebugMenu, HANGOUTS_IS_DEBUG_ENABLED, new XC_MethodHook() {
+        findAndHookMethod(HANGOUTS_DEBUG, loader, HANGOUTS_IS_DEBUG_ENABLED, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 param.setResult(true);

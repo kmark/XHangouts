@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.annotation.SuppressLint;
 import android.app.AndroidAppHelper;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -79,6 +80,7 @@ public final class MmsResizing {
             // function call does something weird that needs to be done (that we don't do) it still
             // gets done. Downside is that we're running code that may never be used.
 
+            @SuppressLint("DefaultLocale")
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 if (!config.modEnabled || !config.resizing) {
@@ -106,7 +108,9 @@ public final class MmsResizing {
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeStream(imgStream, null, options);
-                imgStream.close();
+                if (imgStream != null) {
+                    imgStream.close();
+                }
 
                 int srcW = options.outWidth;
                 int srcH = options.outHeight;
@@ -148,7 +152,9 @@ public final class MmsResizing {
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                 imgStream = esAppResolver.openInputStream(imgUri);
                 Bitmap sampled = BitmapFactory.decodeStream(imgStream, null, options);
-                imgStream.close();
+                if (imgStream != null) {
+                    imgStream.close();
+                }
                 XHangouts.debug(String.format("Sampled: %d×%d", sampled.getWidth(), sampled.getHeight()));
 
                 // Load our scale and rotation changes into a matrix and use it to create the final bitmap
@@ -160,7 +166,7 @@ public final class MmsResizing {
                 XHangouts.debug(String.format("Scaled: %d×%d", scaled.getWidth(), scaled.getHeight()));
 
                 param.setResult(ImageUtils.compress(scaled, config.imageFormat, config.imageQuality, true));
-                XHangouts.debug(String.format("MMS image processing complete."));
+                XHangouts.debug("MMS image processing complete.");
             }
         });
 
