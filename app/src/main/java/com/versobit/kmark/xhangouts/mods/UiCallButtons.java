@@ -43,11 +43,11 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiCallButtons {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "cln";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "coz";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_ENUM_CALL = "bqk";
-    private static final String HANGOUTS_MENU_CALL = "btq";
+    private static final String HANGOUTS_ENUM_CALL = "bsd";
+    private static final String HANGOUTS_MENU_CALL = "bxa";
     private static final String HANGOUTS_MENU_CALL_CONTEXT = "a";
     private static final String HANGOUTS_MENU_CALL_OPIS = "onOptionsItemSelected";
 
@@ -128,9 +128,9 @@ public final class UiCallButtons {
 
                     // Try another way to get the phone number if it's still null
                     if (phoneNumber == null) {
-                        Object altPhoneNumber = getObjectField(param.thisObject, "bb"); // bb = dlj class (11.0.125976520)
+                        Object altPhoneNumber = getObjectField(param.thisObject, "bh"); // bh = dpf class (12.0.130004787)
                         if (altPhoneNumber != null) {
-                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within dlj
+                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within dpf
                         }
                     }
 
@@ -164,12 +164,12 @@ public final class UiCallButtons {
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
-        Object getPhoneNumber = getObjectField(param.thisObject, "h"); // h = bwt class (11.0.125976520)
-        phoneNumber = (String) callMethod(getPhoneNumber, "b"); // method within bwt
+        Object getPhoneNumber = getObjectField(param.thisObject, "h"); // h = cao class (12.0.130004787)
+        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cao
     }
 
     private static String getID(XC_MethodHook.MethodHookParam param) {
-        return (String) getObjectField(param.thisObject, "aC"); // string in btq class (11.0.125976520)
+        return (String) getObjectField(param.thisObject, "aE"); // string in bxa class (12.0.130004787)
     }
 
     private static boolean isHangoutsContact() {

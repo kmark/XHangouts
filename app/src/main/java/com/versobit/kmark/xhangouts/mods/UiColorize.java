@@ -117,14 +117,14 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
-    private static final String HANGOUTS_ONGOING_COLOR = "fxl";
-    private static final String HANGOUTS_ONGOING_LIST = "fuw";
-    private static final String HANGOUTS_RECENT_CALLS = "fut";
+    private static final String HANGOUTS_ONGOING_COLOR = "gbi";
+    private static final String HANGOUTS_ONGOING_LIST = "fyt";
+    private static final String HANGOUTS_RECENT_CALLS = "fyq";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
 
-    private static final String HANGOUTS_ONGOING_COLOR_ID = "dY"; // quantum_bluegrey600
-    private static final String HANGOUTS_ONGOING_SET_COLOR = "y"; // private void y()
+    private static final String HANGOUTS_ONGOING_COLOR_ID = "eb"; // quantum_bluegrey600 from HANGOUTS_ONGOING_COLOR class
+    private static final String HANGOUTS_ONGOING_SET_COLOR = "z"; // private void z() from HANGOUTS_ONGOING_LIST class
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";
