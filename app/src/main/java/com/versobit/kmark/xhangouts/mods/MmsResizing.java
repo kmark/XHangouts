@@ -42,7 +42,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class MmsResizing {
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "ffx";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "fjr";
     // private static a(IIIILandroid/net/Uri;Landroid/content/Context;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 
