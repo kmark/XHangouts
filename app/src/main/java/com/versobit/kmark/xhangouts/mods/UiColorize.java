@@ -39,6 +39,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -759,6 +760,29 @@ public final class UiColorize {
 
             setTextColor(res, "quick_button_container", "quick_button_text", COLOR_GROUP_6);
             setTextColor(res, "quick_button", "quick_button_text", COLOR_GROUP_6);
+
+
+            // Share menu
+            res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "share_intent_activity", new XC_LayoutInflated() {
+                public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                    ((TextView) ((LinearLayout) liparam.view.findViewById(liparam.res.getIdentifier(
+                            "conversation_list_fragment_container", "id", HANGOUTS_RES_PKG_NAME))
+                            .getParent().getParent().getParent()).getChildAt(0)).setTextColor(COLOR_GROUP_1);
+                    ((LinearLayout) liparam.view.findViewById(liparam.res.getIdentifier(
+                            "conversation_list_fragment_container", "id", HANGOUTS_RES_PKG_NAME))
+                            .getParent().getParent().getParent()).setBackgroundColor(COLOR_GROUP_3);
+                    liparam.view.findViewById(liparam.res.getIdentifier("conversation_list_fragment_container", "id",
+                            HANGOUTS_RES_PKG_NAME)).setBackgroundColor(COLOR_GROUP_3);
+                    liparam.view.findViewById(liparam.res.getIdentifier("conversation_list_fragment", "id",
+                                    HANGOUTS_RES_PKG_NAME)).setBackgroundColor(COLOR_GROUP_3);
+                    liparam.view.findViewById(liparam.res.getIdentifier("divider", "id", HANGOUTS_RES_PKG_NAME))
+                            .setBackgroundColor(COLOR_GROUP_5);
+                    ((Button) liparam.view.findViewById(liparam.res.getIdentifier("button_start_new_conversation", "id",
+                            HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_2);
+                    ((Button) liparam.view.findViewById(liparam.res.getIdentifier("button_start_new_sms", "id",
+                            HANGOUTS_RES_PKG_NAME))).setTextColor(COLOR_GROUP_2);
+                }
+            });
         }
 
 
