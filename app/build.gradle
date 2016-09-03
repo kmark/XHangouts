@@ -41,7 +41,7 @@ android {
 
 dependencies {
     provided 'de.robv.android.xposed:api:53'
-    compile 'eu.chainfire:libsuperuser:1.0.0.+'
+    compile 'eu.chainfire:libsuperuser:1.0.0.201608240809'
     compile project(':afilechooser')
     compile project(':colorpicker')
 }
