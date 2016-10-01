@@ -41,7 +41,7 @@ public final class UiEnterKey {
 
     private static final String HANGOUTS_CONVERSATION_MSGEDITTEXT = "com.google.android.apps.hangouts.conversation.v2.MessageEditText";
 
-    private static final String HANGOUTS_CONVERSATOIN_TEXTFRAME = "bwr";
+    private static final String HANGOUTS_CONVERSATOIN_TEXTFRAME = "cdh";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION = "onEditorAction";
 

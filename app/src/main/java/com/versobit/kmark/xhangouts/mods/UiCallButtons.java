@@ -43,11 +43,11 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiCallButtons {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "coz";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dcl";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_ENUM_CALL = "bsd";
-    private static final String HANGOUTS_MENU_CALL = "bxa";
+    private static final String HANGOUTS_ENUM_CALL = "bxt";
+    private static final String HANGOUTS_MENU_CALL = "cdr";
     private static final String HANGOUTS_MENU_CALL_CONTEXT = "a";
     private static final String HANGOUTS_MENU_CALL_OPIS = "onOptionsItemSelected";
 
@@ -68,6 +68,7 @@ public final class UiCallButtons {
     private static int menuItemCallResId = RES_ID_UNSET;
     private static int menuItemVideoCallResId = RES_ID_UNSET;
 
+    @SuppressLint("StaticFieldLeak")
     private static Context context = null;
     private static Class cHandleCalls = null;
     private static String gaiaID = null;
@@ -128,9 +129,10 @@ public final class UiCallButtons {
 
                     // Try another way to get the phone number if it's still null
                     if (phoneNumber == null) {
-                        Object altPhoneNumber = getObjectField(param.thisObject, "bh"); // bh = dpf class (12.0.130004787)
+                        // bj = edk class (HANGOUTS_MENU_CALL class for ref)
+                        Object altPhoneNumber = getObjectField(param.thisObject, "bj");
                         if (altPhoneNumber != null) {
-                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within dpf
+                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within edk
                         }
                     }
 
@@ -164,12 +166,13 @@ public final class UiCallButtons {
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
-        Object getPhoneNumber = getObjectField(param.thisObject, "h"); // h = cao class (12.0.130004787)
-        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cao
+        // h = chh class (HANGOUTS_MENU_CALL class for ref)
+        Object getPhoneNumber = getObjectField(param.thisObject, "h");
+        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within chh
     }
 
     private static String getID(XC_MethodHook.MethodHookParam param) {
-        return (String) getObjectField(param.thisObject, "aE"); // string in bxa class (12.0.130004787)
+        return (String) getObjectField(param.thisObject, "aG"); // string in HANGOUTS_MENU_CALL class
     }
 
     private static boolean isHangoutsContact() {
@@ -214,7 +217,7 @@ public final class UiCallButtons {
 
     private static void hangoutsCall(XC_MethodHook.MethodHookParam param) {
         XHangouts.debug(CALLING_HANGOUTS_CONTACT);
-        callMethod(param.thisObject, "a", Enum.valueOf(cHandleCalls, "AUDIO_CALL"));
+        callMethod(param.thisObject, "a", Enum.valueOf(cHandleCalls, "AUDIO_CALL"), 60, 2724);
     }
 
     private static void cellularCall() {
