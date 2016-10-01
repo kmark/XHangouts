@@ -41,6 +41,7 @@ public final class UiScreenOff {
 
     private static final String HANGOUTS_CONVERSATIONACTIVITY = "com.google.android.apps.hangouts.phone.ConversationActivity";
     private static boolean mIsReceiving;
+    @SuppressLint("StaticFieldLeak")
     private static Activity mActivity;
 
     static BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
@@ -83,7 +84,7 @@ public final class UiScreenOff {
         findAndHookMethod(HANGOUTS_CONVERSATIONACTIVITY, loader, "onDestroy", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (mIsReceiving && mActivity != null) {
+                if (mIsReceiving && mActivity != null || mScreenStateReceiver != null) {
                     mActivity.unregisterReceiver(mScreenStateReceiver);
                     mIsReceiving = false;
                     XHangouts.debug("Screen: unregistered receiver");

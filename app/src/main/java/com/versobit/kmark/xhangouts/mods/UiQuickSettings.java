@@ -85,10 +85,14 @@ public final class UiQuickSettings {
     }
 
     public static void onContextAvailable(Context ctx) {
-        if (hangoutsResMenuIcon == 0) {
-            hangoutsResMenuIcon = ctx.getResources().getIdentifier(HANGOUTS_UNUSED_ICON, null, null);
+        try {
+            if (hangoutsResMenuIcon == 0) {
+                hangoutsResMenuIcon = ctx.getResources().getIdentifier(HANGOUTS_UNUSED_ICON, null, null);
+            }
+            findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(hangoutsResMenuIcon));
+        } catch (Throwable t) {
+            //
         }
-        findAndHookMethod(cMenuItemBase, "b", XC_MethodReplacement.returnConstant(hangoutsResMenuIcon));
     }
 
     private static final XC_MethodReplacement onMenuItemClick = new XC_MethodReplacement() {
