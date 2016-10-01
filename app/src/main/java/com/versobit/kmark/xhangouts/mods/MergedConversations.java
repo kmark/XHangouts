@@ -30,9 +30,9 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class MergedConversations {
 
-    // This might stop working in Hangouts v12+
-    private static final String HANGOUTS_MERGED_CONVERSATION = "fia";
-    private static final String HANGOUTS_MERGED_CONVERSATION_PARAM = "keo";
+    // This might stop working in Hangouts v14+
+    private static final String HANGOUTS_MERGED_CONVERSATION = "fwj";
+    private static final String HANGOUTS_MERGED_CONVERSATION_PARAM = "jyn";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";

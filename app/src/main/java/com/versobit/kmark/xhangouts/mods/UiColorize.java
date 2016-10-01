@@ -72,7 +72,6 @@ public final class UiColorize {
 
     private static final String HANGOUTS_COLOR_FAB = "fab_hangouts_primary_color";
     private static final String HANGOUTS_COLOR_INDICATOR = "indicator_color";
-    private static final String HANGOUTS_COLOR_ONGOING_BG = "ongoing_hangout_background";
     private static final String HANGOUTS_COLOR_PRIMARY = "primary";
     private static final String HANGOUTS_COLOR_PRIMARY_DARK = "primary_dark";
     private static final String HANGOUTS_COLOR_PRIMARY_HANGOUTS = "hangouts_primary_color";
@@ -96,8 +95,6 @@ public final class UiColorize {
     private static final String HANGOUTS_DRAWABLE_GOOGLE_LARGE = "googlelogo_dark20_color_184x60";
     private static final String HANGOUTS_DRAWABLE_JHPS = "join_hangout_pressed_state";
     private static final String HANGOUTS_DRAWABLE_JHAS = "join_hangout_active_state";
-    private static final String HANGOUTS_DRAWABLE_ONGOING_BG = "hangout_ongoing_bg";
-    private static final String HANGOUTS_DRAWABLE_ONGOING_BGP = "hangout_ongoing_bg_pressed";
     private static final String HANGOUTS_DRAWABLE_AB_TAB = "action_bar_tab";
     private static final float HANGOUTS_DRAWABLE_AB_TAB_HUE = ColorUtils.hueFromRgb(0xff27541b);
     private static final String HANGOUTS_DRAWABLE_DEFAULT_AVATAR = "default_avatar";
@@ -118,19 +115,20 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
-    private static final String HANGOUTS_ONGOING_COLOR = "gbi";
-    private static final String HANGOUTS_ONGOING_LIST = "fyt";
-    private static final String HANGOUTS_RECENT_CALLS = "fyq";
+    private static final String HANGOUTS_ONGOING_COLOR = "gwb";
+    private static final String HANGOUTS_ONGOING_LIST = "gno";
+    private static final String HANGOUTS_RECENT_CALLS = "gnk";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
 
-    private static final String HANGOUTS_ONGOING_COLOR_ID = "eb"; // quantum_bluegrey600 from HANGOUTS_ONGOING_COLOR class
+    private static final String HANGOUTS_ONGOING_COLOR_ID = "dX"; // quantum_bluegrey600 from HANGOUTS_ONGOING_COLOR class
     private static final String HANGOUTS_ONGOING_SET_COLOR = "z"; // private void z() from HANGOUTS_ONGOING_LIST class
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";
     private static final String HANGOUTS_C = "c";
     // FIXME: Can we get away with a Weak/Soft Reference here?
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
 
 
@@ -794,13 +792,6 @@ public final class UiColorize {
 
         // Fixes the indicator color that's seen when selecting a sticker
         replaceColor(res, HANGOUTS_COLOR_INDICATOR, appColors[5]);
-
-        // Fixes "Sending as <number>" / Ongoing call bar on 4.x
-        replaceColor(res, HANGOUTS_COLOR_ONGOING_BG, appColors[5]);
-
-        // Fixes "Sending as <number>" / Ongoing call bar on 5.x
-        replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BG, appColors[5]);
-        replaceDrawableColor(res, HANGOUTS_DRAWABLE_ONGOING_BGP, appColors[5]);
 
         // This will colorize the small green contact avatar
         replaceAvatarColor(res, HANGOUTS_DRAWABLE_DEFAULT_AVATAR, smallAvatarId, hangoutsDpi, appColors[7]);

@@ -26,7 +26,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public final class UiDebugOptions {
-    private static final String HANGOUTS_DEBUG = "fwk";
+    private static final String HANGOUTS_DEBUG = "gld";
     private static final String HANGOUTS_IS_DEBUG_ENABLED = "a";
 
     public static void handleLoadPackage(final Config config, ClassLoader loader) {
