@@ -50,10 +50,7 @@
         </activity>
 
         <activity android:name="com.ipaulpro.afilechooser.FileChooserActivity"
-            android:icon="@drawable/ic_chooser"
-            android:enabled="@bool/use_activity"
-            android:exported="false"
-            android:label="@string/choose_file">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -85,7 +82,6 @@
         <provider
             android:name="com.ianhanniballake.localstorage.LocalStorageProvider"
             android:authorities="com.versobit.kmark.xhangouts.documents"
-            android:enabled="@bool/use_provider"
             android:exported="true"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">
