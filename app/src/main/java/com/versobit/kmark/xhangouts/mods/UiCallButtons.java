@@ -19,6 +19,7 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AndroidAppHelper;
 import android.content.Context;
