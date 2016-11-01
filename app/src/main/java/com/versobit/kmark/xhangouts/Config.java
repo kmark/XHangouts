@@ -81,14 +81,14 @@ public final class Config {
     public int outgoingColorOTR = 0xff455a64;
     public int outgoingFontColor = 0xff263238;
     public int outgoingFontColorOTR = 0xffffffff;
-    public int outgoingLinkColor = 0xff3b78e7;
+    public int outgoingLinkColor = 0xff2a56c6;
     public int outgoingLinkColorOTR = 0xffffffff;
     public int incomingColor = 0xffffffff;
     public int incomingColorOTR = 0xffcfd8dc;
     public int incomingFontColor = 0xff263238;
     public int incomingFontColorOTR = 0xff263238;
-    public int incomingLinkColor = 0xff3b78e7;
-    public int incomingLinkColorOTR = 0xff3b78e7;
+    public int incomingLinkColor = 0xff2a56c6;
+    public int incomingLinkColorOTR = 0xff2a56c6;
     public int outgoingDarkColor = 0xff424242;
     public int outgoingDarkColorOTR = 0xff424242;
     public int outgoingDarkFontColor = 0xffffffff;

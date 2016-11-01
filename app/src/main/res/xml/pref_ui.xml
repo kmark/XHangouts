@@ -227,19 +227,19 @@
                 <com.rarepebble.colorpicker.ColorPreference
                     android:key="ui_color_incoming_link"
                     android:title="@string/pref_title_incoming"
-                    app:colorpicker_defaultColor="@color/quantum_googblue600"
+                    app:colorpicker_defaultColor="@color/quantum_googblue800"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
                 <com.rarepebble.colorpicker.ColorPreference
                     android:key="ui_color_outgoing_link"
                     android:title="@string/pref_title_outgoing"
-                    app:colorpicker_defaultColor="@color/quantum_googblue600"
+                    app:colorpicker_defaultColor="@color/quantum_googblue800"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref_header_links_otr">
                 <com.rarepebble.colorpicker.ColorPreference
                     android:key="ui_color_incoming_link_otr"
                     android:title="@string/pref_title_incoming"
-                    app:colorpicker_defaultColor="@color/quantum_googblue600"
+                    app:colorpicker_defaultColor="@color/quantum_googblue800"
                     app:colorpicker_selectNoneButtonText="@string/pref_reset_color" />
                 <com.rarepebble.colorpicker.ColorPreference
                     android:key="ui_color_outgoing_link_otr"
