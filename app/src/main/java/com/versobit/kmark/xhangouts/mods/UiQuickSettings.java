@@ -44,9 +44,9 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public final class UiQuickSettings {
 
     private static final String HANGOUTS_NAV_MENUITEM_BASE = "dyy";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "dpr";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "dpw";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "jyn";
+    private static final String HANGOUTS_MENU_POPULATOR = "jwi";
 
     private static final String HANGOUTS_UNUSED_ICON = HANGOUTS_RES_PKG_NAME + ":drawable/quantum_ic_settings_grey600_48";
 
