@@ -44,11 +44,11 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiCallButtons {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dcw";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dfi";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_ENUM_CALL = "buw";
-    private static final String HANGOUTS_MENU_CALL = "cdx";
+    private static final String HANGOUTS_ENUM_CALL = "bxb";
+    private static final String HANGOUTS_MENU_CALL = "cgk";
     private static final String HANGOUTS_MENU_CALL_CONTEXT = "a";
     private static final String HANGOUTS_MENU_CALL_OPIS = "onOptionsItemSelected";
 
@@ -130,8 +130,8 @@ public final class UiCallButtons {
 
                     // Try another way to get the phone number if it's still null
                     if (phoneNumber == null) {
-                        // bh = edg class (HANGOUTS_MENU_CALL class for ref)
-                        Object altPhoneNumber = getObjectField(param.thisObject, "bh");
+                        // bi = edg class (HANGOUTS_MENU_CALL class for ref)
+                        Object altPhoneNumber = getObjectField(param.thisObject, "bi");
                         if (altPhoneNumber != null) {
                             phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within edg
                         }
@@ -167,13 +167,13 @@ public final class UiCallButtons {
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
-        // h = chm class (HANGOUTS_MENU_CALL class for ref)
+        // h = cka class (HANGOUTS_MENU_CALL class for ref)
         Object getPhoneNumber = getObjectField(param.thisObject, "h");
-        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within chm
+        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cka
     }
 
     private static String getID(XC_MethodHook.MethodHookParam param) {
-        return (String) getObjectField(param.thisObject, "aE"); // string in HANGOUTS_MENU_CALL class
+        return (String) getObjectField(param.thisObject, "aF"); // string in HANGOUTS_MENU_CALL class
     }
 
     private static boolean isHangoutsContact() {
