@@ -55,7 +55,7 @@ public final class Config {
     public Setting.UiButtons stickers = Setting.UiButtons.DEFAULT;
     public Setting.UiButtons location = Setting.UiButtons.DEFAULT;
     public Setting.UiEnterKey enterKey = Setting.UiEnterKey.EMOJI_SELECTOR;
-    public boolean enhanceCallButton = true;
+    public boolean enhanceCallButton = false;
     public boolean hideCallButtons = false;
     public boolean sendLock = false;
     public boolean screenOff = false;

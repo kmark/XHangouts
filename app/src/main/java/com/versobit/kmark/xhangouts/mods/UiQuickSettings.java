@@ -43,10 +43,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "ebt";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "dse";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "eax";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "dqy";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "kbv";
+    private static final String HANGOUTS_MENU_POPULATOR = "kcf";
 
     private static final String HANGOUTS_UNUSED_ICON = HANGOUTS_RES_PKG_NAME + ":drawable/quantum_ic_settings_grey600_48";
 

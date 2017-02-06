@@ -19,6 +19,8 @@
 
 package com.versobit.kmark.xhangouts.mods;
 
+import android.content.Context;
+
 import com.versobit.kmark.xhangouts.Config;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -26,7 +28,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public final class UiDebugOptions {
-    private static final String HANGOUTS_DEBUG = "gno";
+    private static final String HANGOUTS_DEBUG = "gob";
     private static final String HANGOUTS_IS_DEBUG_ENABLED = "a";
 
     public static void handleLoadPackage(final Config config, ClassLoader loader) {
@@ -34,7 +36,7 @@ public final class UiDebugOptions {
             return;
         }
 
-        findAndHookMethod(HANGOUTS_DEBUG, loader, HANGOUTS_IS_DEBUG_ENABLED, new XC_MethodHook() {
+        findAndHookMethod(HANGOUTS_DEBUG, loader, HANGOUTS_IS_DEBUG_ENABLED, Context.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 param.setResult(true);

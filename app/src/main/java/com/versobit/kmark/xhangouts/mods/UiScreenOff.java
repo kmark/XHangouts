@@ -45,7 +45,7 @@ public final class UiScreenOff {
     @SuppressLint("StaticFieldLeak")
     private static Activity mActivity;
 
-    static BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
+    private static BroadcastReceiver mScreenStateReceiver = new BroadcastReceiver() {
         @SuppressWarnings("deprecation")
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -31,15 +31,15 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiButtons {
-    private static final String HANGOUTS_CONVERSATION_EMOJI = "cqa";
-    private static final String HANGOUTS_CONVERSATION_GALLERY = "cmx";
-    private static final String HANGOUTS_CONVERSATION_CAMERA = "clw";
-    private static final String HANGOUTS_CONVERSATION_VIDEO = "cqm";
-    private static final String HANGOUTS_CONVERSATION_STICKER = "cpd";
-    private static final String HANGOUTS_CONVERSATION_LOCATION = "cog";
+    private static final String HANGOUTS_CONVERSATION_EMOJI = "coz";
+    private static final String HANGOUTS_CONVERSATION_GALLERY = "clz";
+    private static final String HANGOUTS_CONVERSATION_CAMERA = "cla";
+    private static final String HANGOUTS_CONVERSATION_VIDEO = "cpk";
+    private static final String HANGOUTS_CONVERSATION_STICKER = "coc";
+    private static final String HANGOUTS_CONVERSATION_LOCATION = "cng";
 
-    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bjc";
-    private static final String HANGOUTS_REQUIRED_CLASS_2 = "cjk";
+    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bjx";
+    //private static final String HANGOUTS_REQUIRED_CLASS_2 = "ciq";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "b";
@@ -53,7 +53,7 @@ public final class UiButtons {
         Class cStickerPicker = findClass(HANGOUTS_CONVERSATION_STICKER, loader);
         Class cLocationPicker = findClass(HANGOUTS_CONVERSATION_LOCATION, loader);
         Class cFirstParam = findClass(HANGOUTS_REQUIRED_CLASS_1, loader);
-        Class cSecondParam = findClass(HANGOUTS_REQUIRED_CLASS_2, loader);
+        //Class cSecondParam = findClass(HANGOUTS_REQUIRED_CLASS_2, loader);
 
         findAndHookMethod(cEmojiPicker, HANGOUTS_CONVERSATION_DETECT_KEYBOARD, new XC_MethodHook() {
             @Override
@@ -77,7 +77,7 @@ public final class UiButtons {
             return;
         }
 
-        findAndHookMethod(cGalleryPicker, HANGOUTS_A, cFirstParam, cSecondParam, new XC_MethodHook() {
+        findAndHookMethod(cGalleryPicker, HANGOUTS_A, cFirstParam, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (config.gallery == Setting.UiButtons.HIDE) {
@@ -86,7 +86,7 @@ public final class UiButtons {
             }
         });
 
-        findAndHookMethod(cCameraPicker, HANGOUTS_A, cFirstParam, cSecondParam, new XC_MethodHook() {
+        findAndHookMethod(cCameraPicker, HANGOUTS_A, cFirstParam, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (config.camera == Setting.UiButtons.HIDE) {
@@ -95,7 +95,7 @@ public final class UiButtons {
             }
         });
 
-        findAndHookMethod(cVideoPicker, HANGOUTS_A, cFirstParam, cSecondParam, new XC_MethodHook() {
+        findAndHookMethod(cVideoPicker, HANGOUTS_A, cFirstParam, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (config.video == Setting.UiButtons.HIDE) {
@@ -104,7 +104,7 @@ public final class UiButtons {
             }
         });
 
-        findAndHookMethod(cStickerPicker, HANGOUTS_A, cFirstParam, cSecondParam, new XC_MethodHook() {
+        findAndHookMethod(cStickerPicker, HANGOUTS_A, cFirstParam, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (config.stickers == Setting.UiButtons.HIDE) {
@@ -113,7 +113,7 @@ public final class UiButtons {
             }
         });
 
-        findAndHookMethod(cLocationPicker, HANGOUTS_A, cFirstParam, cSecondParam, new XC_MethodHook() {
+        findAndHookMethod(cLocationPicker, HANGOUTS_A, cFirstParam, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 if (config.location == Setting.UiButtons.HIDE) {
