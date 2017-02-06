@@ -20,7 +20,6 @@
 package com.versobit.kmark.xhangouts.mods;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
@@ -37,7 +36,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,11 +54,9 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
-import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
-import static de.robv.android.xposed.XposedHelpers.setStaticIntField;
 
 @SuppressWarnings("deprecation")
 public final class UiColorize {
@@ -115,21 +111,13 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
-    private static final String HANGOUTS_ONGOING_COLOR = "act";
-    private static final String HANGOUTS_ONGOING_LIST = "gpa";
-    private static final String HANGOUTS_RECENT_CALLS = "gox";
+    private static final String HANGOUTS_RECENT_CALLS = "gpk";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
-
-    private static final String HANGOUTS_ONGOING_COLOR_ID = "eK"; // quantum_bluegrey600 from HANGOUTS_ONGOING_COLOR class
-    private static final String HANGOUTS_ONGOING_SET_COLOR = "z"; // private void z() from HANGOUTS_ONGOING_LIST class
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";
     private static final String HANGOUTS_C = "c";
-    // FIXME: Can we get away with a Weak/Soft Reference here?
-    @SuppressLint("StaticFieldLeak")
-    private static Context context;
 
 
     public static void initZygote() {
@@ -192,31 +180,6 @@ public final class UiColorize {
         });
 
         if (config.darkTheme) {
-            // Set the color of an ongoing call
-            final Class ongoingConvoList = findClass(HANGOUTS_ONGOING_LIST, loader);
-            findAndHookConstructor(ongoingConvoList, Context.class, AttributeSet.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    // We need the context to get the resource ID's
-                    context = (Context) param.args[0];
-                }
-            });
-            final Class ongoingColor = findClass(HANGOUTS_ONGOING_COLOR, loader);
-            findAndHookMethod(ongoingConvoList, HANGOUTS_ONGOING_SET_COLOR, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    // Set a new color
-                    int id = context.getResources().getIdentifier("quantum_grey800", "color", HANGOUTS_RES_PKG_NAME);
-                    setStaticIntField(ongoingColor, HANGOUTS_ONGOING_COLOR_ID, id);
-                }
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    // Restore the original color
-                    int id = context.getResources().getIdentifier("quantum_bluegrey600", "color", HANGOUTS_RES_PKG_NAME);
-                    setStaticIntField(ongoingColor, HANGOUTS_ONGOING_COLOR_ID, id);
-                }
-            });
-
             // Various conversation list icons
             findAndHookMethod(cConversationList, HANGOUTS_A, Drawable.class, new XC_MethodHook() {
                 @Override
@@ -700,6 +663,8 @@ public final class UiColorize {
             replaceLayoutBackgroundColor(res, "babel_home_activity", "drawer_layout", COLOR_GROUP_3);
             replaceLayoutBackgroundColor(res, "babel_home_activity_tabless", "drawer_layout", COLOR_GROUP_3);
 
+            res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "bg_item_selectable_hangout",
+                    moduleRes.fwd(R.drawable.bg_item_selectable_hangout));
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "bg_item_selectable_conversation_list",
                     config.blackBackgrounds ? moduleRes.fwd(R.drawable.bg_item_selectable_conversation_list_black) :
                             moduleRes.fwd(R.drawable.bg_item_selectable_conversation_list));
@@ -772,7 +737,7 @@ public final class UiColorize {
                     liparam.view.findViewById(liparam.res.getIdentifier("conversation_list_fragment_container", "id",
                             HANGOUTS_RES_PKG_NAME)).setBackgroundColor(COLOR_GROUP_3);
                     liparam.view.findViewById(liparam.res.getIdentifier("conversation_list_fragment", "id",
-                                    HANGOUTS_RES_PKG_NAME)).setBackgroundColor(COLOR_GROUP_3);
+                            HANGOUTS_RES_PKG_NAME)).setBackgroundColor(COLOR_GROUP_3);
                     liparam.view.findViewById(liparam.res.getIdentifier("divider", "id", HANGOUTS_RES_PKG_NAME))
                             .setBackgroundColor(COLOR_GROUP_5);
                     ((Button) liparam.view.findViewById(liparam.res.getIdentifier("button_start_new_conversation", "id",

@@ -331,7 +331,7 @@
     </PreferenceScreen>
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:dependency="mod_enabled"
         android:key="ui_enhance_call_button"
         android:summary="@string/pref_desc_ui_enhance_call_button"
