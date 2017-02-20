@@ -111,7 +111,7 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
-    private static final String HANGOUTS_RECENT_CALLS = "gpk";
+    private static final String HANGOUTS_RECENT_CALLS = "grn";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
 
@@ -623,9 +623,11 @@ public final class UiColorize {
 
 
             // OTR notifications, missed calls etc
+            themeListItemView(res, "hangout_event_message", true);
             themeListItemView(res, "hangout_event_message_list_item_view", true);
             themeListItemView(res, "otr_modification_message_list_item_view", false);
             themeListItemView(res, "system_message_list_item_view", false);
+            themeListItemView(res, "system_message", false);
 
 
             // Timestamp color

@@ -31,18 +31,18 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiButtons {
-    private static final String HANGOUTS_CONVERSATION_EMOJI = "coz";
-    private static final String HANGOUTS_CONVERSATION_GALLERY = "clz";
-    private static final String HANGOUTS_CONVERSATION_CAMERA = "cla";
-    private static final String HANGOUTS_CONVERSATION_VIDEO = "cpk";
-    private static final String HANGOUTS_CONVERSATION_STICKER = "coc";
-    private static final String HANGOUTS_CONVERSATION_LOCATION = "cng";
+    private static final String HANGOUTS_CONVERSATION_EMOJI = "cpm";
+    private static final String HANGOUTS_CONVERSATION_GALLERY = "cmq";
+    private static final String HANGOUTS_CONVERSATION_CAMERA = "clr";
+    private static final String HANGOUTS_CONVERSATION_VIDEO = "cpx";
+    private static final String HANGOUTS_CONVERSATION_STICKER = "cot";
+    private static final String HANGOUTS_CONVERSATION_LOCATION = "cnx";
 
-    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bjx";
-    //private static final String HANGOUTS_REQUIRED_CLASS_2 = "ciq";
+    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bju";
+    //private static final String HANGOUTS_REQUIRED_CLASS_2 = "cjg";
 
     private static final String HANGOUTS_A = "a";
-    private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "b";
+    private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "a";
     private static final String HANGOUTS_CONVERSATION_DETECT_KEYBOARD = "a";
 
     public static void handleLoadPackage(final Config config, ClassLoader loader) {
