@@ -37,6 +37,10 @@ android {
     aaptOptions {
         cruncherEnabled = false
     }
+
+    lintOptions {
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
