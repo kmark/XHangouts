@@ -20,6 +20,7 @@
 package com.versobit.kmark.xhangouts.mods;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.XModuleResources;
@@ -51,6 +52,7 @@ import com.versobit.kmark.xhangouts.Setting;
 import com.versobit.kmark.xhangouts.XHangouts;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LayoutInflated;
 
 import static com.versobit.kmark.xhangouts.XHangouts.HANGOUTS_RES_PKG_NAME;
@@ -111,6 +113,7 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
+    private static final String HANGOUTS_THEME_METHOD = "fr";
     private static final String HANGOUTS_RECENT_CALLS = "grn";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
@@ -176,6 +179,15 @@ public final class UiColorize {
                         }
                     }
                 }
+            }
+        });
+
+        // Fix theme issues for devices using Marshmallow or Nougat
+        findAndHookMethod(HANGOUTS_THEME_METHOD, loader, HANGOUTS_C, Context.class, int.class, new XC_MethodReplacement() {
+            @Override
+            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+                int color = (int) param.args[1];
+                return ((Context) param.args[0]).getResources().getColor(color);
             }
         });
 
@@ -620,6 +632,11 @@ public final class UiColorize {
             replaceColor(res, HANGOUTS_COLOR_FONT_OUT_OTR, config.outgoingDarkFontColorOTR);
             replaceColor(res, HANGOUTS_COLOR_LINK_OUT, config.outgoingDarkLinkColor);
             replaceColor(res, HANGOUTS_COLOR_LINK_OUT_OTR, config.outgoingDarkLinkColorOTR);
+
+
+            // Jump button
+            res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "jump_button_background",
+                    moduleRes.fwd(R.drawable.jump_button_background));
 
 
             // OTR notifications, missed calls etc
