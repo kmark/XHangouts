@@ -3,7 +3,8 @@
 
 ***The ultimate Google Hangouts extension.***
 
-> **XDA-Developers:**  [forum.xda-developers.com/xposed/modules/xhangouts-t2888102](http://forum.xda-developers.com/xposed/modules/xhangouts-mms-fixes-google-hangouts-t2888102)  
+> **XDA-Developers:**  
+[forum.xda-developers.com/xposed/modules/xhangouts-t2888102](https://forum.xda-developers.com/xposed/modules/xhangouts-mms-fixes-google-hangouts-t2888102)  
 > **Xposed Repository:** [repo.xposed.info/module/com.versobit.kmark.xhangouts](http://repo.xposed.info/module/com.versobit.kmark.xhangouts)
 
 Google Hangouts is a great messaging app for those of us who make considerable use of the Google
