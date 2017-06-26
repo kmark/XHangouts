@@ -138,7 +138,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiVersionNotice.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageCompression.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageResizing.handleLoadPackage(config, loadPackageParam.classLoader);
-        MergedConversations.handleLoadPackage(config, loadPackageParam.classLoader);
+        //MergedConversations.handleLoadPackage(config, loadPackageParam.classLoader);
         MmsResizing.handleLoadPackage(config, loadPackageParam.classLoader);
         Sound.handleLoadPackage(config);
         UiButtons.handleLoadPackage(config, loadPackageParam.classLoader);
@@ -147,7 +147,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiDebugOptions.handleLoadPackage(config, loadPackageParam.classLoader);
         UiDisableProximity.handleLoadPackage(config);
         UiEnterKey.handleLoadPackage(config, loadPackageParam.classLoader);
-        UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
+        //UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
         UiQuickSettings.handleLoadPackage(config, loadPackageParam.classLoader);
         UiScreenOff.handleLoadPackage(config, loadPackageParam.classLoader);
         UiSendLock.handleLoadPackage(config, loadPackageParam.classLoader);
