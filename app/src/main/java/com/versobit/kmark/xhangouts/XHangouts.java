@@ -140,6 +140,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         ImageResizing.handleLoadPackage(config, loadPackageParam.classLoader);
         //MergedConversations.handleLoadPackage(config, loadPackageParam.classLoader);
         MmsResizing.handleLoadPackage(config, loadPackageParam.classLoader);
+        RestoreSMS.handleLoadPackage(config, loadPackageParam.classLoader);
         Sound.handleLoadPackage(config);
         UiButtons.handleLoadPackage(config, loadPackageParam.classLoader);
         UiCallButtons.handleLoadPackage(config, loadPackageParam.classLoader);
