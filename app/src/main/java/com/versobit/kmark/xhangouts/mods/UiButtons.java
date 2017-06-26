@@ -31,15 +31,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiButtons {
-    private static final String HANGOUTS_CONVERSATION_EMOJI = "cpm";
-    private static final String HANGOUTS_CONVERSATION_GALLERY = "cmq";
-    private static final String HANGOUTS_CONVERSATION_CAMERA = "clr";
-    private static final String HANGOUTS_CONVERSATION_VIDEO = "cpx";
-    private static final String HANGOUTS_CONVERSATION_STICKER = "cot";
-    private static final String HANGOUTS_CONVERSATION_LOCATION = "cnx";
+    private static final String HANGOUTS_CONVERSATION_EMOJI = "crx";
+    private static final String HANGOUTS_CONVERSATION_GALLERY = "con";
+    private static final String HANGOUTS_CONVERSATION_CAMERA = "cno";
+    private static final String HANGOUTS_CONVERSATION_VIDEO = "csm";
+    private static final String HANGOUTS_CONVERSATION_STICKER = "crf";
+    private static final String HANGOUTS_CONVERSATION_LOCATION = "cpu";
 
-    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bju";
-    //private static final String HANGOUTS_REQUIRED_CLASS_2 = "cjg";
+    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bmc";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "a";
@@ -53,7 +52,6 @@ public final class UiButtons {
         Class cStickerPicker = findClass(HANGOUTS_CONVERSATION_STICKER, loader);
         Class cLocationPicker = findClass(HANGOUTS_CONVERSATION_LOCATION, loader);
         Class cFirstParam = findClass(HANGOUTS_REQUIRED_CLASS_1, loader);
-        //Class cSecondParam = findClass(HANGOUTS_REQUIRED_CLASS_2, loader);
 
         findAndHookMethod(cEmojiPicker, HANGOUTS_CONVERSATION_DETECT_KEYBOARD, new XC_MethodHook() {
             @Override
