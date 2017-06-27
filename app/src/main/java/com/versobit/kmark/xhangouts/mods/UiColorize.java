@@ -576,6 +576,18 @@ public final class UiColorize {
             replaceColor(res, "rich_status_content_color", COLOR_GROUP_1);
 
 
+            // Last read indicator
+            res.hookLayout(HANGOUTS_RES_PKG_NAME, "layout", "last_read_message", new XC_LayoutInflated() {
+                public void handleLayoutInflated(LayoutInflatedParam liparam) throws Throwable {
+                    LinearLayout parent = ((LinearLayout) liparam.view.findViewById(liparam.res.getIdentifier(
+                            "text", "id", HANGOUTS_RES_PKG_NAME)).getParent());
+                    parent.getChildAt(0).setBackgroundColor(0xffffffff);
+                    ((TextView) parent.getChildAt(1)).setTextColor(0xffffffff);
+                    parent.getChildAt(2).setBackgroundColor(0xffffffff);
+                }
+            });
+
+
             // Sticker color
             final Drawable sticker = res.getDrawable(res.getIdentifier("ic_stickers", "drawable", HANGOUTS_RES_PKG_NAME));
             res.setReplacement(HANGOUTS_RES_PKG_NAME, "drawable", "ic_stickers", new XResources.DrawableLoader() {
