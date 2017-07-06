@@ -1,5 +1,31 @@
 apply plugin: 'com.android.library'
 
+/*
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'colorpicker'
+
+    publishedGroupId = 'com.rarepebble'
+    libraryName = 'HSV-Alpha Color Picker for Android'
+    artifact = 'colorpicker'
+
+    libraryDescription = 'A library providing a ColorPreference and ColorPickerView for Android.'
+
+    siteUrl = 'https://github.com/martin-stone/hsv-alpha-color-picker-android'
+    gitUrl = 'https://github.com/martin-stone/hsv-alpha-color-picker-android.git'
+
+    libraryVersion = '2.2.0'
+
+    developerId = 'martin-stone'
+    developerName = 'Martin Stone'
+    //developerEmail = '@rarepebble.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+*/
+
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.0'
@@ -7,8 +33,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 10600
-        versionName "1.6.0-XHangouts"
+        versionCode 20200
+        versionName "2.2.0-XHangouts"
     }
 
     aaptOptions {
