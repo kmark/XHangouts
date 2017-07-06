@@ -69,9 +69,9 @@
         android:gravity="center_horizontal"
         android:maxLength="8"
         android:typeface="monospace"
-        android:fontFamily="monospace"
         android:background="@null"
         android:inputType="textNoSuggestions"
+        android:imeOptions="flagNoExtractUi"
         />
 
 </LinearLayout>
