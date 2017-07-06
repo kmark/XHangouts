@@ -158,8 +158,8 @@ public class ColorPreference extends DialogPreference {
 			builder.setNeutralButton(selectNoneButtonText, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					if (callChangeListener(null)) {
-						setColor(null);
+					if (callChangeListener(defaultColor)) {
+						setColor(defaultColor);
 					}
 				}
 			});
