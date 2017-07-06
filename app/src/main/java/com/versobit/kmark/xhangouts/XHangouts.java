@@ -26,8 +26,8 @@ import android.content.pm.PackageInfo;
 
 import com.versobit.kmark.xhangouts.mods.ImageCompression;
 import com.versobit.kmark.xhangouts.mods.ImageResizing;
-import com.versobit.kmark.xhangouts.mods.MergedConversations;
 import com.versobit.kmark.xhangouts.mods.MmsResizing;
+import com.versobit.kmark.xhangouts.mods.RestoreSMS;
 import com.versobit.kmark.xhangouts.mods.Sound;
 import com.versobit.kmark.xhangouts.mods.UiButtons;
 import com.versobit.kmark.xhangouts.mods.UiCallButtons;
@@ -35,7 +35,6 @@ import com.versobit.kmark.xhangouts.mods.UiColorize;
 import com.versobit.kmark.xhangouts.mods.UiDebugOptions;
 import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
-import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiScreenOff;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
