@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 24
         versionCode getVersionDef()[0].toInteger()
         versionName getVersionName()

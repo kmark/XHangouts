@@ -2,6 +2,5 @@
 <resources>
     <string name="empty_directory">Leerer Ordner</string>
     <string name="storage_removed">Speicher wurde entferntet.</string>
-    <string name="choose_file">Wähle eine Datei</string>
     <string name="error_selecting_file">Fehler beim Öffnen der Datei</string>    
 </resources>
