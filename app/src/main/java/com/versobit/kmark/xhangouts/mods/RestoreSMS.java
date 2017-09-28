@@ -31,9 +31,9 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class RestoreSMS {
 
     // This might stop working in Hangouts v21+
-    private static final String HANGOUTS_DEP_SMS_LIST = "ggv";
-    private static final String HANGOUTS_DEP_SMS_CONV = "ggg";
-    private static final String HANGOUTS_DEP_SMS_NOTI = "ggk";
+    private static final String HANGOUTS_DEP_SMS_LIST = "ggb";
+    private static final String HANGOUTS_DEP_SMS_CONV = "gfm";
+    private static final String HANGOUTS_DEP_SMS_NOTI = "gfq";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";

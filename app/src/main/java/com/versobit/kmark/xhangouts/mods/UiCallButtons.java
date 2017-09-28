@@ -44,11 +44,11 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiCallButtons {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "div";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dig";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_ENUM_CALL = "bzf";
-    private static final String HANGOUTS_MENU_CALL = "cit";
+    private static final String HANGOUTS_ENUM_CALL = "byt";
+    private static final String HANGOUTS_MENU_CALL = "cih";
     private static final String HANGOUTS_MENU_CALL_CONTEXT = "b";
     private static final String HANGOUTS_MENU_CALL_OPIS = "onOptionsItemSelected";
 
@@ -130,10 +130,10 @@ public final class UiCallButtons {
 
                     // Try another way to get the phone number if it's still null
                     if (phoneNumber == null) {
-                        // aF = ekc class (HANGOUTS_MENU_CALL class for ref)
-                        Object altPhoneNumber = getObjectField(param.thisObject, "aF");
+                        // aE = ejo class (HANGOUTS_MENU_CALL class for ref)
+                        Object altPhoneNumber = getObjectField(param.thisObject, "aE");
                         if (altPhoneNumber != null) {
-                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within ekc
+                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within ejo
                         }
                     }
 
@@ -167,9 +167,9 @@ public final class UiCallButtons {
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
-        // k = cmb class (HANGOUTS_MENU_CALL class for ref)
+        // k = clo class (HANGOUTS_MENU_CALL class for ref)
         Object getPhoneNumber = getObjectField(param.thisObject, "k");
-        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cmb
+        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within clo
     }
 
     private static String getID(XC_MethodHook.MethodHookParam param) {
