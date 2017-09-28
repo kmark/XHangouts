@@ -70,9 +70,9 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.talk";
 
-    public static final String TESTED_VERSION_STR = "20.0.156935076";
-    public static final int MIN_VERSION_INT = 24154787;
-    public static final int MAX_VERSION_INT = 24154820;
+    public static final String TESTED_VERSION_STR = "21.0.162426697";
+    public static final int MIN_VERSION_INT = 24301787;
+    public static final int MAX_VERSION_INT = 24301820;
 
     private static final Config config = new Config();
 
