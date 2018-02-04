@@ -44,11 +44,11 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiCallButtons {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dig";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dog";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_ENUM_CALL = "byt";
-    private static final String HANGOUTS_MENU_CALL = "cih";
+    private static final String HANGOUTS_ENUM_CALL = "caz";
+    private static final String HANGOUTS_MENU_CALL = "clq";
     private static final String HANGOUTS_MENU_CALL_CONTEXT = "b";
     private static final String HANGOUTS_MENU_CALL_OPIS = "onOptionsItemSelected";
 
@@ -130,10 +130,10 @@ public final class UiCallButtons {
 
                     // Try another way to get the phone number if it's still null
                     if (phoneNumber == null) {
-                        // aE = ejo class (HANGOUTS_MENU_CALL class for ref)
-                        Object altPhoneNumber = getObjectField(param.thisObject, "aE");
+                        // bz = esb class (HANGOUTS_MENU_CALL class for ref)
+                        Object altPhoneNumber = getObjectField(param.thisObject, "bz");
                         if (altPhoneNumber != null) {
-                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within ejo
+                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within esb
                         }
                     }
 
@@ -167,13 +167,13 @@ public final class UiCallButtons {
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
-        // k = clo class (HANGOUTS_MENU_CALL class for ref)
-        Object getPhoneNumber = getObjectField(param.thisObject, "k");
-        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within clo
+        // af = cow class (HANGOUTS_MENU_CALL class for ref)
+        Object getPhoneNumber = getObjectField(param.thisObject, "af");
+        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cow
     }
 
     private static String getID(XC_MethodHook.MethodHookParam param) {
-        return (String) getObjectField(param.thisObject, "U"); // string in HANGOUTS_MENU_CALL class
+        return (String) getObjectField(param.thisObject, "aO"); // string in HANGOUTS_MENU_CALL class
     }
 
     private static boolean isHangoutsContact() {
