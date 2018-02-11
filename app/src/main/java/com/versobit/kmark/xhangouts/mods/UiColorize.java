@@ -654,9 +654,10 @@ public final class UiColorize {
             // OTR notifications, missed calls etc
             themeListItemView(res, "hangout_event_message", true);
             themeListItemView(res, "hangout_event_message_list_item_view", true);
+            themeListItemView(res, "otr_modification_message", false);
             themeListItemView(res, "otr_modification_message_list_item_view", false);
-            themeListItemView(res, "system_message_list_item_view", false);
             themeListItemView(res, "system_message", false);
+            themeListItemView(res, "system_message_list_item_view", false);
 
 
             // Timestamp color
