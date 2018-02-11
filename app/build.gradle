@@ -8,7 +8,7 @@ def gitRev = {
         return stdout.toString().trim()
     }
     catch (ignored) {
-        return 'nogit';
+        return 'nogit'
     }
 }
 
@@ -24,12 +24,12 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 27
         versionCode getVersionDef()[0].toInteger()
         versionName getVersionName()
     }
