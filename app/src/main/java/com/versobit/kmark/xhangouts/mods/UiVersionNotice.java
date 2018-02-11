@@ -21,6 +21,7 @@ package com.versobit.kmark.xhangouts.mods;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.XModuleResources;
 import android.content.res.XResources;
@@ -32,6 +33,7 @@ import com.versobit.kmark.xhangouts.R;
 import com.versobit.kmark.xhangouts.XHangouts;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 
 import static com.versobit.kmark.xhangouts.XHangouts.MAX_VERSION_INT;
 import static com.versobit.kmark.xhangouts.XHangouts.TESTED_VERSION_STR;
@@ -46,6 +48,7 @@ public final class UiVersionNotice {
     // We could try to retrieve the launch activity at runtime (I did try) but Android gives us an
     // activity-alias name and I don't think there's a way for us to resolve those.
     private static final String HANGOUTS_BABELHOMEACTIVITY = "com.google.android.apps.hangouts.phone.BabelHomeActivity";
+    private static final String HANGOUTS_BABEL_APPUPGRADE_FORCE = "bgd";
 
     private static boolean hasRun = false;
     private static int dialogTitleId = 0;
@@ -58,6 +61,14 @@ public final class UiVersionNotice {
         if (!config.modEnabled) {
             return;
         }
+        
+        // Prevent forced upgrades
+        findAndHookMethod(HANGOUTS_BABEL_APPUPGRADE_FORCE, loader, "a", Context.class, new XC_MethodReplacement() {
+            @Override
+            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+                return false;
+            }
+        });
 
         findAndHookMethod(HANGOUTS_BABELHOMEACTIVITY, loader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
