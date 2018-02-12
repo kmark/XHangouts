@@ -31,12 +31,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class RestoreSMS {
 
     // This might stop working in Hangouts v21+
-    private static final String HANGOUTS_DEP_SMS_LIST = "gqt";
-    private static final String HANGOUTS_DEP_SMS_CONV = "gpx";
-    private static final String HANGOUTS_DEP_SMS_NOTI = "gqd";
+    private static final String HANGOUTS_DEP_SMS_LIST = "gex";
+    private static final String HANGOUTS_DEP_SMS_CONV = "gep";
 
     private static final String HANGOUTS_A = "a";
-    private static final String HANGOUTS_B = "b";
     private static final String HANGOUTS_C = "c";
     private static final String HANGOUTS_D = "d";
     private static final String HANGOUTS_E = "e";
@@ -49,7 +47,6 @@ public class RestoreSMS {
 
         Class cDeprecatedSMSList = findClass(HANGOUTS_DEP_SMS_LIST, loader);
         Class cDeprecatedSMS = findClass(HANGOUTS_DEP_SMS_CONV, loader);
-        Class cDeprecatedSMSNotify = findClass(HANGOUTS_DEP_SMS_NOTI, loader);
 
         findAndHookMethod(cDeprecatedSMSList, HANGOUTS_A, new XC_MethodReplacement() {
             @Override
@@ -98,28 +95,6 @@ public class RestoreSMS {
             @Override
             protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
                 //babel_sms_dep_enabled
-                return false;
-            }
-        });
-
-        findAndHookMethod(cDeprecatedSMSNotify, HANGOUTS_A, Context.class, new XC_MethodReplacement() {
-            @Override
-            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
-                //babel_sms_dep_notif_19_enabled
-                return false;
-            }
-        });
-        findAndHookMethod(cDeprecatedSMSNotify, HANGOUTS_B, Context.class, new XC_MethodReplacement() {
-            @Override
-            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
-                //babel_sms_dep_msg_notif_enabled
-                return false;
-            }
-        });
-        findAndHookMethod(cDeprecatedSMSNotify, HANGOUTS_C, Context.class, new XC_MethodReplacement() {
-            @Override
-            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
-                //Babel_SmsDepNotif
                 return false;
             }
         });

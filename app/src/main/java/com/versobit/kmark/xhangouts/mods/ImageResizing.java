@@ -35,7 +35,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class ImageResizing {
 
-    private static final String HANGOUTS_PROCESS_IMG_CLASS = "haa";
+    private static final String HANGOUTS_PROCESS_IMG_CLASS = "gnq";
     // public Bitmap b(byte[] paramArrayOfByte, int paramInt1, int paramInt2, int paramInt3)
     private static final String HANGOUTS_PROCESS_IMG_METHOD = "a";
     // public void a(Bitmap paramBitmap)

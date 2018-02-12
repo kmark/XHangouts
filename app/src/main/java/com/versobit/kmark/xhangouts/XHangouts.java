@@ -26,6 +26,7 @@ import android.content.pm.PackageInfo;
 
 import com.versobit.kmark.xhangouts.mods.ImageCompression;
 import com.versobit.kmark.xhangouts.mods.ImageResizing;
+import com.versobit.kmark.xhangouts.mods.MergedConversations;
 import com.versobit.kmark.xhangouts.mods.MmsResizing;
 import com.versobit.kmark.xhangouts.mods.RestoreSMS;
 import com.versobit.kmark.xhangouts.mods.Sound;
@@ -35,6 +36,7 @@ import com.versobit.kmark.xhangouts.mods.UiColorize;
 import com.versobit.kmark.xhangouts.mods.UiDebugOptions;
 import com.versobit.kmark.xhangouts.mods.UiDisableProximity;
 import com.versobit.kmark.xhangouts.mods.UiEnterKey;
+import com.versobit.kmark.xhangouts.mods.UiMsgTypeSpinner;
 import com.versobit.kmark.xhangouts.mods.UiQuickSettings;
 import com.versobit.kmark.xhangouts.mods.UiScreenOff;
 import com.versobit.kmark.xhangouts.mods.UiSendLock;
@@ -68,11 +70,11 @@ public final class XHangouts implements IXposedHookZygoteInit,
     private static final Class ACTIVITY_THREAD = findClass(ACTIVITY_THREAD_CLASS, null);
 
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
-    public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.talk";
+    public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.apps.hangouts";
 
-    public static final String TESTED_VERSION_STR = "24.0.182154523";
-    public static final int MIN_VERSION_INT = 24746315;
-    public static final int MAX_VERSION_INT = 24746348;
+    public static final String TESTED_VERSION_STR = "18.0.150813355";
+    public static final int MIN_VERSION_INT = 23989265;
+    public static final int MAX_VERSION_INT = 23989298;
 
     private static final Config config = new Config();
 
@@ -137,7 +139,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiVersionNotice.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageCompression.handleLoadPackage(config, loadPackageParam.classLoader);
         ImageResizing.handleLoadPackage(config, loadPackageParam.classLoader);
-        //MergedConversations.handleLoadPackage(config, loadPackageParam.classLoader);
+        MergedConversations.handleLoadPackage(config, loadPackageParam.classLoader);
         MmsResizing.handleLoadPackage(config, loadPackageParam.classLoader);
         RestoreSMS.handleLoadPackage(config, loadPackageParam.classLoader);
         Sound.handleLoadPackage(config);
@@ -147,7 +149,7 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiDebugOptions.handleLoadPackage(config, loadPackageParam.classLoader);
         UiDisableProximity.handleLoadPackage(config);
         UiEnterKey.handleLoadPackage(config, loadPackageParam.classLoader);
-        //UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
+        UiMsgTypeSpinner.handleLoadPackage(config, loadPackageParam.classLoader);
         UiQuickSettings.handleLoadPackage(config, loadPackageParam.classLoader);
         UiScreenOff.handleLoadPackage(config, loadPackageParam.classLoader);
         UiSendLock.handleLoadPackage(config, loadPackageParam.classLoader);
