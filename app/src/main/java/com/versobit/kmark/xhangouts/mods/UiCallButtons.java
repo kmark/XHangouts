@@ -80,90 +80,94 @@ public final class UiCallButtons {
             return;
         }
 
-        Class cConversationActSuper = findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loader);
-        Class cMenuOptions = findClass(HANGOUTS_MENU_CALL, loader);
-        cHandleCalls = findClass(HANGOUTS_ENUM_CALL, loader);
+        try {
+            Class cConversationActSuper = findClass(HANGOUTS_ACT_CONVERSATION_SUPER, loader);
+            Class cMenuOptions = findClass(HANGOUTS_MENU_CALL, loader);
+            cHandleCalls = findClass(HANGOUTS_ENUM_CALL, loader);
 
-        findAndHookMethod(cConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM, Menu.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                if (!config.hideCallButtons) {
-                    return;
-                }
-                if (menuItemCallResId == RES_ID_UNSET || menuItemVideoCallResId == RES_ID_UNSET) {
-                    Resources res = AndroidAppHelper.currentApplication().getResources();
-                    menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
-                    menuItemVideoCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_VIDEOCALL, "id", HANGOUTS_RES_PKG_NAME);
-                }
-                Menu menu = (Menu) param.args[0];
-                for (int i = 0; i < menu.size(); i++) {
-                    MenuItem item = menu.getItem(i);
-                    if (item.getItemId() == menuItemCallResId || item.getItemId() == menuItemVideoCallResId) {
-                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            findAndHookMethod(cConversationActSuper, HANGOUTS_ACT_CONVERSATION_SUPER_OPOM, Menu.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    if (!config.hideCallButtons) {
+                        return;
+                    }
+                    if (menuItemCallResId == RES_ID_UNSET || menuItemVideoCallResId == RES_ID_UNSET) {
+                        Resources res = AndroidAppHelper.currentApplication().getResources();
+                        menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
+                        menuItemVideoCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_VIDEOCALL, "id", HANGOUTS_RES_PKG_NAME);
+                    }
+                    Menu menu = (Menu) param.args[0];
+                    for (int i = 0; i < menu.size(); i++) {
+                        MenuItem item = menu.getItem(i);
+                        if (item.getItemId() == menuItemCallResId || item.getItemId() == menuItemVideoCallResId) {
+                            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        findAndHookMethod(cMenuOptions, HANGOUTS_MENU_CALL_OPIS, MenuItem.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (!config.enhanceCallButton) {
-                    return;
-                }
-                if (menuItemCallResId == RES_ID_UNSET) {
-                    Resources res = AndroidAppHelper.currentApplication().getResources();
-                    menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
-                }
-                if (((MenuItem) param.args[0]).getItemId() == menuItemCallResId) {
-                    // We store some info so that it isn't lost when switching between message types (SMS, GV, Hangouts)
-                    if (gaiaID == null) {
-                        gaiaID = getID(param);
-                        getNumber(param);
-                    } else {
-                        String ID = getID(param);
-                        if (!gaiaID.equals(ID)) {
-                            gaiaID = ID;
+            findAndHookMethod(cMenuOptions, HANGOUTS_MENU_CALL_OPIS, MenuItem.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    if (!config.enhanceCallButton) {
+                        return;
+                    }
+                    if (menuItemCallResId == RES_ID_UNSET) {
+                        Resources res = AndroidAppHelper.currentApplication().getResources();
+                        menuItemCallResId = res.getIdentifier(HANGOUTS_MENU_CONVO_CALL, "id", HANGOUTS_RES_PKG_NAME);
+                    }
+                    if (((MenuItem) param.args[0]).getItemId() == menuItemCallResId) {
+                        // We store some info so that it isn't lost when switching between message types (SMS, GV, Hangouts)
+                        if (gaiaID == null) {
+                            gaiaID = getID(param);
                             getNumber(param);
-                        }
-                    }
-
-                    // Try another way to get the phone number if it's still null
-                    if (phoneNumber == null) {
-                        // bz = esb class (HANGOUTS_MENU_CALL class for ref)
-                        Object altPhoneNumber = getObjectField(param.thisObject, "bz");
-                        if (altPhoneNumber != null) {
-                            phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within esb
-                        }
-                    }
-
-                    // Check if we're calling a Hangouts contact
-                    if (phoneNumber != null) {
-                        if (!isHangoutsContact()) {
-                            if (gaiaID.contains("g:")) {
-                                selectCallType(param);
-                            } else {
-                                cellularCall();
+                        } else {
+                            String ID = getID(param);
+                            if (!gaiaID.equals(ID)) {
+                                gaiaID = ID;
+                                getNumber(param);
                             }
-                            param.setResult(true);
+                        }
+
+                        // Try another way to get the phone number if it's still null
+                        if (phoneNumber == null) {
+                            // bz = esb class (HANGOUTS_MENU_CALL class for ref)
+                            Object altPhoneNumber = getObjectField(param.thisObject, "bz");
+                            if (altPhoneNumber != null) {
+                                phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within esb
+                            }
+                        }
+
+                        // Check if we're calling a Hangouts contact
+                        if (phoneNumber != null) {
+                            if (!isHangoutsContact()) {
+                                if (gaiaID.contains("g:")) {
+                                    selectCallType(param);
+                                } else {
+                                    cellularCall();
+                                }
+                                param.setResult(true);
+                            } else {
+                                XHangouts.debug(CALLING_HANGOUTS_CONTACT);
+                            }
                         } else {
                             XHangouts.debug(CALLING_HANGOUTS_CONTACT);
                         }
-                    } else {
-                        XHangouts.debug(CALLING_HANGOUTS_CONTACT);
                     }
                 }
-            }
-        });
+            });
 
-        // Get the context
-        findAndHookMethod(cMenuOptions, HANGOUTS_MENU_CALL_CONTEXT, Context.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                context = (Context) param.args[0];
-            }
-        });
+            // Get the context
+            findAndHookMethod(cMenuOptions, HANGOUTS_MENU_CALL_CONTEXT, Context.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    context = (Context) param.args[0];
+                }
+            });
 
+        } catch (Throwable t) {
+            XHangouts.debug("Found Xposed bug or Hangouts mismatch");
+        }
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
