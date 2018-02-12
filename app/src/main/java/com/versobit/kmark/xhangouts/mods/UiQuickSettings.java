@@ -43,10 +43,10 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "enz";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "ece";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "ecw";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "dsy";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "kma";
+    private static final String HANGOUTS_MENU_POPULATOR = "kbk";
 
     private static final String HANGOUTS_UNUSED_ICON = HANGOUTS_RES_PKG_NAME + ":drawable/ic_hangouts_color";
 

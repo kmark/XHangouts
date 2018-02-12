@@ -34,9 +34,9 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiMsgTypeSpinner {
-    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "cle";
+    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "cfy";
 
-    private static final String HANGOUTS_CONVERSATION_LAYOUT = "i";
+    private static final String HANGOUTS_CONVERSATION_LAYOUT = "f";
     private static final String HANGOUTS_CONVERSATION_METHOD = "a";
     private static final String HANGOUTS_CONVERSATION_SPINNER = "a";
 

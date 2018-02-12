@@ -31,14 +31,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiButtons {
-    private static final String HANGOUTS_CONVERSATION_EMOJI = "cvz";
-    private static final String HANGOUTS_CONVERSATION_GALLERY = "crs";
-    private static final String HANGOUTS_CONVERSATION_CAMERA = "cqn";
-    private static final String HANGOUTS_CONVERSATION_VIDEO = "cwq";
-    private static final String HANGOUTS_CONVERSATION_STICKER = "cvh";
-    private static final String HANGOUTS_CONVERSATION_LOCATION = "cth";
+    private static final String HANGOUTS_CONVERSATION_EMOJI = "cpn";
+    private static final String HANGOUTS_CONVERSATION_GALLERY = "cmc";
+    private static final String HANGOUTS_CONVERSATION_CAMERA = "cld";
+    private static final String HANGOUTS_CONVERSATION_VIDEO = "cpy";
+    private static final String HANGOUTS_CONVERSATION_STICKER = "cou";
+    private static final String HANGOUTS_CONVERSATION_LOCATION = "cnj";
 
-    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bnx";
+    private static final String HANGOUTS_REQUIRED_CLASS_1 = "bjt";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "a";
