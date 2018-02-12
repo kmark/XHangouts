@@ -61,7 +61,7 @@ public final class UiVersionNotice {
         if (!config.modEnabled) {
             return;
         }
-        
+
         // Prevent forced upgrades
         findAndHookMethod(HANGOUTS_BABEL_APPUPGRADE_FORCE, loader, "a", Context.class, new XC_MethodReplacement() {
             @Override
@@ -70,26 +70,30 @@ public final class UiVersionNotice {
             }
         });
 
-        findAndHookMethod(HANGOUTS_BABELHOMEACTIVITY, loader, "onCreate", Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                if (unsupportedVersion && !hasRun) {
-                    final Activity act = (Activity) param.thisObject;
-                    String direction = act.getString(hangoutsVerCode > MAX_VERSION_INT ? dialogDowngradeId : dialogUpgradeId);
-                    new AlertDialog.Builder(act)
-                            .setTitle(dialogTitleId)
-                            .setMessage(act.getString(dialogMsgId, hangoutsVerName, BuildConfig.VERSION_NAME, direction, TESTED_VERSION_STR))
-                            .setPositiveButton(dialogButtonId, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show();
+        try {
+            findAndHookMethod(HANGOUTS_BABELHOMEACTIVITY, loader, "onCreate", Bundle.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    if (unsupportedVersion && !hasRun) {
+                        final Activity act = (Activity) param.thisObject;
+                        String direction = act.getString(hangoutsVerCode > MAX_VERSION_INT ? dialogDowngradeId : dialogUpgradeId);
+                        new AlertDialog.Builder(act)
+                                .setTitle(dialogTitleId)
+                                .setMessage(act.getString(dialogMsgId, hangoutsVerName, BuildConfig.VERSION_NAME, direction, TESTED_VERSION_STR))
+                                .setPositiveButton(dialogButtonId, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    }
+                    hasRun = true;
                 }
-                hasRun = true;
-            }
-        });
+            });
+        } catch (Throwable t) {
+            // The mismatch has already been logged
+        }
     }
 
     public static void handleInitPackageResources(Config config, XResources res) {
