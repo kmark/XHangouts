@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Kevin Mark
+ * Copyright (C) 2014, 2018 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -25,6 +25,14 @@ final public class XApp extends Application {
 
     static boolean isActive() {
         return false;
+    }
+
+    static TestedCompatibilityDefinition getTestedVersion() {
+        return null;
+    }
+
+    static BuildConfigWrapper getXBuildConfig() {
+        return null;
     }
 
 }
