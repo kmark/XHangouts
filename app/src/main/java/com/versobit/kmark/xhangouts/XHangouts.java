@@ -129,9 +129,9 @@ public final class XHangouts implements IXposedHookZygoteInit,
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
         if (!TESTED_VERSION.isCompatible(hangoutsVerCode)) {
             unsupportedVersion = true;
-            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: v%s (%d - %d)",
+            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: %s (%d+)",
                     hangoutsVerName, hangoutsVerCode, TESTED_VERSION.getVersion(),
-                    TESTED_VERSION.getMin(), TESTED_VERSION.getMax()), false);
+                    TESTED_VERSION.getMin(), TESTED_VERSION.getDifference()), false);
         }
 
         findAndHookMethod(Application.class, "onCreate", new XC_MethodHook() {
