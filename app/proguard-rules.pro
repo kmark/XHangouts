@@ -3,8 +3,17 @@
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
+# Shared between Xposed and the Settings app
 -keep class com.versobit.kmark.xhangouts.XApp {
-    boolean isActive();
+    static boolean isActive();
+    static com.versobit.kmark.xhangouts.TestedCompatibilityDefinition getTestedVersion();
+    static com.versobit.kmark.xhangouts.BuildConfigWrapper getXBuildConfig();
+}
+-keepclassmembers public class com.versobit.kmark.xhangouts.TestedCompatibilityDefinition {
+    <init>(...);
+}
+-keepclassmembers public class com.versobit.kmark.xhangouts.BuildConfigWrapper {
+    <init>(...);
 }
 
 -keep class * implements de.robv.android.xposed.IXposedHookLoadPackage {

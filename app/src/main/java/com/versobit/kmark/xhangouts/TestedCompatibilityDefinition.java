@@ -53,6 +53,10 @@ public final class TestedCompatibilityDefinition {
         return version >= min && version <= max;
     }
 
+    public int getDifference() {
+        return max - min;
+    }
+
     @Override
     public String toString() {
         return String.format(Locale.US, "%s[version=%s, min=%d, max=%d]",

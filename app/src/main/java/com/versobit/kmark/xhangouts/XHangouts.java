@@ -55,6 +55,7 @@ import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.newInstance;
 
 public final class XHangouts implements IXposedHookZygoteInit,
         IXposedHookLoadPackage, IXposedHookInitPackageResources {
@@ -99,6 +100,12 @@ public final class XHangouts implements IXposedHookZygoteInit,
             // Passing in just XApp.class does not work :(
             findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "isActive",
                     XC_MethodReplacement.returnConstant(true));
+            findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "getTestedVersion", XC_MethodReplacement.returnConstant(
+                    newInstance(findClass(TestedCompatibilityDefinition.class.getName(), loadPackageParam.classLoader), TESTED_VERSION_STR, MIN_VERSION_INT, MAX_VERSION_INT)
+            ));
+            findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "getXBuildConfig", XC_MethodReplacement.returnConstant(
+                    newInstance(findClass(BuildConfigWrapper.class.getName(), loadPackageParam.classLoader), BuildConfigWrapper.collect())
+            ));
             return;
         }
 
