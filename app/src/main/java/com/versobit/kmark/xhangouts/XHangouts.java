@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Kevin Mark
+ * Copyright (C) 2014-2018 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -57,6 +57,7 @@ import static de.robv.android.xposed.XposedHelpers.callMethod;
 import static de.robv.android.xposed.XposedHelpers.callStaticMethod;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
+import static de.robv.android.xposed.XposedHelpers.newInstance;
 
 public final class XHangouts implements IXposedHookZygoteInit,
         IXposedHookLoadPackage, IXposedHookInitPackageResources {
@@ -75,6 +76,9 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final String TESTED_VERSION_STR = "18.0.150813355";
     public static final int MIN_VERSION_INT = 23989265;
     public static final int MAX_VERSION_INT = 23989298;
+
+    public static final TestedCompatibilityDefinition TESTED_VERSION =
+            new TestedCompatibilityDefinition(TESTED_VERSION_STR, MIN_VERSION_INT, MAX_VERSION_INT);
 
     private static final Config config = new Config();
 
@@ -98,6 +102,12 @@ public final class XHangouts implements IXposedHookZygoteInit,
             // Passing in just XApp.class does not work :(
             findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "isActive",
                     XC_MethodReplacement.returnConstant(true));
+            findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "getTestedVersion", XC_MethodReplacement.returnConstant(
+                    newInstance(findClass(TestedCompatibilityDefinition.class.getName(), loadPackageParam.classLoader), TESTED_VERSION_STR, MIN_VERSION_INT, MAX_VERSION_INT)
+            ));
+            findAndHookMethod(XApp.class.getName(), loadPackageParam.classLoader, "getXBuildConfig", XC_MethodReplacement.returnConstant(
+                    newInstance(findClass(BuildConfigWrapper.class.getName(), loadPackageParam.classLoader), BuildConfigWrapper.collect())
+            ));
             return;
         }
 
@@ -119,10 +129,11 @@ public final class XHangouts implements IXposedHookZygoteInit,
         debug(String.format("Google Hangouts v%s (%d)", hangoutsVerName, hangoutsVerCode), false);
 
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
-        if (!versionSupported(hangoutsVerCode)) {
+        if (!TESTED_VERSION.isCompatible(hangoutsVerCode)) {
             unsupportedVersion = true;
-            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: v%s (%d)",
-                    hangoutsVerName, hangoutsVerCode, TESTED_VERSION_STR, MIN_VERSION_INT), false);
+            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: %s (%d+)",
+                    hangoutsVerName, hangoutsVerCode, TESTED_VERSION.getVersion(),
+                    TESTED_VERSION.getMin(), TESTED_VERSION.getDifference()), false);
         }
 
         findAndHookMethod(Application.class, "onCreate", new XC_MethodHook() {
@@ -170,10 +181,6 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiVersionNotice.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiColorize.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiQuickSettings.handleInitPackageResources(config, initPackageResourcesParam.res);
-    }
-
-    static boolean versionSupported(int vCode) {
-        return vCode >= MIN_VERSION_INT && vCode <= MAX_VERSION_INT;
     }
 
     public static void debug(String msg) {
