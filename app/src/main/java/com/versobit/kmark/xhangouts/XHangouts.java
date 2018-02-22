@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Kevin Mark
+ * Copyright (C) 2014-2018 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -74,6 +74,9 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final int MIN_VERSION_INT = 24746315;
     public static final int MAX_VERSION_INT = 24746348;
 
+    public static final TestedCompatibilityDefinition TESTED_VERSION =
+            new TestedCompatibilityDefinition(TESTED_VERSION_STR, MIN_VERSION_INT, MAX_VERSION_INT);
+
     private static final Config config = new Config();
 
     public static String modulePath = null;
@@ -117,10 +120,11 @@ public final class XHangouts implements IXposedHookZygoteInit,
         debug(String.format("Google Hangouts v%s (%d)", hangoutsVerName, hangoutsVerCode), false);
 
         // Do not warn unless Hangouts version is > +/- the VERSION_TOLERANCE of the supported version
-        if (!versionSupported(hangoutsVerCode)) {
+        if (!TESTED_VERSION.isCompatible(hangoutsVerCode)) {
             unsupportedVersion = true;
-            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: v%s (%d)",
-                    hangoutsVerName, hangoutsVerCode, TESTED_VERSION_STR, MIN_VERSION_INT), false);
+            log(String.format("Warning: Your Hangouts version, %s (%d), significantly differs from the version XHangouts was built against: v%s (%d - %d)",
+                    hangoutsVerName, hangoutsVerCode, TESTED_VERSION.getVersion(),
+                    TESTED_VERSION.getMin(), TESTED_VERSION.getMax()), false);
         }
 
         findAndHookMethod(Application.class, "onCreate", new XC_MethodHook() {
@@ -168,10 +172,6 @@ public final class XHangouts implements IXposedHookZygoteInit,
         UiVersionNotice.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiColorize.handleInitPackageResources(config, initPackageResourcesParam.res);
         UiQuickSettings.handleInitPackageResources(config, initPackageResourcesParam.res);
-    }
-
-    static boolean versionSupported(int vCode) {
-        return vCode >= MIN_VERSION_INT && vCode <= MAX_VERSION_INT;
     }
 
     public static void debug(String msg) {
