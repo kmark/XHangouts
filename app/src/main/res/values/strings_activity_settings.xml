@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2014-2016 Kevin Mark
+    Copyright (C) 2014-2016, 2018 Kevin Mark
 
     This file is part of XHangouts.
 
@@ -239,7 +239,10 @@
     <string name="pref_title_about_version">XHangouts v%1$s</string>
     <string name="pref_desc_about_version">Google Hangouts v%1$s (%2$d)\n%3$s</string>
     <string name="pref_title_about_version_loaded">Loaded</string>
-    <string name="pref_title_about_version_notloaded">Not loaded</string>
+    <string name="pref_title_about_version_notloaded">Error: Not loaded</string>
+    <string name="pref_desc_about_version_hangouts_incompat">Error: The loaded XHangouts module is incompatible with your version of Hangouts. Compatible version: %1$s (%2$d+%3$d)</string>
+    <string name="pref_desc_about_version_hangouts_xmismatch">Warning: The loaded XHangouts module supports a different version of Hangouts than the version of XHangouts currently installed. Loaded module supports Hangouts %1$s (%2$d+%3$d). Installed module supports %4$s (%5$d+%6$d).</string>
+    <string name="pref_desc_about_version_xmismatch">Warning: The loaded XHangouts module (v%1$s (%2$d)) differs from the one currently installed. Please reboot your device.</string>
 
     <string name="pref_title_about_debug">Debug mode</string>
     <string name="pref_desc_about_debug_on">Xposed logging is on</string>

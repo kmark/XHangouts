@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Kevin Mark
+ * Copyright (C) 2014-2018 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -278,10 +278,35 @@ final public class SettingsActivity extends Activity {
             } catch (PackageManager.NameNotFoundException ex) {
                 //
             }
+
+            String extra;
             //noinspection ConstantConditions
-            String loaded = XApp.isActive() ? ctx.getString(R.string.pref_title_about_version_loaded) :
-                    ctx.getString(R.string.pref_title_about_version_notloaded);
-            preference.setSummary(ctx.getString(R.string.pref_desc_about_version, gHangoutsVerName, gHangoutsVerCode, loaded));
+            if (XApp.isActive()) {
+                extra = ctx.getString(R.string.pref_title_about_version_loaded);
+                // Unfortunately accessing XHangouts.TESTED_VERSION results in Xposed-related errors
+                TestedCompatibilityDefinition installedCompatDef = new TestedCompatibilityDefinition(
+                        XHangouts.TESTED_VERSION_STR, XHangouts.MIN_VERSION_INT, XHangouts.MAX_VERSION_INT);
+                TestedCompatibilityDefinition xCompatDef = XApp.getTestedVersion();
+                BuildConfigWrapper xBuild = XApp.getXBuildConfig();
+                if (installedCompatDef.equals(xCompatDef)) {
+                    if (gHangoutsVerCode != 0 && !xCompatDef.isCompatible(gHangoutsVerCode)) {
+                        extra += "\n" + getString(R.string.pref_desc_about_version_hangouts_incompat,
+                                xCompatDef.getVersion(), xCompatDef.getMin(), xCompatDef.getDifference());
+                    }
+                }
+                else if (xCompatDef != null) {
+                    extra += "\n" + getString(R.string.pref_desc_about_version_hangouts_xmismatch,
+                            xCompatDef.getVersion(), xCompatDef.getMin(), xCompatDef.getDifference(),
+                            installedCompatDef.getVersion(), installedCompatDef.getMin(), installedCompatDef.getDifference());
+                }
+                if (xBuild != null && !xBuild.equalToCurrent()) {
+                    extra += "\n" + getString(R.string.pref_desc_about_version_xmismatch,
+                            xBuild.version_name, xBuild.version_code);
+                }
+            } else {
+                extra = ctx.getString(R.string.pref_title_about_version_notloaded);
+            }
+            preference.setSummary(ctx.getString(R.string.pref_desc_about_version, gHangoutsVerName, gHangoutsVerCode, extra));
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
