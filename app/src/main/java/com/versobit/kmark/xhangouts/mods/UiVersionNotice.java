@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Kevin Mark
+ * Copyright (C) 2016, 2018 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -35,8 +35,7 @@ import com.versobit.kmark.xhangouts.XHangouts;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 
-import static com.versobit.kmark.xhangouts.XHangouts.MAX_VERSION_INT;
-import static com.versobit.kmark.xhangouts.XHangouts.TESTED_VERSION_STR;
+import static com.versobit.kmark.xhangouts.XHangouts.TESTED_VERSION;
 import static com.versobit.kmark.xhangouts.XHangouts.hangoutsVerCode;
 import static com.versobit.kmark.xhangouts.XHangouts.hangoutsVerName;
 import static com.versobit.kmark.xhangouts.XHangouts.unsupportedVersion;
@@ -76,10 +75,10 @@ public final class UiVersionNotice {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     if (unsupportedVersion && !hasRun) {
                         final Activity act = (Activity) param.thisObject;
-                        String direction = act.getString(hangoutsVerCode > MAX_VERSION_INT ? dialogDowngradeId : dialogUpgradeId);
+                        String direction = act.getString(hangoutsVerCode > TESTED_VERSION.getMax() ? dialogDowngradeId : dialogUpgradeId);
                         new AlertDialog.Builder(act)
                                 .setTitle(dialogTitleId)
-                                .setMessage(act.getString(dialogMsgId, hangoutsVerName, BuildConfig.VERSION_NAME, direction, TESTED_VERSION_STR))
+                                .setMessage(act.getString(dialogMsgId, hangoutsVerName, BuildConfig.VERSION_NAME, direction, TESTED_VERSION.getVersion()))
                                 .setPositiveButton(dialogButtonId, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
