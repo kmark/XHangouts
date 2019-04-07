@@ -23,19 +23,15 @@ Closure<String> getVersionName = {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.versobit.kmark.xhangouts"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode getVersionDef()[0].toInteger()
         versionName getVersionName()
-    }
-
-    aaptOptions {
-        cruncherEnabled = false
     }
 
     lintOptions {
@@ -51,10 +47,10 @@ android {
 }
 
 dependencies {
-    provided 'de.robv.android.xposed:api:53'
-    compile 'eu.chainfire:libsuperuser:1.0.0.201608240809'
-    compile project(':afilechooser')
-    compile project(':colorpicker')
+    compileOnly 'de.robv.android.xposed:api:53'
+    api 'eu.chainfire:libsuperuser:1.0.0.201608240809'
+    implementation project(':afilechooser')
+    implementation project(':colorpicker')
 }
 
 // Find and apply the signing file
