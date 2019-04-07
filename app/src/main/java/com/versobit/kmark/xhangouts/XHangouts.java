@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Kevin Mark
+ * Copyright (C) 2014-2019 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -71,9 +71,9 @@ public final class XHangouts implements IXposedHookZygoteInit,
     public static final String HANGOUTS_PKG_NAME = "com.google.android.talk";
     public static final String HANGOUTS_RES_PKG_NAME = "com.google.android.talk";
 
-    public static final String TESTED_VERSION_STR = "24.0.182154523";
-    public static final int MIN_VERSION_INT = 24746315;
-    public static final int MAX_VERSION_INT = 24746348;
+    public static final String TESTED_VERSION_STR = "30.0.239887060";
+    public static final int MIN_VERSION_INT = 25659186;
+    public static final int MAX_VERSION_INT = 25659216;
 
     public static final TestedCompatibilityDefinition TESTED_VERSION =
             new TestedCompatibilityDefinition(TESTED_VERSION_STR, MIN_VERSION_INT, MAX_VERSION_INT);

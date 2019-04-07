@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Kevin Mark
+ * Copyright (C) 2014-2019 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -42,7 +42,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class MmsResizing {
 
-    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "gnw";
+    private static final String HANGOUTS_PROCESS_MMS_IMG_CLASS = "gvj";
     // private static a(IIIILandroid/net/Uri;Landroid/content/Context;)[B
     private static final String HANGOUTS_PROCESS_MMS_IMG_METHOD = "a";
 

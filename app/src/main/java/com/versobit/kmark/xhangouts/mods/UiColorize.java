@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Kevin Mark
+ * Copyright (C) 2014-2019 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -113,8 +113,8 @@ public final class UiColorize {
     private static final int COLOR_GROUP_5 = 0xff424242; // Dividers and incoming message bubbles
     private static final int COLOR_GROUP_6 = 0xff000000; // Floating action button text color
 
-    private static final String HANGOUTS_THEME_METHOD = "le";
-    private static final String HANGOUTS_RECENT_CALLS = "heo";
+    private static final String HANGOUTS_THEME_METHOD = "ny";
+    private static final String HANGOUTS_RECENT_CALLS = "hmg";
     private static final String HANGOUTS_CONVO_LIST = "com.google.android.apps.hangouts.views.ConversationListItemView";
     private static final String HANGOUTS_SNACKBAR = "com.google.android.libraries.quantum.snackbar.Snackbar";
 

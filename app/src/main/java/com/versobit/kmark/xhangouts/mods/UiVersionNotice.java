@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2018 Kevin Mark
+ * Copyright (C) 2016-2019 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -47,7 +47,7 @@ public final class UiVersionNotice {
     // We could try to retrieve the launch activity at runtime (I did try) but Android gives us an
     // activity-alias name and I don't think there's a way for us to resolve those.
     private static final String HANGOUTS_BABELHOMEACTIVITY = "com.google.android.apps.hangouts.phone.BabelHomeActivity";
-    private static final String HANGOUTS_BABEL_APPUPGRADE_FORCE = "bgd";
+    private static final String HANGOUTS_BABEL_APPUPGRADE_FORCE = "ble";
 
     private static boolean hasRun = false;
     private static int dialogTitleId = 0;

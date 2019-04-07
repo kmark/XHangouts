@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Kevin Mark
+ * Copyright (C) 2015-2019 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -43,10 +43,13 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "enz";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "ece";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "etz";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "eih";
+    private static final String HANGOUTS_NAV_MENUITEM_PRIVACY = "euf";
+    private static final String HANGOUTS_NAV_MENUITEM_PROGRAM = "eug";
+    private static final String HANGOUTS_NAV_MENUITEM_TERMS = "euj";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "kma";
+    private static final String HANGOUTS_MENU_POPULATOR = "lhr";
 
     private static final String HANGOUTS_UNUSED_ICON = HANGOUTS_RES_PKG_NAME + ":drawable/ic_hangouts_color";
 
@@ -67,6 +70,9 @@ public final class UiQuickSettings {
         cMenuItemBase = findClass(HANGOUTS_NAV_MENUITEM_BASE, loader);
         cMenuItemBaseArray = Array.newInstance(cMenuItemBase, 0).getClass();
         Class cMenuItemHelp = findClass(HANGOUTS_NAV_MENUITEM_HELP, loader);
+        Class cMenuItemPrivacy = findClass(HANGOUTS_NAV_MENUITEM_PRIVACY, loader);
+        Class cMenuItemProgram = findClass(HANGOUTS_NAV_MENUITEM_PROGRAM, loader);
+        Class cMenuItemTerms = findClass(HANGOUTS_NAV_MENUITEM_TERMS, loader);
         Class cMenuPop = findClass(HANGOUTS_MENU_POPULATOR, loader);
 
         // Field corrections
@@ -79,6 +85,18 @@ public final class UiQuickSettings {
         // Push the Help & feedback entry down
         findAndHookMethod(cMenuItemHelp, "c", XC_MethodReplacement.returnConstant(11));
         findAndHookMethod(cMenuItemHelp, "e", XC_MethodReplacement.returnConstant(11));
+
+        // Push the privacy policy entry down
+        findAndHookMethod(cMenuItemPrivacy, "c", XC_MethodReplacement.returnConstant(12));
+        findAndHookMethod(cMenuItemPrivacy, "e", XC_MethodReplacement.returnConstant(12));
+
+        // Push the program policy entry down
+        findAndHookMethod(cMenuItemProgram, "c", XC_MethodReplacement.returnConstant(13));
+        findAndHookMethod(cMenuItemProgram, "e", XC_MethodReplacement.returnConstant(13));
+
+        // Push the terms of service entry down
+        findAndHookMethod(cMenuItemTerms, "c", XC_MethodReplacement.returnConstant(14));
+        findAndHookMethod(cMenuItemTerms, "e", XC_MethodReplacement.returnConstant(14));
 
         // Populate dat menu
         findAndHookMethod(cMenuPop, "a", Class.class, Object[].class, populateMenu);

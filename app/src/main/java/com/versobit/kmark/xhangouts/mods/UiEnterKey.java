@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Kevin Mark
+ * Copyright (C) 2014-2019 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -41,7 +41,7 @@ public final class UiEnterKey {
 
     private static final String HANGOUTS_CONVERSATION_MSGEDITTEXT = "com.google.android.apps.hangouts.conversation.v2.MessageEditText";
 
-    private static final String HANGOUTS_CONVERSATOIN_TEXTFRAME = "cle";
+    private static final String HANGOUTS_CONVERSATOIN_TEXTFRAME = "cqg";
     // public onEditorAction(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z
     private static final String HANGOUTS_CONVERSATION_TEXTFRAME_ONEDITORACTION = "onEditorAction";
 
