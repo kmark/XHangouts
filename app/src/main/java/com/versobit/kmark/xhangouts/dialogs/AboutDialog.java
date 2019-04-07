@@ -52,14 +52,14 @@ public final class AboutDialog extends DialogFragment {
 
         TextView txtVersion = (TextView)v.findViewById(R.id.dialog_about_version);
         TextView txtDonate = (TextView)v.findViewById(R.id.dialog_about_donate);
-        TextView txtBlackbox87 = (TextView)v.findViewById(R.id.dialog_about_blackbox87);
+        TextView txtImadev = (TextView)v.findViewById(R.id.dialog_about_imadev);
         Button btnGithub = (Button)v.findViewById(R.id.dialog_about_github);
         Button btnXda = (Button)v.findViewById(R.id.dialog_about_xda);
         TextView txtLicense = (TextView)v.findViewById(R.id.dialog_about_license);
 
         txtVersion.setText(BuildConfig.VERSION_NAME);
         txtDonate.setMovementMethod(new DonateLinkMovementMethod());
-        txtBlackbox87.setMovementMethod(LinkMovementMethod.getInstance());
+        txtImadev.setMovementMethod(LinkMovementMethod.getInstance());
         btnGithub.setOnClickListener(onButtonClick);
         btnXda.setOnClickListener(onButtonClick);
         txtLicense.setOnClickListener(onLicenseClick);

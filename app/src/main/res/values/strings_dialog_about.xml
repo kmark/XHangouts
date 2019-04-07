@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2015-2018 Kevin Mark
+    Copyright (C) 2015-2019 Kevin Mark
 
     This file is part of XHangouts.
 
@@ -19,13 +19,12 @@
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="dialog_about_copyright" translatable="false" tools:ignore="TypographyDashes">Copyright © 2014-2018 Kevin Mark</string>
+    <string name="dialog_about_copyright" translatable="false" tools:ignore="TypographyDashes">Copyright © 2014-2019 Kevin Mark</string>
     <string name="dialog_about_donate">XHangouts is developed in my spare time and will always
         remain free and open-source software. If you find this application useful please feel free to
     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HUXS9XTC6VMY4">donate</a>.</string>
-    <string name="dialog_about_blackbox87">A very special thank you to <a href="https://github.com/blackbox87">blackbox87</a>
-        (<a href="https://forum.xda-developers.com/member.php?u=6610308">ImADev</a> @ XDA)
-        for his substantial and continuous contributions.</string>
+    <string name="dialog_about_imadev">A very special thank you to <a href="https://forum.xda-developers.com/member.php?u=6610308">ImADev</a>
+        @ XDA for his substantial and continuous contributions.</string>
     <string name="dialog_about_github">GitHub</string>
     <string name="dialog_about_github_link" translatable="false">https://github.com/kmark/XHangouts</string>
     <string name="dialog_about_xda">XDA</string>

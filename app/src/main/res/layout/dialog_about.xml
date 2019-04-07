@@ -74,8 +74,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/dialog_about_blackbox87"
-            android:id="@+id/dialog_about_blackbox87"
+            android:text="@string/dialog_about_imadev"
+            android:id="@+id/dialog_about_imadev"
             android:textSize="18sp"
             android:textColor="@android:color/black" />
 
