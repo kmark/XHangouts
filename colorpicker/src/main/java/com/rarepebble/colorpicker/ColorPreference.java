@@ -181,7 +181,7 @@ public class ColorPreference extends DialogPreference {
 			getSharedPreferences()
 					.edit()
 					.remove(getKey())
-					.commit();
+					.apply();
 		}
 	}
 
