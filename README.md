@@ -55,7 +55,7 @@ MD5 checksums are available on the Xposed Repo.
 * [GitHub (sources)](https://github.com/kmark/XHangouts)
 
 ## Licensing
-Copyright &copy; 2014-2019 Kevin Mark. XHangouts is licensed under the GNU General Public License, Version 3, which can
+Copyright &copy; 2014-2020 Kevin Mark. XHangouts is licensed under the GNU General Public License, Version 3, which can
 be found in `LICENSE.md`
 
 More information on the projects used to help create XHangouts can be found by opening the app's About dialog and clicking the *License* link. Or just open `app/src/main/assets/license.html` in your browser.

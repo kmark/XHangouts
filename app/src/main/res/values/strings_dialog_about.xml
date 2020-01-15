@@ -19,7 +19,7 @@
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="dialog_about_copyright" translatable="false" tools:ignore="TypographyDashes">Copyright © 2014-2019 Kevin Mark</string>
+    <string name="dialog_about_copyright" translatable="false" tools:ignore="TypographyDashes">Copyright © 2014-2020 Kevin Mark</string>
     <string name="dialog_about_donate">XHangouts is developed in my spare time and will always
         remain free and open-source software. If you find this application useful please feel free to
     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HUXS9XTC6VMY4">donate</a>.</string>
