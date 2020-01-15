@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Kevin Mark
+ * Copyright (C) 2014-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.telephony.PhoneNumberUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,11 +45,11 @@ import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiCallButtons {
 
-    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "due";
+    private static final String HANGOUTS_ACT_CONVERSATION_SUPER = "dvr";
     private static final String HANGOUTS_ACT_CONVERSATION_SUPER_OPOM = "onPrepareOptionsMenu";
 
-    private static final String HANGOUTS_ENUM_CALL = "cgf";
-    private static final String HANGOUTS_MENU_CALL = "cqs";
+    private static final String HANGOUTS_ENUM_CALL = "chy";
+    private static final String HANGOUTS_MENU_CALL = "csm";
     private static final String HANGOUTS_MENU_CALL_CONTEXT = "b";
     private static final String HANGOUTS_MENU_CALL_OPIS = "onOptionsItemSelected";
 
@@ -76,7 +77,7 @@ public final class UiCallButtons {
     private static String phoneNumber = null;
 
     public static void handleLoadPackage(final Config config, final ClassLoader loader) {
-        if (!config.modEnabled) {
+        if (!config.modEnabled || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return;
         }
 
@@ -131,10 +132,10 @@ public final class UiCallButtons {
 
                         // Try another way to get the phone number if it's still null
                         if (phoneNumber == null) {
-                            // bC = eyo class (HANGOUTS_MENU_CALL class for ref)
-                            Object altPhoneNumber = getObjectField(param.thisObject, "bC");
+                            // bz = fae class (HANGOUTS_MENU_CALL class for ref)
+                            Object altPhoneNumber = getObjectField(param.thisObject, "bz");
                             if (altPhoneNumber != null) {
-                                phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within eyo
+                                phoneNumber = (String) callMethod(altPhoneNumber, "c"); // method within fae
                             }
                         }
 
@@ -171,13 +172,13 @@ public final class UiCallButtons {
     }
 
     private static void getNumber(XC_MethodHook.MethodHookParam param) {
-        // ai = cty class (HANGOUTS_MENU_CALL class for ref)
-        Object getPhoneNumber = getObjectField(param.thisObject, "ai");
-        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cty
+        // k = cvs class (HANGOUTS_MENU_CALL class for ref)
+        Object getPhoneNumber = getObjectField(param.thisObject, "k");
+        phoneNumber = (String) callMethod(getPhoneNumber, "c"); // method within cvs
     }
 
     private static String getID(XC_MethodHook.MethodHookParam param) {
-        return (String) getObjectField(param.thisObject, "aR"); // string in HANGOUTS_MENU_CALL class
+        return (String) getObjectField(param.thisObject, "aO"); // string in HANGOUTS_MENU_CALL class
     }
 
     private static boolean isHangoutsContact() {

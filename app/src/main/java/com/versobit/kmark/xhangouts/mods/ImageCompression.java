@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Kevin Mark
+ * Copyright (C) 2015-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -34,7 +34,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class ImageCompression {
 
-    private static final String HANGOUTS_PROCESS_IMG_CLASS = "hip";
+    private static final String HANGOUTS_PROCESS_IMG_CLASS = "hir";
     // public static byte[] a(Bitmap paramBitmap, int paramInt)
     private static final String HANGOUTS_PROCESS_IMG_METHOD = "a";
 

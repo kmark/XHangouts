@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Kevin Mark
+ * Copyright (C) 2016-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -31,8 +31,8 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class MergedConversations {
 
     // This might stop working in Hangouts v18+
-    private static final String HANGOUTS_MERGED_CONVERSATION = "gto";
-    private static final String HANGOUTS_MERGED_CONVERSATION_PARAM = "lhr";
+    private static final String HANGOUTS_MERGED_CONVERSATION = "gtq";
+    private static final String HANGOUTS_MERGED_CONVERSATION_PARAM = "kzs";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";

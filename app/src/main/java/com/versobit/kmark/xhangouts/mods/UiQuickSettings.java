@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Kevin Mark
+ * Copyright (C) 2015-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -43,13 +43,13 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class UiQuickSettings {
 
-    private static final String HANGOUTS_NAV_MENUITEM_BASE = "etz";
-    private static final String HANGOUTS_NAV_MENUITEM_HELP = "eih";
-    private static final String HANGOUTS_NAV_MENUITEM_PRIVACY = "euf";
-    private static final String HANGOUTS_NAV_MENUITEM_PROGRAM = "eug";
-    private static final String HANGOUTS_NAV_MENUITEM_TERMS = "euj";
+    private static final String HANGOUTS_NAV_MENUITEM_BASE = "evp";
+    private static final String HANGOUTS_NAV_MENUITEM_HELP = "eju";
+    private static final String HANGOUTS_NAV_MENUITEM_PRIVACY = "evv";
+    private static final String HANGOUTS_NAV_MENUITEM_PROGRAM = "evu";
+    private static final String HANGOUTS_NAV_MENUITEM_TERMS = "evz";
 
-    private static final String HANGOUTS_MENU_POPULATOR = "lhr";
+    private static final String HANGOUTS_MENU_POPULATOR = "kzs";
 
     private static final String HANGOUTS_UNUSED_ICON = HANGOUTS_RES_PKG_NAME + ":drawable/ic_hangouts_color";
 

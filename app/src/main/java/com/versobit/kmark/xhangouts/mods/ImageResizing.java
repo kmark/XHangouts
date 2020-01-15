@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Kevin Mark
+ * Copyright (C) 2014-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -35,7 +35,7 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public final class ImageResizing {
 
-    private static final String HANGOUTS_PROCESS_IMG_CLASS = "hhs";
+    private static final String HANGOUTS_PROCESS_IMG_CLASS = "hhw";
     // public Bitmap b(byte[] paramArrayOfByte, int paramInt1, int paramInt2, int paramInt3)
     private static final String HANGOUTS_PROCESS_IMG_METHOD = "a";
     // public void a(Bitmap paramBitmap)

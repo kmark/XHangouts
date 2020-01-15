@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Kevin Mark
+ * Copyright (C) 2015-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -34,7 +34,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiMsgTypeSpinner {
-    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "cqg";
+    private static final String HANGOUTS_CONVERSATION_TEXTFRAME = "csa";
 
     private static final String HANGOUTS_CONVERSATION_LAYOUT = "i";
     private static final String HANGOUTS_CONVERSATION_METHOD = "a";

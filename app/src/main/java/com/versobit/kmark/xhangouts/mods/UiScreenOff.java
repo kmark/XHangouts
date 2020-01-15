@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Kevin Mark
+ * Copyright (C) 2016-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -27,6 +27,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.versobit.kmark.xhangouts.Config;
@@ -65,7 +66,7 @@ public final class UiScreenOff {
     };
 
     public static void handleLoadPackage(Config config, ClassLoader loader) {
-        if (!config.modEnabled || !config.screenOff) {
+        if (!config.modEnabled || !config.screenOff || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return;
         }
 

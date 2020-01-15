@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Kevin Mark
+ * Copyright (C) 2016-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -31,14 +31,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 
 public final class UiButtons {
-    private static final String HANGOUTS_CONVERSATION_EMOJI = "dbc";
-    private static final String HANGOUTS_CONVERSATION_GALLERY = "cwu";
-    private static final String HANGOUTS_CONVERSATION_CAMERA = "cvp";
-    private static final String HANGOUTS_CONVERSATION_VIDEO = "dbt";
-    private static final String HANGOUTS_CONVERSATION_STICKER = "dak";
-    private static final String HANGOUTS_CONVERSATION_LOCATION = "cyj";
+    private static final String HANGOUTS_CONVERSATION_EMOJI = "dcw";
+    private static final String HANGOUTS_CONVERSATION_GALLERY = "cyo";
+    private static final String HANGOUTS_CONVERSATION_CAMERA = "cxj";
+    private static final String HANGOUTS_CONVERSATION_VIDEO = "ddl";
+    private static final String HANGOUTS_CONVERSATION_STICKER = "dce";
+    private static final String HANGOUTS_CONVERSATION_LOCATION = "dab";
 
-    private static final String HANGOUTS_REQUIRED_CLASS_1 = "btd";
+    private static final String HANGOUTS_REQUIRED_CLASS_1 = "buv";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_CONVERSATION_CONTEXT_FIELD = "a";

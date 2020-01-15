@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Kevin Mark
+ * Copyright (C) 2017-2020 Kevin Mark
  *
  * This file is part of XHangouts.
  *
@@ -31,9 +31,9 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 public class RestoreSMS {
 
     // This might stop working in Hangouts v21+
-    private static final String HANGOUTS_DEP_SMS_LIST = "gyg";
-    private static final String HANGOUTS_DEP_SMS_CONV = "gxk";
-    private static final String HANGOUTS_DEP_SMS_NOTI = "gxq";
+    private static final String HANGOUTS_DEP_SMS_LIST = "gyk";
+    private static final String HANGOUTS_DEP_SMS_CONV = "gxo";
+    private static final String HANGOUTS_DEP_SMS_NOTI = "gxu";
 
     private static final String HANGOUTS_A = "a";
     private static final String HANGOUTS_B = "b";
